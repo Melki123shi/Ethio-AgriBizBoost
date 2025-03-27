@@ -5,11 +5,9 @@ def calculate_financials(data: CropData):
 
     profit = revenue + data.government_subsidy - data.total_cost
 
-    cash_flow = data.total_cost
-
     financial_stability = (profit / data.total_cost * 100) if data.total_cost != 0 else 0
 
-    cash_flow = (cash_flow / revenue * 100) if revenue != 0 else 0
+    cash_flow = (data.total_cost/ revenue * 100) if revenue != 0 else 0
 
     return {
         "revenue": revenue,
