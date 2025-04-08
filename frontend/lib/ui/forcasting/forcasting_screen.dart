@@ -1,4 +1,4 @@
-import 'package:app/ui/input_field.dart';
+import 'package:app/ui/custom_input_field.dart';
 import 'package:flutter/material.dart';
 
 class ForcastingScreen extends StatelessWidget {

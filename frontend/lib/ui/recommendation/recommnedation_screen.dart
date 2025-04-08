@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:app/ui/input_field.dart';
+import 'package:app/ui/custom_input_field.dart';
 
 class RecommnedationScreen extends StatelessWidget {
   const RecommnedationScreen({super.key});

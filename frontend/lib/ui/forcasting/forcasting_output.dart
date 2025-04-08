@@ -1,4 +1,4 @@
-import 'package:app/ui/health_assessment/health_assessmet_output.dart';
+import 'package:app/ui/health_assessment/income_expense_chart.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -78,7 +78,6 @@ class ForcastingOutput extends StatelessWidget {
                           x: index,
                           barsSpace: 8,
                           barRods: [
-                            // Price rod
                             BarChartRodData(
                               toY: priceValues[index],
                               color: Colors.yellow,
