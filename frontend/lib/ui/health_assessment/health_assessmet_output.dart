@@ -22,11 +22,11 @@ class HealthAssessmentOutput extends StatelessWidget {
               children: [
                 AssessmentCard(
                     title: "Financial Stability",
-                    percentage: assessmentResult.financialStability.toInt()),
+                    percentage: assessmentResult.financialStability),
                 const SizedBox(width: 15),
                 AssessmentCard(
                     title: "Cash Flow",
-                    percentage: assessmentResult.cashFlow.toInt()),
+                    percentage: assessmentResult.cashFlow),
               ],
             ),
             const SizedBox(height: 20),

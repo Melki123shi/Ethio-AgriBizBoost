@@ -3,7 +3,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class AssessmentCard extends StatelessWidget {
   final String title;
-  final int percentage;
+  final double percentage;
 
   const AssessmentCard({
     super.key, 
