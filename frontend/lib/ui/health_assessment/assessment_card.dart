@@ -27,7 +27,6 @@ class AssessmentCard extends StatelessWidget {
           CircularPercentIndicator(
             radius: 40.0,
             lineWidth: 8.0,
-            // percent: percentage / 100,
             center: Text(
               "$percentage%",
               style: const TextStyle(

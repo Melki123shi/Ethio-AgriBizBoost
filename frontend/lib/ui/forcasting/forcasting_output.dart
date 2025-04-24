@@ -120,7 +120,7 @@ class ForcastingOutput extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        const IncomeExpenseChart(),
+        const IncomeExpenseChart(totalIncome: 10, totalExpense: 8, profit: 2),
       ],
     );
   }

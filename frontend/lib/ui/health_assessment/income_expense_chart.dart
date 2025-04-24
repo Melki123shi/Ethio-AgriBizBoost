@@ -2,125 +2,58 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
 class IncomeExpenseChart extends StatelessWidget {
-  const IncomeExpenseChart({super.key});
+  final double totalIncome;
+  final double totalExpense;
+  final double profit;
+
+  const IncomeExpenseChart({
+    super.key,
+    required this.totalIncome,
+    required this.totalExpense,
+    required this.profit,
+  });
+
+  static const _months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(18.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
       child: Container(
-        height: 280,
+        height: 220,                                   
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 34, 34, 34), 
-          borderRadius: BorderRadius.circular(20),
+          color: const Color(0xFF222222),
+          borderRadius: BorderRadius.circular(16),      
         ),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(8),               
         child: Column(
           children: [
             Expanded(
               child: LineChart(
                 LineChartData(
                   gridData: const FlGridData(show: false),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 40,
-                        getTitlesWidget: (value, meta) {
-                          return Padding(
-                            padding: const EdgeInsets.only(right: 8.0), 
-                            child: Text(
-                              value.toInt().toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                              ),
-                              textAlign: TextAlign.right,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 24,
-                        getTitlesWidget: (value, meta) {
-                          const months = ["Sept", "Oct", "Nov", "Dec", "Jan", "Feb"];
-                          return Text(
-                            months[value.toInt() % months.length],
-                            style: const TextStyle(color: Colors.white, fontSize: 12),
-                          );
-                        },
-                      ),
-                    ),
-                    topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false),
-                    ),
-                  ),
+                  titlesData: _buildTitles(),
                   borderData: FlBorderData(show: false),
                   lineBarsData: [
-                    LineChartBarData(
-                      spots: [
-                        const FlSpot(0, 100),
-                        const FlSpot(1, 120),
-                        const FlSpot(2, 200),
-                        const FlSpot(3, 250),
-                        const FlSpot(4, 320),
-                        const FlSpot(5, 300),
-                      ],
-                      isCurved: true,
-                      color: Colors.yellow,
-                      barWidth: 3,
-                      isStrokeCapRound: true,
-                    ),
-      
-                    LineChartBarData(
-                      spots: [
-                        const FlSpot(0, 90),
-                        const FlSpot(1, 110),
-                        const FlSpot(2, 180),
-                        const FlSpot(3, 240),
-                        const FlSpot(4, 310),
-                        const FlSpot(5, 290),
-                      ],
-                      isCurved: true,
-                      color: Colors.redAccent,
-                      barWidth: 3,
-                      isStrokeCapRound: true,
-                    ),
-      
-                    LineChartBarData(
-                      spots: [
-                        const FlSpot(0, 20),
-                        const FlSpot(1, 30),
-                        const FlSpot(2, 60),
-                        const FlSpot(3, 90),
-                        const FlSpot(4, 120),
-                        const FlSpot(5, 110),
-                      ],
-                      isCurved: true,
-                      color: Colors.greenAccent,
-                      barWidth: 3,
-                      isStrokeCapRound: true,
-                    ),
+                    _flatLine(totalIncome, Colors.yellow),
+                    _flatLine(totalExpense, Colors.redAccent),
+                    _flatLine(profit, Colors.greenAccent),
                   ],
                 ),
               ),
             ),
-      
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            const SizedBox(height: 6),
+            Wrap(                                         
+              alignment: WrapAlignment.center,
+              spacing: 8,
+              runSpacing: 4,
               children: [
-                _buildLegendDot(Colors.yellow, "Total Income"),
-                const SizedBox(width: 10),
-                _buildLegendDot(Colors.redAccent, "Total Expense"),
-                const SizedBox(width: 10),
-                _buildLegendDot(Colors.greenAccent, "Profit"),
+                _legend(Colors.yellow,  'Income'),
+                _legend(Colors.redAccent, 'Expense'),
+                _legend(Colors.greenAccent, 'Profit'),
               ],
             ),
           ],
@@ -129,20 +62,63 @@ class IncomeExpenseChart extends StatelessWidget {
     );
   }
 
-  Widget _buildLegendDot(Color color, String label) {
-    return Row(
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+  LineChartBarData _flatLine(double value, Color color) =>
+      LineChartBarData(
+        spots: List.generate(
+          _months.length,
+          (i) => FlSpot(i.toDouble(), value),
         ),
-        const SizedBox(width: 5),
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white, fontSize: 12),
+        isCurved: false,
+        color: color,
+        barWidth: 2,                       
+        isStrokeCapRound: true,
+      );
+
+  FlTitlesData _buildTitles() => FlTitlesData(
+        leftTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 32,              
+            getTitlesWidget: (v, _) => Text(
+              v.toInt().toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,               
+              ),
+              textAlign: TextAlign.right,
+            ),
+          ),
         ),
-      ],
-    );
-  }
+        rightTitles:
+            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+        bottomTitles: AxisTitles(
+          sideTitles: SideTitles(
+            showTitles: true,
+            reservedSize: 16,
+            interval: 1,
+            getTitlesWidget: (v, _) => Text(
+              _months[v.toInt() % _months.length],
+              style: const TextStyle(color: Colors.white, fontSize: 9),
+            ),
+          ),
+        ),
+        topTitles:
+            const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      );
+
+  Widget _legend(Color color, String label) => Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.white, fontSize: 10),
+          ),
+        ],
+      );
 }
