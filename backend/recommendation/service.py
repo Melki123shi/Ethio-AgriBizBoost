@@ -1,9 +1,9 @@
 from .model import AssessmentResult
-from health_assessment.service import calculate_financials
+from health_assessment.service import calculateFinancials
 
-def make_recommendations(data: AssessmentResult):
+def makeRecommendations(data: AssessmentResult):
 
-    assessment_result = calculate_financials(data)
+    assessment_result = calculateFinancials(data)
 
     if isinstance(assessment_result, dict):
         assessment_result = AssessmentResult(**assessment_result)
