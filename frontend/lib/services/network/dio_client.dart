@@ -7,6 +7,10 @@ class DioClient {
         baseUrl: 'http://192.168.1.3:8000',
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
+        followRedirects: true,
+        validateStatus: (status) {
+          return status != null && status < 500;
+        },
       ),
     );
 

@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 from health_assessment.route import router as health_router
 from recommendation.route import router as recommendation_router
+from forcasting.routes import router as forcasting_router
 import uvicorn
 
 app = FastAPI()
 
 app.include_router(health_router)
 app.include_router(recommendation_router)
+app.include_router(forcasting_router)
 
 @app.get("/")
 def read_root():

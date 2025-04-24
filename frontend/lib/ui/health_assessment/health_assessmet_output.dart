@@ -28,7 +28,6 @@ class HealthAssessmentOutput extends StatelessWidget {
                 const SizedBox(width: 15),
                 AssessmentCard(
                   title: "Cash Flow",
-                  // percentage: result.cashFlow,
                   percentage: double.parse(result.cashFlow.toStringAsFixed(1)),
                 ),
               ],

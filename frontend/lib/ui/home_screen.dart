@@ -1,3 +1,4 @@
+import 'package:app/domain/entity/forcasting_result_entity.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
 import 'package:app/ui/forcasting/forcasting_output.dart';
 import 'package:app/ui/health_assessment/health_assessmet_output.dart';
@@ -71,7 +72,8 @@ class HomeScreenState extends State<HomeScreen> {
                   final result = settings.arguments as AssessmentResultEntity; 
                     return MaterialPageRoute(builder: (_) => HealthAssessmentOutput(result: result));
                   case '/forcastingOutput':
-                    return MaterialPageRoute(builder: (_) => const ForcastingOutput());
+                  final result = settings.arguments as ForcastingResultEntity; 
+                    return MaterialPageRoute(builder: (_) => ForcastingOutput(result: result));
                   default:
                     return MaterialPageRoute(builder: (_) => const HealthAssessmentScreen());
                 }

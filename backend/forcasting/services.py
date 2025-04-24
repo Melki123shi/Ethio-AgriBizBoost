@@ -1,16 +1,16 @@
+import os
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
-      
-# Load models
-base_model_path = "/home/melki/Desktop/Ethio-AgriBizBoost/model/"
+
+base_model_path = "/Users/user/Desktop/final_project/model"
 demand_model = CatBoostClassifier()
-demand_model.load_model(f'{base_model_path}demand_model.cbm')
+demand_model.load_model(os.path.join(base_model_path, "demand_model.cbm"))
 
 min_model = CatBoostRegressor()
-min_model.load_model(f'{base_model_path}max_price_model.cbm')
+min_model.load_model(os.path.join(base_model_path, "min_price_model.cbm"))
 
 max_model = CatBoostRegressor()
-max_model.load_model(f'{base_model_path}min_price_model.cbm')
+max_model.load_model(os.path.join(base_model_path, "max_price_model.cbm"))
 
 def make_predictions(input_data: dict):
     single_value_input = {key: value[0] for key, value in input_data.items()}
