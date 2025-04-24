@@ -8,9 +8,9 @@ def makeRecommendations(data: AssessmentResult):
     if isinstance(assessment_result, dict):
         assessment_result = AssessmentResult(**assessment_result)
 
-    financial_stability = assessment_result.financial_stability
+    financial_stability = assessment_result.financialStability
 
-    cash_flow = assessment_result.cash_flow
+    cash_flow = assessment_result.cashFlow
 
     if financial_stability >= 50 and cash_flow <= 50:
         return (
