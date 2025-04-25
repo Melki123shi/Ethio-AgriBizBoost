@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from forcasting.routes import router as predict_router
 from health_assessment.route import router as health_router
 from recommendation.route import router as recommendation_router
+from forcasting.routes import router as forcasting_router
+import uvicorn
 from auth.routes import router as auth_router
 from security.rate_limiter import limiter
 from security.https_middleware import HTTPSRedirectMiddleware, SecurityHeadersMiddleware
@@ -12,7 +14,6 @@ from fastapi.responses import JSONResponse
 import os
 import sys
 import config
-import uvicorn
 
 app = FastAPI(
     title="🌾 Ethio-AgriBizBoost API",
@@ -145,10 +146,10 @@ app.add_middleware(
 )
 
 # Include routers
-app.include_router(predict_router)
 app.include_router(health_router)
 app.include_router(recommendation_router)
 app.include_router(auth_router)
+app.include_router(forcasting_router)
 
 @app.get(
     "/",
