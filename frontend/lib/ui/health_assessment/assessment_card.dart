@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 
 class AssessmentCard extends StatelessWidget {
   final String title;
   final double percentage;
 
   const AssessmentCard({
-    super.key, 
-    required this.title, 
-    required this.percentage
+    super.key,
+    required this.title,
+    required this.percentage,
   });
 
   @override
@@ -17,7 +17,7 @@ class AssessmentCard extends StatelessWidget {
       width: 140,
       height: 160,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 34, 34, 34), 
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(20),
       ),
       padding: const EdgeInsets.all(12),
@@ -26,27 +26,35 @@ class AssessmentCard extends StatelessWidget {
         children: [
           CircularPercentIndicator(
             radius: 40.0,
-            lineWidth: 8.0,
+            lineWidth: 10.0,
+            percent: percentage / 100,
+            animation: true,
+            animationDuration: 800,
+            backgroundColor: Theme.of(context).canvasColor,
+            linearGradient: const LinearGradient(
+              colors: [
+                Color(0xFF00FF7F),
+                Color(0xFFFFFF00),
+              ],
+            ),
+            circularStrokeCap: CircularStrokeCap.round,
             center: Text(
               "$percentage%",
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: Theme.of(context).focusColor,
               ),
             ),
-            progressColor: Colors.greenAccent,
-            backgroundColor: const Color.fromARGB(255, 169, 255, 88),
-            circularStrokeCap: CircularStrokeCap.round,
           ),
           const SizedBox(height: 10),
           Text(
             title,
             textAlign: TextAlign.center,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: Theme.of(context).focusColor,
             ),
           ),
         ],
