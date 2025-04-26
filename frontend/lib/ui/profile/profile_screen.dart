@@ -25,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
                 children: [
-                  _profileHeader(theme),
+                  _profileHeader(context, theme),
                   const SizedBox(height: 32),
                   _sectionHeader('Account', theme),
                   _settingsCard(theme, children: [
@@ -59,7 +59,7 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _profileHeader(ThemeData theme) {
+  Widget _profileHeader(BuildContext context, ThemeData theme) {
     return Stack(
       children: [
         Container(
@@ -110,7 +110,9 @@ class ProfileScreen extends StatelessWidget {
           child: IconButton(
             visualDensity: VisualDensity.compact,
             icon: const Icon(Icons.edit, color: Colors.white),
-            onPressed: () => debugPrint('Edit tapped'),
+            onPressed: () {
+              context.push('/editProfile');
+            },
           ),
         ),
       ],
@@ -129,70 +131,71 @@ class ProfileScreen extends StatelessWidget {
         ),
       );
 
+  Widget _settingsTile(
+    BuildContext context,
+    ThemeData theme, {
+    required IconData icon,
+    required String label,
+  }) {
+    return InkWell(
+      onTap: () {
+        final routeMap = {
+          'Edit profile': '/editProfile',
+          'Security': '/security',
+          'Notifications': '/notifications',
+          'Language': '/language',
+          'Darkmode': '/darkmode',
+          'Log out': '/logout',
+        };
 
-Widget _settingsTile(BuildContext context, ThemeData theme, {
-  required IconData icon,
-  required String label,
-}) {
-  return InkWell(
-    onTap: () {
-      final routeMap = {
-        'Edit profile': '/editProfile',
-        'Security': '/security',
-        'Notifications': '/notifications',
-        'Language': '/language',
-        'Darkmode': '/darkmode',
-        'Log out': '/logout',
-      };
-
-      final route = routeMap[label];
-      if (route != null) {
-        context.push(route); 
-      } else {
-        debugPrint('No route defined for $label');
-      }
-    },
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-      child: Row(
-        children: [
-          Icon(icon, color: theme.focusColor.withOpacity(0.7), size: 20),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              label,
-              style: theme.textTheme.bodyMedium!
-                  .copyWith(color: theme.focusColor),
+        final route = routeMap[label];
+        if (route != null) {
+          context.push(route);
+        } else {
+          debugPrint('No route defined for $label');
+        }
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        child: Row(
+          children: [
+            Icon(icon, color: theme.focusColor.withOpacity(0.7), size: 20),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                label,
+                style: theme.textTheme.bodyMedium!
+                    .copyWith(color: theme.focusColor),
+              ),
             ),
-          ),
-          Icon(Icons.chevron_right,
-              color: theme.focusColor.withOpacity(0.4), size: 20),
-        ],
+            Icon(Icons.chevron_right,
+                color: theme.focusColor.withOpacity(0.4), size: 20),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
-Widget _settingsCard(ThemeData theme, {required List<Widget> children}) {
-  return Container(
-    decoration: BoxDecoration(
-      color: theme.cardColor,
-      borderRadius: BorderRadius.circular(16),
-    ),
-    child: Column(
-      children: _addDividers(theme, children),
-    ),
-  );
-}
-
-List<Widget> _addDividers(ThemeData theme, List<Widget> tiles) {
-  final list = <Widget>[];
-  for (var i = 0; i < tiles.length; i++) {
-    list.add(tiles[i]);
-    if (i != tiles.length - 1) {
-      list.add(Divider(height: 1, color: theme.dividerColor));
-    }
+    );
   }
-  return list;
-}
+
+  Widget _settingsCard(ThemeData theme, {required List<Widget> children}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.cardColor,
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Column(
+        children: _addDividers(theme, children),
+      ),
+    );
+  }
+
+  List<Widget> _addDividers(ThemeData theme, List<Widget> tiles) {
+    final list = <Widget>[];
+    for (var i = 0; i < tiles.length; i++) {
+      list.add(tiles[i]);
+      if (i != tiles.length - 1) {
+        list.add(Divider(height: 1, color: theme.dividerColor));
+      }
+    }
+    return list;
+  }
 }

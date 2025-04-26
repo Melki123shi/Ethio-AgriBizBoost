@@ -10,22 +10,89 @@ class LanguageScreen extends StatefulWidget {
 class _LanguageScreenState extends State<LanguageScreen> {
   String selectedLanguage = 'English';
 
+  final List<String> languages = [
+  'English',
+  'Amharic',
+  'Afan Oromo',
+  'Tigrigna',
+];
+
+  final GlobalKey _fieldKey = GlobalKey();
+
+  void _selectLanguage(BuildContext context) async {
+    final RenderBox renderBox = _fieldKey.currentContext!.findRenderObject() as RenderBox;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    final Size size = renderBox.size;
+
+    final selected = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy + size.height,
+        offset.dx + size.width,
+        0,
+      ),
+      items: languages
+          .map(
+            (lang) => PopupMenuItem(
+              value: lang,
+              child: SizedBox(
+                width: size.width,
+                child: Text(lang),
+              ),
+            ),
+          )
+          .toList(),
+    );
+
+    if (selected != null) {
+      setState(() {
+        selectedLanguage = selected;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Language')),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: DropdownButtonFormField<String>(
-          value: selectedLanguage,
-          decoration: const InputDecoration(labelText: 'Select Language'),
-          items: const [
-            DropdownMenuItem(value: 'English', child: Text('English')),
-            DropdownMenuItem(value: 'Amharic', child: Text('Amharic')),
-            DropdownMenuItem(value: 'French', child: Text('French')),
-            DropdownMenuItem(value: 'Spanish', child: Text('Spanish')),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Select Language',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () => _selectLanguage(context),
+              child: Container(
+                key: _fieldKey,
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: const BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: Colors.grey),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        selectedLanguage,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
+                ),
+              ),
+            ),
           ],
-          onChanged: (value) => setState(() => selectedLanguage = value ?? 'English'),
         ),
       ),
     );
