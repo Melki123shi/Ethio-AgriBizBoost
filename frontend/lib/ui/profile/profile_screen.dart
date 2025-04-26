@@ -1,5 +1,6 @@
 import 'package:app/ui/profile/header.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ProfileScreen extends StatelessWidget {
   static const _userName = 'Favour Isechap';
@@ -21,27 +22,33 @@ class ProfileScreen extends StatelessWidget {
           Expanded(
             child: SafeArea(
               child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
                 children: [
                   _profileHeader(theme),
                   const SizedBox(height: 32),
                   _sectionHeader('Account', theme),
                   _settingsCard(theme, children: [
-                    _settingsTile(theme, icon: Icons.person, label: 'Edit profile'),
-                    _settingsTile(theme, icon: Icons.security, label: 'Security'),
-                    _settingsTile(theme, icon: Icons.notifications, label: 'Notifications'),
-                    _settingsTile(theme, icon: Icons.lock, label: 'Privacy'),
+                    _settingsTile(context, theme,
+                        icon: Icons.person, label: 'Edit profile'),
+                    _settingsTile(context, theme,
+                        icon: Icons.security, label: 'Security'),
+                    _settingsTile(context, theme,
+                        icon: Icons.notifications, label: 'Notifications'),
                   ]),
                   const SizedBox(height: 24),
                   _sectionHeader('Preference', theme),
                   _settingsCard(theme, children: [
-                    _settingsTile(theme, icon: Icons.language, label: 'Language'),
-                    _settingsTile(theme, icon: Icons.dark_mode, label: 'Darkmode'),
+                    _settingsTile(context, theme,
+                        icon: Icons.language, label: 'Language'),
+                    _settingsTile(context, theme,
+                        icon: Icons.dark_mode, label: 'Darkmode'),
                   ]),
                   const SizedBox(height: 24),
                   _sectionHeader('Actions', theme),
                   _settingsCard(theme, children: [
-                    _settingsTile(theme, icon: Icons.logout, label: 'Log out'),
+                    _settingsTile(context, theme,
+                        icon: Icons.logout, label: 'Log out'),
                   ]),
                 ],
               ),
@@ -122,49 +129,70 @@ class ProfileScreen extends StatelessWidget {
         ),
       );
 
-  Widget _settingsCard(ThemeData theme, {required List<Widget> children}) =>
-      Container(
-        decoration: BoxDecoration(
-          color: theme.cardColor,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          children: _addDividers(theme, children),
-        ),
-      );
 
-  List<Widget> _addDividers(ThemeData theme, List<Widget> tiles) {
-    final list = <Widget>[];
-    for (var i = 0; i < tiles.length; i++) {
-      list.add(tiles[i]);
-      if (i != tiles.length - 1) {
-        list.add(Divider(height: 1, color: theme.dividerColor));
+Widget _settingsTile(BuildContext context, ThemeData theme, {
+  required IconData icon,
+  required String label,
+}) {
+  return InkWell(
+    onTap: () {
+      final routeMap = {
+        'Edit profile': '/editProfile',
+        'Security': '/security',
+        'Notifications': '/notifications',
+        'Language': '/language',
+        'Darkmode': '/darkmode',
+        'Log out': '/logout',
+      };
+
+      final route = routeMap[label];
+      if (route != null) {
+        context.push(route); 
+      } else {
+        debugPrint('No route defined for $label');
       }
-    }
-    return list;
-  }
-
-  Widget _settingsTile(ThemeData theme,
-          {required IconData icon, required String label}) =>
-      InkWell(
-        onTap: () => debugPrint('$label tapped'),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: Row(
-            children: [
-              Icon(icon, color: theme.focusColor.withOpacity(0.7), size: 20),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
-                  label,
-                  style: theme.textTheme.bodyMedium!
-                      .copyWith(color: theme.focusColor),
-                ),
-              ),
-              Icon(Icons.chevron_right,
-                  color: theme.focusColor.withOpacity(0.4), size: 20),
-            ],
+    },
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      child: Row(
+        children: [
+          Icon(icon, color: theme.focusColor.withOpacity(0.7), size: 20),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              label,
+              style: theme.textTheme.bodyMedium!
+                  .copyWith(color: theme.focusColor),
+            ),
           ),
-        ),
-      );
+          Icon(Icons.chevron_right,
+              color: theme.focusColor.withOpacity(0.4), size: 20),
+        ],
+      ),
+    ),
+  );
+}
+
+Widget _settingsCard(ThemeData theme, {required List<Widget> children}) {
+  return Container(
+    decoration: BoxDecoration(
+      color: theme.cardColor,
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Column(
+      children: _addDividers(theme, children),
+    ),
+  );
+}
+
+List<Widget> _addDividers(ThemeData theme, List<Widget> tiles) {
+  final list = <Widget>[];
+  for (var i = 0; i < tiles.length; i++) {
+    list.add(tiles[i]);
+    if (i != tiles.length - 1) {
+      list.add(Divider(height: 1, color: theme.dividerColor));
+    }
+  }
+  return list;
+}
 }

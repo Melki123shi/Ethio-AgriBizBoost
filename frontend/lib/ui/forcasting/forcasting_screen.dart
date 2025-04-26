@@ -1,13 +1,15 @@
 import 'package:app/application/forcasting/forcasting_bloc.dart';
 import 'package:app/application/forcasting/forcasting_event.dart';
 import 'package:app/application/forcasting/forcasting_state.dart';
+import 'package:app/domain/entity/forcasting_result_entity.dart';
 import 'package:app/ui/custom_input_field.dart';
-import 'package:app/ui/forcasting/forcasting_output.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ForcastingScreen extends StatefulWidget {
-  const ForcastingScreen({super.key});
+  final void Function(ForcastingResultEntity result)? onSubmitted;
+
+  const ForcastingScreen({super.key, this.onSubmitted});
 
   @override
   State<ForcastingScreen> createState() => _ForcastingScreenState();
@@ -41,11 +43,9 @@ class _ForcastingScreenState extends State<ForcastingScreen> {
     return BlocListener<ForcastingBloc, ForcastingState>(
       listener: (context, state) {
         if (state is ForcastingSuccess) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => ForcastingOutput(result: state.forcastingResult),
-            ),
-          );
+          if (widget.onSubmitted != null) {
+            widget.onSubmitted!(state.forcastingResult); 
+          }
         } else if (state is ForcastingFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -54,58 +54,56 @@ class _ForcastingScreenState extends State<ForcastingScreen> {
           );
         }
       },
-      child: Scaffold(
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildInput('Region', 'region'),
-                _buildInput('Zone', 'zone'),
-                _buildInput('Woreda', 'woreda'),
-                _buildInput('Market name', 'marketname'),
-                _buildInput('Crop name', 'cropname'),
-                _buildInput('Variety name', 'varietyname'),
-                _buildInput('Season', 'season'),
-                const SizedBox(height: 50),
-                Center(
-                  child: TextButton(
-                    onPressed: () {
-                      final isValid = _formKey.currentState?.validate() ?? false;
-                      if (isValid) {
-                        context.read<ForcastingBloc>().add(
-                              SubmitForcastingEvent(
-                                region: _getList('region'),
-                                zone: _getList('zone'),
-                                woreda: _getList('woreda'),
-                                marketname: _getList('marketname'),
-                                cropname: _getList('cropname'),
-                                varietyname: _getList('varietyname'),
-                                season: _getList('season'),
-                              ),
-                            );
-                      }
-                    },
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.red.shade400,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 30,
-                        vertical: 12,
-                      ),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInput('Region', 'region'),
+              _buildInput('Zone', 'zone'),
+              _buildInput('Woreda', 'woreda'),
+              _buildInput('Market name', 'marketname'),
+              _buildInput('Crop name', 'cropname'),
+              _buildInput('Variety name', 'varietyname'),
+              _buildInput('Season', 'season'),
+              const SizedBox(height: 50),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    final isValid = _formKey.currentState?.validate() ?? false;
+                    if (isValid) {
+                      context.read<ForcastingBloc>().add(
+                            SubmitForcastingEvent(
+                              region: _getList('region'),
+                              zone: _getList('zone'),
+                              woreda: _getList('woreda'),
+                              marketname: _getList('marketname'),
+                              cropname: _getList('cropname'),
+                              varietyname: _getList('varietyname'),
+                              season: _getList('season'),
+                            ),
+                          );
+                    }
+                  },
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.red.shade400,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 12,
                     ),
-                    child: Text(
-                      'Submit',
-                      style: TextStyle(
-                        color: Theme.of(context).focusColor,
-                        fontSize: 16,
-                      ),
+                  ),
+                  child: Text(
+                    'Submit',
+                    style: TextStyle(
+                      color: Theme.of(context).focusColor,
+                      fontSize: 16,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
