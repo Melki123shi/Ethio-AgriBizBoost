@@ -8,6 +8,7 @@ python-multipart>=0.0.5
 python-dotenv>=0.19.0
 slowapi>=0.1.4
 uvicorn>=0.15.0
+catboost>=1.2.0
 # Windows-specific and cross-platform servers
 waitress>=2.0.0
 # Windows tools (optional, install as needed)
