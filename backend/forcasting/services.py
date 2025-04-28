@@ -2,7 +2,14 @@ import os
 import pandas as pd
 from catboost import CatBoostClassifier, CatBoostRegressor
 
-base_model_path = "/Users/user/Desktop/final_project/model"
+# Adjust the base_model_path to point to the model directory
+base_model_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "..", "model")
+base_model_path = os.path.abspath(base_model_path)  # Ensure the path is absolute
+
+# Debugging: Print the base_model_path to verify correctness
+print(f"Base model path: {base_model_path}")
+
+# Load models
 demand_model = CatBoostClassifier()
 demand_model.load_model(os.path.join(base_model_path, "demand_model.cbm"))
 
