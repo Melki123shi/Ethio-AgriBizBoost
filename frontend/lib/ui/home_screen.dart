@@ -2,7 +2,7 @@ import 'package:app/domain/entity/forcasting_result_entity.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
 import 'package:app/ui/forcasting/forcasting_output.dart';
 import 'package:app/ui/health_assessment/health_assessmet_output.dart';
-import 'package:app/ui/recommendation/loan_advice_mock_data.dart';
+import 'package:app/ui/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app/ui/profile/header.dart';
 import 'package:app/ui/navigation.dart';
@@ -10,6 +10,7 @@ import 'package:app/ui/search_input.dart';
 import 'package:app/ui/forcasting/forcasting_screen.dart';
 import 'package:app/ui/health_assessment/health_assessment_screen.dart';
 import 'package:app/ui/recommendation/recommnedation_screen.dart';
+import 'package:app/ui/recommendation/loan_advice_mock_data.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -19,17 +20,24 @@ class HomeScreen extends StatefulWidget {
 }
 
 class HomeScreenState extends State<HomeScreen> {
-  int selectedIndex = 0;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
-  AssessmentResultEntity? _healthResult;
-  ForcastingResultEntity? _forecastResult;
-  bool _showLoanAdvice = false;
+  int selectedIndex = 0;
 
   void onTabSelected(int index) {
     setState(() {
       selectedIndex = index;
-      _healthResult = null;
-      _forecastResult = null;
+      switch (index) {
+        case 0:
+          _navigatorKey.currentState?.pushNamed('/health');
+          break;
+        case 1:
+          _navigatorKey.currentState?.pushNamed('/forecasting');
+          break;
+        case 2:
+          _navigatorKey.currentState?.pushNamed('/recommendation');
+          break;
+      }
     });
   }
 
@@ -48,51 +56,35 @@ class HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 25),
           Expanded(
-            child: SafeArea(
-              child: _buildCurrentTab(),
+            child: Navigator(
+              key: _navigatorKey,
+              initialRoute: '/health',
+              onGenerateRoute: (RouteSettings settings) {
+                switch (settings.name) {
+                  case '/health':
+                    return MaterialPageRoute(builder: (_) => const HealthAssessmentScreen());
+                  case '/forecasting':
+                    return MaterialPageRoute(builder: (_) => const ForcastingScreen());
+                  case '/recommendation':
+                    return MaterialPageRoute(builder: (_) => const RecommnedationScreen());
+                  case '/profile':
+                    return MaterialPageRoute(builder: (_) => const ProfileScreen());
+                  case '/loanAdvice':
+                    return MaterialPageRoute(builder: (_) => const LoanAdviceMockData());
+                  case '/healthAssessmentOutput':
+                  final result = settings.arguments as AssessmentResultEntity; 
+                    return MaterialPageRoute(builder: (_) => HealthAssessmentOutput(result: result));
+                  case '/forcastingOutput':
+                  final result = settings.arguments as ForcastingResultEntity; 
+                    return MaterialPageRoute(builder: (_) => ForcastingOutput(result: result));
+                  default:
+                    return MaterialPageRoute(builder: (_) => const HealthAssessmentScreen());
+                }
+              },
             ),
           ),
         ],
       ),
     );
-  }
-
-  Widget _buildCurrentTab() {
-    if (selectedIndex == 0) {
-      if (_healthResult != null) {
-        return HealthAssessmentOutput(result: _healthResult!);
-      }
-      return HealthAssessmentScreen(
-        onSubmitted: (result) {
-          setState(() {
-            _healthResult = result;
-          });
-        },
-      );
-    } else if (selectedIndex == 1) {
-      if (_forecastResult != null) {
-        return ForcastingOutput(result: _forecastResult!);
-      }
-      return ForcastingScreen(
-        onSubmitted: (result) {
-          setState(() {
-            _forecastResult = result;
-          });
-        },
-      );
-    } else if (selectedIndex == 2) {
-      if (_showLoanAdvice) {
-        return const LoanAdviceMockData();
-      }
-      return RecommnedationScreen(
-        onSubmitted: () {
-          setState(() {
-            _showLoanAdvice = true;
-          });
-        },
-      );
-    } else {
-      return const SizedBox();
-    }
   }
 }
