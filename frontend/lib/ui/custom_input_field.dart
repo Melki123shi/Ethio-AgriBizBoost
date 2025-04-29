@@ -11,6 +11,7 @@ class CustomInputField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final double? contentVerticalPadding;
   final bool isRequired;
+  final String? Function(String?)? validator; 
 
   const CustomInputField({
     super.key,
@@ -24,6 +25,7 @@ class CustomInputField extends StatelessWidget {
     this.onChanged,
     this.contentVerticalPadding,
     this.isRequired = false,
+    this.validator,
   });
 
   @override
@@ -50,7 +52,7 @@ class CustomInputField extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
               onChanged: onChanged,
-              validator: (value) {
+              validator: validator ?? (value) {
                 if (isRequired && (value == null || value.trim().isEmpty)) {
                   return '$hintText cannot be empty';
                 }

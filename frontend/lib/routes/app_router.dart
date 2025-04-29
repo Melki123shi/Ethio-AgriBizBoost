@@ -1,5 +1,7 @@
 import 'package:app/domain/entity/assessment_result_entity.dart';
 import 'package:app/domain/entity/forcasting_result_entity.dart';
+import 'package:app/ui/auth/login.dart';
+import 'package:app/ui/auth/signup.dart';
 import 'package:app/ui/forcasting/forcasting_output.dart';
 import 'package:app/ui/health_assessment/health_assessmet_output.dart';
 import 'package:app/ui/home_screen.dart';
@@ -17,8 +19,20 @@ final GoRouter router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const HomeScreen(),
+      builder: (context, state) => SignupScreen(),
       routes: [
+        GoRoute(
+          path: 'signup',
+          builder: (context, state) => SignupScreen(),
+        ),
+        GoRoute(
+          path: 'login',
+          builder: (context, state) => LoginScreen(),
+        ),
+        GoRoute(
+          path: 'home',
+          builder: (context, state) => const HomeScreen(),
+        ),
         GoRoute(
           path: 'healthAssessmentOutput',
           builder: (context, state) {

@@ -3,7 +3,7 @@ import 'package:app/application/forcasting/forcasting_state.dart';
 import 'package:app/domain/dto/forcasting_input_dto.dart';
 import 'package:app/domain/entity/forcasting_result_entity.dart';
 import 'package:app/domain/entity/forcasting_input_entity.dart';
-import 'package:app/services/api/forcasting_api.dart';
+import 'package:app/services/api/forcasting_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ForcastingBloc

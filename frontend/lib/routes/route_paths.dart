@@ -1,5 +1,7 @@
 class RoutePaths {
-  static const home = '/';
+  static const signup = '/signup';
+  static const login = '/login';
+  static const home = '/home';
   static const profile = '/profile';
   static const editProfile = '/editProfile';
   static const security = '/security';
