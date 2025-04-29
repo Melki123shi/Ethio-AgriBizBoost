@@ -4,8 +4,8 @@ from datetime import datetime
 from auth.validators import validate_ethiopian_phone
 
 class UserBase(BaseModel):
-    name: str = Field(
-        ...,
+    name: Optional[str] = Field(
+        None,
         description="User's full name",
         example="Abebe Kebede"
     )
