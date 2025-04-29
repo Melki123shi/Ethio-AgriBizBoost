@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
 
 class AssessmentCard extends StatelessWidget {
   final String title;
-  final double percentage;
+  final double percentage; 
 
   const AssessmentCard({
     super.key,
@@ -24,26 +23,24 @@ class AssessmentCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularPercentIndicator(
-            radius: 40.0,
-            lineWidth: 10.0,
-            percent: percentage / 100,
-            animation: true,
-            animationDuration: 800,
-            backgroundColor: Theme.of(context).canvasColor,
-            linearGradient: const LinearGradient(
-              colors: [
-                Color(0xFF00FF7F),
-                Color(0xFFFFFF00),
-              ],
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Theme.of(context).primaryColor,
+                width: 8,
+              ),
             ),
-            circularStrokeCap: CircularStrokeCap.round,
-            center: Text(
-              "$percentage%",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).focusColor,
+            child: Center(
+              child: Text(
+                "${percentage.toStringAsFixed(1)}%",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).focusColor,
+                ),
               ),
             ),
           ),
