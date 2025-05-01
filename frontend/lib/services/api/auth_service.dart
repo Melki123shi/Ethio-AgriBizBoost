@@ -21,15 +21,20 @@ class AuthService {
 }
 
   Future<UserEntity> login(LoginRequestDTO loginDTO) async {
-    final response = await dio.post('/auth/login', data: loginDTO.toJson());
-    
-    final userId = response.data['user_id'];
-   if (userId == null || userId is! String)  {
-      throw Exception('Invalid login response: user data missing.');
-    }
+  final response = await dio.post('/auth/login-with-json', data: loginDTO.toJson());
 
-     return UserEntity(
-    id: userId,
-  );
+  final accessToken = response.data['access_token'];
+  final refreshToken = response.data['refresh_token'];
+  final tokenType = response.data['token_type'];
+
+  if (accessToken == null || refreshToken == null || tokenType == null) {
+    throw Exception('Invalid login response: token fields missing.');
   }
+
+  return UserEntity(
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+    tokenType: tokenType
+  );
+}
 }
