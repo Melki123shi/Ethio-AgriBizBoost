@@ -3,7 +3,7 @@ import 'package:app/application/health_assessment/health_assessment_state.dart';
 import 'package:app/domain/dto/assessmet_input_dto.dart';
 import 'package:app/domain/entity/assessment_input_entity.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
-import 'package:app/services/api/health_assessment_api.dart';
+import 'package:app/services/api/health_assessment_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HealthAssessmentBloc

@@ -1,9 +1,11 @@
+import 'package:app/application/auth/auth_bloc.dart';
+import 'package:app/services/api/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/application/forcasting/forcasting_bloc.dart';
 import 'package:app/application/health_assessment/health_assessment_bloc.dart';
-import 'package:app/services/api/forcasting_api.dart';
-import 'package:app/services/api/health_assessment_api.dart';
+import 'package:app/services/api/forcasting_service.dart';
+import 'package:app/services/api/health_assessment_service.dart';
 import 'package:app/routes/app_router.dart';
 
 final themeNotifier = ValueNotifier(ThemeMode.system);
@@ -11,6 +13,7 @@ final themeNotifier = ValueNotifier(ThemeMode.system);
 void main() {
   final healthService = HealthAssessmentService();
   final forcastingService = ForcastingService();
+  final authService = AuthService();
 
   runApp(
     MultiBlocProvider(
@@ -20,6 +23,9 @@ void main() {
         ),
         BlocProvider<ForcastingBloc>(
           create: (context) => ForcastingBloc(forcastingService),
+        ),
+         BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc(authService),
         ),
       ],
       child: ValueListenableBuilder<ThemeMode>(
