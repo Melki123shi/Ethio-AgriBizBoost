@@ -2,7 +2,7 @@ import 'package:app/application/forcasting/forcasting_bloc.dart';
 import 'package:app/application/forcasting/forcasting_event.dart';
 import 'package:app/application/forcasting/forcasting_state.dart';
 import 'package:app/domain/entity/forcasting_result_entity.dart';
-import 'package:app/presentation/ui/custom_input_field.dart';
+import 'package:app/ui/custom_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

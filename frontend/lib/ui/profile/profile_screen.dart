@@ -1,4 +1,4 @@
-import 'package:app/presentation/ui/profile/header.dart';
+import 'package:app/ui/profile/header.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

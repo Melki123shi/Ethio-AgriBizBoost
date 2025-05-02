@@ -4,7 +4,7 @@ import 'package:app/application/health_assessment/health_assessment_bloc.dart';
 import 'package:app/application/health_assessment/health_assessment_event.dart';
 import 'package:app/application/health_assessment/health_assessment_state.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
-import 'package:app/presentation/ui/custom_input_field.dart';
+import 'package:app/ui/custom_input_field.dart';
 
 class HealthAssessmentScreen extends StatefulWidget {
   final void Function(AssessmentResultEntity result) onSubmitted;

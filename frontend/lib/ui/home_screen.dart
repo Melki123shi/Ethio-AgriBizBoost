@@ -1,15 +1,15 @@
 import 'package:app/domain/entity/forcasting_result_entity.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
-import 'package:app/presentation/ui/forcasting/forcasting_output.dart';
-import 'package:app/presentation/ui/health_assessment/health_assessmet_output.dart';
-import 'package:app/presentation/ui/recommendation/loan_advice_mock_data.dart';
+import 'package:app/ui/forcasting/forcasting_output.dart';
+import 'package:app/ui/health_assessment/health_assessmet_output.dart';
+import 'package:app/ui/recommendation/loan_advice_mock_data.dart';
 import 'package:flutter/material.dart';
-import 'package:app/presentation/ui/profile/header.dart';
-import 'package:app/presentation/ui/navigation.dart';
-import 'package:app/presentation/ui/search_input.dart';
-import 'package:app/presentation/ui/forcasting/forcasting_screen.dart';
-import 'package:app/presentation/ui/health_assessment/health_assessment_screen.dart';
-import 'package:app/presentation/ui/recommendation/recommnedation_screen.dart';
+import 'package:app/ui/profile/header.dart';
+import 'package:app/ui/navigation.dart';
+import 'package:app/ui/search_input.dart';
+import 'package:app/ui/forcasting/forcasting_screen.dart';
+import 'package:app/ui/health_assessment/health_assessment_screen.dart';
+import 'package:app/ui/recommendation/recommnedation_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
