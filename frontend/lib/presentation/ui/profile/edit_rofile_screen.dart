@@ -1,4 +1,3 @@
-import 'package:app/presentation/ui/common/bottom_border_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -22,7 +21,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future<void> _pickProfileImage() async {
     final XFile? pickedFile = await _picker.pickImage(
       source: ImageSource.gallery,
-      imageQuality: 85,
+      imageQuality: 85, 
     );
 
     if (pickedFile != null) {
@@ -43,8 +42,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const green = Color(0xFF94C495);
-
     return Scaffold(
       appBar: AppBar(title: const Text('Edit Profile')),
       body: SingleChildScrollView(
@@ -55,52 +52,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               onTap: _pickProfileImage,
               child: CircleAvatar(
                 radius: 50,
-                backgroundColor: green,
-                backgroundImage:
-                    _profileImage != null ? FileImage(_profileImage!) : null,
+                backgroundImage: _profileImage != null
+                    ? FileImage(_profileImage!)
+                    : null,
                 child: _profileImage == null
-                    ? Icon(Icons.person, size: 50, color: Theme.of(context).focusColor)
+                    ? const Icon(Icons.person, size: 50)
                     : null,
               ),
             ),
             const SizedBox(height: 24),
-            BottomBorderInputField(
+            TextFormField(
               controller: _nameController,
-              labelText: 'Name',
+              decoration: const InputDecoration(labelText: 'Name'),
             ),
             const SizedBox(height: 16),
-            BottomBorderInputField(
+            TextFormField(
               controller: _emailController,
-              labelText: 'Email',
+              decoration: const InputDecoration(labelText: 'Email'),
             ),
             const SizedBox(height: 16),
-            BottomBorderInputField(
+            TextFormField(
               controller: _phoneController,
-              labelText: 'Phone Number',
+              decoration: const InputDecoration(labelText: 'Phone Number'),
             ),
             const SizedBox(height: 16),
-            BottomBorderInputField(
+            TextFormField(
               controller: _locationController,
-              labelText: 'Location',
+              decoration: const InputDecoration(labelText: 'Location'),
             ),
             const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: green,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(
-                  'Save Changes',
-                  style: TextStyle(color: Theme.of(context).focusColor, fontSize: 16),
-                ),
-              ),
+            ElevatedButton(
+              onPressed: () {
+              },
+              child: const Text('Save Changes'),
             ),
           ],
         ),

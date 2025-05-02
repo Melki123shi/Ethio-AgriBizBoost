@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:app/presentation/ui/common/bottom_border_input_field.dart';
 
 class SecurityScreen extends StatefulWidget {
   const SecurityScreen({super.key});
@@ -50,8 +49,6 @@ class _SecurityScreenState extends State<SecurityScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const green = Color(0xFF94C495);
-
     return Scaffold(
       appBar: AppBar(title: const Text('Security')),
       body: Padding(
@@ -60,43 +57,30 @@ class _SecurityScreenState extends State<SecurityScreen> {
           key: _formKey,
           child: Column(
             children: [
-              BottomBorderInputField(
+              TextFormField(
                 controller: _currentPasswordController,
-                labelText: 'Current Password',
                 obscureText: true,
+                decoration: const InputDecoration(labelText: 'Current Password'),
                 validator: _validatePassword,
               ),
               const SizedBox(height: 16),
-              BottomBorderInputField(
+              TextFormField(
                 controller: _newPasswordController,
-                labelText: 'New Password',
                 obscureText: true,
+                decoration: const InputDecoration(labelText: 'New Password'),
                 validator: _validatePassword,
               ),
               const SizedBox(height: 16),
-              BottomBorderInputField(
+              TextFormField(
                 controller: _confirmPasswordController,
-                labelText: 'Confirm New Password',
                 obscureText: true,
+                decoration: const InputDecoration(labelText: 'Confirm New Password'),
                 validator: _validateConfirmPassword,
               ),
               const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _updatePassword,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: green,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: const Text(
-                    'Update Password',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
+              ElevatedButton(
+                onPressed: _updatePassword,
+                child: const Text('Update Password'),
               ),
             ],
           ),

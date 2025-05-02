@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:app/presentation/ui/common/custom_input_field.dart';
+import 'package:app/presentation/ui/custom_input_field.dart';
 
 class RecommnedationScreen extends StatelessWidget {
-  final VoidCallback? onSubmitted;
+  final VoidCallback? onSubmitted; 
 
   const RecommnedationScreen({super.key, this.onSubmitted});
 
@@ -13,21 +13,18 @@ class RecommnedationScreen extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const CustomInputField(
-              label: 'Expense Reduction', hintText: 'Expense Reduction'),
+          const CustomInputField(hintText: 'Expense Reduction'),
           const SizedBox(height: 30),
-          const CustomInputField(
-              label: 'Crop Selection', hintText: 'Crop Selection'),
+          const CustomInputField(hintText: 'Crop Selection'),
           const SizedBox(height: 30),
-          const CustomInputField(label: 'Loan Advice', hintText: 'Loan Advice'),
+          const CustomInputField(hintText: 'Loan Advice'),
           const SizedBox(height: 150),
           Center(
             child: TextButton(
               onPressed: onSubmitted,
               style: TextButton.styleFrom(
                 backgroundColor: Colors.red.shade400,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
+                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
               ),
               child: Text(
                 "Submit",

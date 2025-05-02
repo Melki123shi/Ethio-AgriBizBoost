@@ -20,41 +20,37 @@ class _LanguageScreenState extends State<LanguageScreen> {
   final GlobalKey _fieldKey = GlobalKey();
 
   void _selectLanguage(BuildContext context) async {
-  final RenderBox renderBox = _fieldKey.currentContext!.findRenderObject() as RenderBox;
-  final Offset offset = renderBox.localToGlobal(Offset.zero);
-  final Size size = renderBox.size;
+    final RenderBox renderBox = _fieldKey.currentContext!.findRenderObject() as RenderBox;
+    final Offset offset = renderBox.localToGlobal(Offset.zero);
+    final Size size = renderBox.size;
 
-  final selected = await showMenu<String>(
-    context: context,
-    position: RelativeRect.fromLTRB(
-      offset.dx,
-      offset.dy + size.height,
-      offset.dx + size.width,
-      0,
-    ),
-    color: Theme.of(context).indicatorColor, 
-    items: languages
-        .map(
-          (lang) => PopupMenuItem(
-            value: lang,
-            child: SizedBox(
-              width: size.width,
-              child: Text(
-                lang,
-                style: TextStyle(color: Theme.of(context).focusColor), 
+    final selected = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy + size.height,
+        offset.dx + size.width,
+        0,
+      ),
+      items: languages
+          .map(
+            (lang) => PopupMenuItem(
+              value: lang,
+              child: SizedBox(
+                width: size.width,
+                child: Text(lang),
               ),
             ),
-          ),
-        )
-        .toList(),
-  );
+          )
+          .toList(),
+    );
 
-  if (selected != null) {
-    setState(() {
-      selectedLanguage = selected;
-    });
+    if (selected != null) {
+      setState(() {
+        selectedLanguage = selected;
+      });
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
@@ -80,7 +76,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: const BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(color: Color.fromARGB(255, 148, 196, 149)),
+                    bottom: BorderSide(color: Colors.grey),
                   ),
                 ),
                 child: Row(
@@ -91,7 +87,7 @@ class _LanguageScreenState extends State<LanguageScreen> {
                         style: const TextStyle(fontSize: 16),
                       ),
                     ),
-                    const Icon(Icons.arrow_drop_down, color: Color.fromARGB(255, 148, 196, 149)),
+                    const Icon(Icons.arrow_drop_down),
                   ],
                 ),
               ),

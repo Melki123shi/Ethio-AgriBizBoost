@@ -4,7 +4,7 @@ import 'package:app/application/health_assessment/health_assessment_bloc.dart';
 import 'package:app/application/health_assessment/health_assessment_event.dart';
 import 'package:app/application/health_assessment/health_assessment_state.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
-import 'package:app/presentation/ui/common/custom_input_field.dart';
+import 'package:app/presentation/ui/custom_input_field.dart';
 
 class HealthAssessmentScreen extends StatefulWidget {
   final void Function(AssessmentResultEntity result) onSubmitted;
@@ -53,7 +53,6 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomInputField(
-                label:'Crop Type' ,
                 hintText: 'Crop Type',
                 isRequired: true,
                 onChanged: (value) {
@@ -63,7 +62,6 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
               ),
               const SizedBox(height: 30),
               CustomInputField(
-                label: 'Government Subsidy',
                 hintText: 'Government Subsidy',
                 isRequired: true,
                 onChanged: (value) {
@@ -73,7 +71,6 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
               ),
               const SizedBox(height: 30),
               CustomInputField(
-                label: 'Sale Price Per Quintal',
                 hintText: 'Sale Price Per Quintal',
                 isRequired: true,
                 onChanged: (value) {
@@ -86,7 +83,6 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
                 children: [
                   Expanded(
                     child: CustomInputField(
-                      label: 'Total Cost',
                       hintText: 'Total Cost',
                       isRequired: true,
                       onChanged: (value) {
@@ -98,7 +94,6 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: CustomInputField(
-                      label: 'Quantity Sold',
                       hintText: 'Quantity Sold',
                       isRequired: true,
                       onChanged: (value) {
