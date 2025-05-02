@@ -36,7 +36,7 @@ class LoginScreen extends StatelessWidget {
       return 'Phone number is required.';
     }
     final cleanedValue = value.replaceAll(' ', '');
-    final ethioPhoneRegex = RegExp(r'^(?:\+2519\d{8}|09\d{8})$');
+    final ethioPhoneRegex = RegExp(r'^(?:\+2519\d{8}|09\d{8})\$');
     if (!ethioPhoneRegex.hasMatch(cleanedValue)) {
       return 'Enter a valid Ethiopian phone number.';
     }
@@ -58,103 +58,168 @@ class LoginScreen extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Welcome Back",
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Stack(
+        children: [
+          Positioned(
+            top: -60,
+            left: -80,
+            child: Container(
+              width: 220,
+              height: 220,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 207, 255, 149),
+                    Color.fromARGB(255, 188, 247, 161)
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                "Login to your account",
-                style: theme.textTheme.bodyMedium,
+            ),
+          ),
+          Positioned(
+            top: -60,
+            left: 45,
+            child: Container(
+              width: 280,
+              height: 140,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 179, 216, 134),
+                    Color.fromARGB(255, 200, 255, 174)
+                  ],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                ),
               ),
-              const SizedBox(height: 32),
-              BlocListener<AuthBloc, AuthState>(
-                listener: (context, state) {
-                  if (state is AuthLoading) {
-                  } else if (state is AuthSuccess) {
-                    context.go('/home');
-                  } else if (state is AuthFailure) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.errorMessage)),
-                    );
-                  }
-                },
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      CustomInputField(
-                        label: 'Phone Number',
-                        hintText: 'Enter your phone number',
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
-                        isRequired: true,
-                        validator: _validatePhone,
-                      ),
-                      const SizedBox(height: 20),
-                      CustomInputField(
-                        label: 'Password',
-                        hintText: 'Enter your password',
-                        controller: _passwordController,
-                        obscureText: true,
-                        isRequired: true,
-                        validator: _validatePassword,
-                      ),
-                      const SizedBox(height: 30),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () => _submitForm(context),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Center(
-                        child: RichText(
-                          text: TextSpan(
-                            text: "Don't have an account? ",
-                            style: theme.textTheme.bodyMedium,
-                            children: [
-                              TextSpan(
-                                text: "Sign Up",
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.underline,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    context.go('/signup');
-                                  },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+            ),
+          ),
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 12),
+                const Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundImage: AssetImage('assets/plant.jpeg'),
+                    backgroundColor: Colors.white,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 30),
+                Expanded(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 32),
+                      child: BlocListener<AuthBloc, AuthState>(
+                        listener: (context, state) {
+                          if (state is AuthSuccess) {
+                            context.go('/home');
+                          } else if (state is AuthFailure) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(state.errorMessage)),
+                            );
+                          }
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Login',
+                                      style: theme.textTheme.headlineSmall?.copyWith(
+                                        color: theme.focusColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    CustomInputField(
+                                      label: 'Phone Number',
+                                      hintText: 'Enter your phone number',
+                                      controller: _phoneController,
+                                      keyboardType: TextInputType.phone,
+                                      isRequired: true,
+                                      validator: _validatePhone,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    CustomInputField(
+                                      label: 'Password',
+                                      hintText: 'Enter your password',
+                                      controller: _passwordController,
+                                      obscureText: true,
+                                      isRequired: true,
+                                      validator: _validatePassword,
+                                    ),
+                                    const SizedBox(height: 24),
+                                    SizedBox(
+                                      width: 140,
+                                      child: ElevatedButton(
+                                        onPressed: () => _submitForm(context),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: theme.primaryColor,
+                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(30),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Login',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color: theme.focusColor),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 15),
+                                    RichText(
+                                      text: TextSpan(
+                                        text: "Don't have an account? ",
+                                        style: theme.textTheme.bodyMedium,
+                                        children: [
+                                          TextSpan(
+                                            text: "Sign Up",
+                                            style: theme.textTheme.bodyMedium?.copyWith(
+                                              color: theme.primaryColor,
+                                              fontWeight: FontWeight.bold,
+                                              decoration: TextDecoration.underline,
+                                            ),
+                                            recognizer: TapGestureRecognizer()
+                                              ..onTap = () {
+                                                context.go('/signup');
+                                              },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
