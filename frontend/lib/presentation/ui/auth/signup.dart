@@ -63,7 +63,7 @@ class SignupScreen extends StatelessWidget {
 
   String? _validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
-      return null; // Email is optional
+      return null;
     }
     final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
     if (!emailRegex.hasMatch(value)) {
@@ -74,125 +74,198 @@ class SignupScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Create Account",
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: Stack(
+        children: [
+          Positioned(
+            top: -60,
+            left: -80,
+            child: Container(
+              width: 220,
+              height: 220,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 207, 255, 149),
+                    Color.fromARGB(255, 188, 247, 161)
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                "Sign up to get started!",
-                style: theme.textTheme.bodyMedium,
+            ),
+          ),
+          Positioned(
+            top: -60,
+            left: 45,
+            child: Container(
+              width: 280,
+              height: 140,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    Color.fromARGB(255, 179, 216, 134),
+                    Color.fromARGB(255, 200, 255, 174)
+                  ],
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                ),
               ),
-              const SizedBox(height: 32),
-              BlocListener<AuthBloc, AuthState>(
-                listener: (context, state) {
-                  if (state is AuthLoading) {
-                  } else if (state is AuthSuccess) {
-                    context.go('/home');
-                  } else if (state is AuthFailure) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(state.errorMessage)),
-                    );
-                  }
-                },
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      CustomInputField(
-                        label: 'Name',
-                        hintText: 'Enter your name',
-                        controller: _nameController,
-                        isRequired: false,
-                      ),
-                      const SizedBox(height: 20),
-                      CustomInputField(
-                        label: 'Email',
-                        hintText: 'Enter your email',
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        isRequired: false,
-                        onChanged: (val) {},
-                        validator: _validateEmail,
-                      ),
-                      const SizedBox(height: 20),
-                      CustomInputField(
-                        label: 'Phone Number',
-                        hintText: 'Enter your phone number',
-                        controller: _phoneController,
-                        keyboardType: TextInputType.phone,
-                        isRequired: true,
-                        onChanged: (val) {},
-                        validator: _validatePhone,
-                      ),
-                      const SizedBox(height: 20),
-                      CustomInputField(
-                        label: 'Password',
-                        hintText: 'Enter your password',
-                        controller: _passwordController,
-                        obscureText: true,
-                        isRequired: true,
-                        onChanged: (val) {},
-                        validator: _validatePassword,
-                      ),
-                      const SizedBox(height: 30),
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () => _submitForm(context),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: const Text(
-                            'Sign Up',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      Center(
-                        child: RichText(
-                          text: TextSpan(
-                            text: "Already have an account? ",
-                            style: theme.textTheme.bodyMedium,
-                            children: [
-                              TextSpan(
-                                text: "Login",
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.primaryColor,
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.underline,
-                                ),
-                                recognizer: TapGestureRecognizer()
-                                  ..onTap = () {
-                                    context.go('/login');
-                                  },
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
+            ),
+          ),
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 12),
+                const Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundImage: AssetImage('assets/plant.jpeg'),
+                    backgroundColor: Colors.white,
                   ),
                 ),
-              )
-            ],
+                const SizedBox(height: 30),
+                Expanded(
+                  child: Center(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 32),
+                      child: BlocListener<AuthBloc, AuthState>(
+                        listener: (context, state) {
+                          if (state is AuthSuccess) {
+                            context.go('/home');
+                          } else if (state is AuthFailure) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(state.errorMessage)),
+                            );
+                          }
+                        },
+                        child: Column(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(24),
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).cardColor,
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Form(
+                                key: _formKey,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      'Sign up',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineSmall
+                                          ?.copyWith(
+                                            color: Theme.of(context).focusColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                    const SizedBox(height: 24),
+                                    CustomInputField(
+                                      label: 'Name',
+                                      hintText: 'Enter your name',
+                                      controller: _nameController,
+                                      isRequired: false,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    CustomInputField(
+                                      label: 'Phone Number',
+                                      hintText: 'Enter your Phone Number',
+                                      controller: _phoneController,
+                                      keyboardType: TextInputType.phone,
+                                      isRequired: true,
+                                      validator: _validatePhone,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    CustomInputField(
+                                      label: 'Email',
+                                      hintText: 'Enter your email',
+                                      controller: _emailController,
+                                      keyboardType: TextInputType.emailAddress,
+                                      isRequired: false,
+                                      validator: _validateEmail,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    CustomInputField(
+                                      label: 'Password',
+                                      hintText: 'Enter your Password',
+                                      controller: _passwordController,
+                                      obscureText: true,
+                                      isRequired: true,
+                                      validator: _validatePassword,
+                                    ),
+                                    const SizedBox(height: 24),
+                                    SizedBox(
+                                      width: 140,
+                                      child: ElevatedButton(
+                                        onPressed: () => _submitForm(context),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              Theme.of(context).primaryColor,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                          ),
+                                        ),
+                                        child: Text(
+                                          'Sign Up',
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              color:
+                                                  Theme.of(context).focusColor),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 15),
+                                    RichText(
+                                      text: TextSpan(
+                                        text: "Already have an account? ",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium,
+                                        children: [
+                                          TextSpan(
+                                            text: "Login",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.copyWith(
+                                                  color: Theme.of(context)
+                                                      .primaryColor,
+                                                  fontWeight: FontWeight.bold,
+                                                  decoration:
+                                                      TextDecoration.underline,
+                                                ),
+                                            recognizer: TapGestureRecognizer()
+                                              ..onTap =
+                                                  () => context.go('/login'),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
