@@ -2,7 +2,7 @@ import 'package:app/application/auth/auth_bloc.dart';
 import 'package:app/application/auth/auth_event.dart';
 import 'package:app/application/auth/auth_state.dart';
 import 'package:app/domain/entity/login_input_entity.dart';
-import 'package:app/ui/custom_input_field.dart';
+import 'package:app/presentation/ui/custom_input_field.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

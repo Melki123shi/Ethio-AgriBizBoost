@@ -6,7 +6,7 @@ import 'package:app/application/forcasting/forcasting_bloc.dart';
 import 'package:app/application/health_assessment/health_assessment_bloc.dart';
 import 'package:app/services/api/forcasting_service.dart';
 import 'package:app/services/api/health_assessment_service.dart';
-import 'package:app/routes/app_router.dart';
+import 'package:app/presentation/router/app_router.dart';
 
 final themeNotifier = ValueNotifier(ThemeMode.system);
 
