@@ -1,4 +1,4 @@
-import 'package:app/ui/profile/profile_screen.dart';
+import 'package:app/presentation/ui/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 
 class Header extends StatelessWidget {

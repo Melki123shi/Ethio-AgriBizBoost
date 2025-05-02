@@ -1,34 +1,26 @@
 import 'package:app/application/auth/auth_bloc.dart';
 import 'package:app/application/auth/auth_event.dart';
 import 'package:app/application/auth/auth_state.dart';
-import 'package:app/domain/entity/signup_input_entity.dart';
-import 'package:app/ui/custom_input_field.dart';
+import 'package:app/domain/entity/login_input_entity.dart';
+import 'package:app/presentation/ui/custom_input_field.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class SignupScreen extends StatelessWidget {
-  SignupScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  LoginScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   void _submitForm(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(
-            SignupSubmitted(
-              signupData: SignupInputEntity(
-                name: _nameController.text.trim().isEmpty
-                    ? null
-                    : _nameController.text.trim(),
-                email: _emailController.text.trim().isEmpty
-                    ? null
-                    : _emailController.text.trim(),
+            LoginSubmitted(
+              loginData: LoginInputEntity(
                 phoneNumber: _phoneController.text.trim(),
                 password: _passwordController.text.trim(),
               ),
@@ -61,17 +53,6 @@ class SignupScreen extends StatelessWidget {
     return null;
   }
 
-  String? _validateEmail(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return null; // Email is optional
-    }
-    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-    if (!emailRegex.hasMatch(value)) {
-      return 'Enter a valid email address.';
-    }
-    return null;
-  }
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -84,14 +65,14 @@ class SignupScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Create Account",
+                "Welcome Back",
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 8),
               Text(
-                "Sign up to get started!",
+                "Login to your account",
                 style: theme.textTheme.bodyMedium,
               ),
               const SizedBox(height: 32),
@@ -111,29 +92,11 @@ class SignupScreen extends StatelessWidget {
                   child: Column(
                     children: [
                       CustomInputField(
-                        label: 'Name',
-                        hintText: 'Enter your name',
-                        controller: _nameController,
-                        isRequired: false,
-                      ),
-                      const SizedBox(height: 20),
-                      CustomInputField(
-                        label: 'Email',
-                        hintText: 'Enter your email',
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        isRequired: false,
-                        onChanged: (val) {},
-                        validator: _validateEmail,
-                      ),
-                      const SizedBox(height: 20),
-                      CustomInputField(
                         label: 'Phone Number',
                         hintText: 'Enter your phone number',
                         controller: _phoneController,
                         keyboardType: TextInputType.phone,
                         isRequired: true,
-                        onChanged: (val) {},
                         validator: _validatePhone,
                       ),
                       const SizedBox(height: 20),
@@ -143,7 +106,6 @@ class SignupScreen extends StatelessWidget {
                         controller: _passwordController,
                         obscureText: true,
                         isRequired: true,
-                        onChanged: (val) {},
                         validator: _validatePassword,
                       ),
                       const SizedBox(height: 30),
@@ -158,7 +120,7 @@ class SignupScreen extends StatelessWidget {
                             ),
                           ),
                           child: const Text(
-                            'Sign Up',
+                            'Login',
                             style: TextStyle(fontSize: 16),
                           ),
                         ),
@@ -167,11 +129,11 @@ class SignupScreen extends StatelessWidget {
                       Center(
                         child: RichText(
                           text: TextSpan(
-                            text: "Already have an account? ",
+                            text: "Don't have an account? ",
                             style: theme.textTheme.bodyMedium,
                             children: [
                               TextSpan(
-                                text: "Login",
+                                text: "Sign Up",
                                 style: theme.textTheme.bodyMedium?.copyWith(
                                   color: theme.primaryColor,
                                   fontWeight: FontWeight.bold,
@@ -179,7 +141,7 @@ class SignupScreen extends StatelessWidget {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    context.go('/login');
+                                    context.go('/signup');
                                   },
                               ),
                             ],
@@ -189,7 +151,7 @@ class SignupScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),

@@ -1,6 +1,6 @@
 import 'package:app/domain/entity/assessment_result_entity.dart';
-import 'package:app/ui/health_assessment/assessment_card.dart';
-import 'package:app/ui/health_assessment/income_expense_chart.dart';
+import 'package:app/presentation/ui/health_assessment/assessment_card.dart';
+import 'package:app/presentation/ui/health_assessment/income_expense_chart.dart';
 import 'package:flutter/material.dart';
 
 
