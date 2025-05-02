@@ -16,7 +16,9 @@ class _DarkmodeScreenState extends State<DarkmodeScreen> {
     super.initState();
     final currentMode = themeNotifier.value;
     _isDark = currentMode == ThemeMode.dark ||
-              (currentMode == ThemeMode.system && WidgetsBinding.instance.window.platformBrightness == Brightness.dark);
+        (currentMode == ThemeMode.system &&
+            WidgetsBinding.instance.window.platformBrightness ==
+                Brightness.dark);
   }
 
   void _toggleTheme(bool value) {
@@ -40,10 +42,17 @@ class _DarkmodeScreenState extends State<DarkmodeScreen> {
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 16),
-            Switch(
-              value: _isDark,
-              onChanged: _toggleTheme,
-            ),
+            Transform.scale(
+              scale: 0.9,
+              child: Switch(
+                value: _isDark,
+                onChanged: _toggleTheme,
+                activeColor: const Color(0xFF388E3C),
+                activeTrackColor: const Color(0xFF81C784),
+                inactiveThumbColor: const Color.fromARGB(255, 121, 185, 122),
+                inactiveTrackColor: const Color.fromARGB(255, 196, 255, 198),
+              ),
+            )
           ],
         ),
       ),

@@ -19,13 +19,27 @@ class LogoutScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text('Yes, Logout'),
+              SizedBox(
+                width: 140,
+                child: ElevatedButton(
+                  onPressed: () {
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFF94C495),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(
+                    'Save Changes',
+                    style: TextStyle(color: Theme.of(context).focusColor, fontSize: 16),
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+                child: Text('Cancel', style: TextStyle(color: Theme.of(context).focusColor, fontSize: 16),),
               ),
               const Spacer(),
             ],
