@@ -37,11 +37,11 @@ void main() {
             themeMode: themeMode,
             theme: ThemeData(
               brightness: Brightness.light,
-              primaryColor: const Color.fromARGB(255, 132, 203, 133),
+              primaryColor: const Color(0xFF8BC34A),
               scaffoldBackgroundColor: Colors.white,
               dividerColor: Colors.grey.shade300,
               focusColor: Colors.black,
-              cardColor: const Color.fromARGB(255, 240, 240, 240),
+              cardColor: const Color(0xFFF0F0F0),
               splashColor: Colors.black12,
               canvasColor: Colors.black26,
               appBarTheme: const AppBarTheme(
@@ -52,8 +52,7 @@ void main() {
             ),
             darkTheme: ThemeData(
               brightness: Brightness.dark,
-              primaryColor: const Color.fromARGB(255, 153, 215, 82),
-              // primaryColor: const Color.fromARGB(255, 148, 196, 149),
+              primaryColor: const Color(0xFF8BC34A),
               scaffoldBackgroundColor: Colors.black,
               dividerColor: Colors.white12,
               focusColor: Colors.white,
