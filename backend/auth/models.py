@@ -24,6 +24,35 @@ class UserBase(BaseModel):
     def validate_phone(cls, v):
         return validate_ethiopian_phone(v)
 
+class UserUpdate(BaseModel):
+    name: Optional[str] = Field(
+        None,
+        description="User's full name",
+        example="Abebe Kebede"
+    )
+    email: Optional[str] = Field(
+        None,
+        description="User's email address (optional)",
+        example="user@example.com"
+    )
+    phone_number: Optional[str] = Field(
+        None,
+        description="Ethiopian phone number (Ethio Telecom or Safaricom)",
+        example="0912345678"
+    )
+    password: Optional[str] = Field(
+        None,
+        description="New password (will be hashed)",
+        example="newsecurepassword123",
+        min_length=8
+    )
+    
+    @validator('phone_number')
+    def validate_phone(cls, v):
+        if v is None:
+            return v
+        return validate_ethiopian_phone(v)
+
 class UserCreate(UserBase):
     password: str = Field(
         ...,
