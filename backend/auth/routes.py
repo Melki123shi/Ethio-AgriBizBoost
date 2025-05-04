@@ -3,14 +3,15 @@ from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from typing import Dict
 
-from auth.models import UserCreate, Token, UserInDB, UserUpdate
+from auth.models import UserCreate, Token, UserInDB, UserUpdate, DeleteAccount
 from auth.utils import (
     authenticate_user, 
     create_access_token, 
     ACCESS_TOKEN_EXPIRE_MINUTES, 
     get_password_hash,
     create_tokens_for_user,
-    validate_refresh_token
+    validate_refresh_token,
+    verify_password
 )
 from auth.validators import normalize_phone_number, check_phone_exists
 from auth.database import (
@@ -19,7 +20,8 @@ from auth.database import (
     revoke_refresh_token, 
     revoke_all_user_tokens,
     get_user_by_id,
-    update_user
+    update_user,
+    delete_user
 )
 from auth.dependencies import get_current_active_user
 from security.rate_limiter import limiter
@@ -637,6 +639,70 @@ async def update_user_profile(
             "phone_number": update_data.get("phone_number", current_user.get("phone_number"))
         }
     }
+
+@router.delete(
+    "/profile", 
+    response_model=Dict[str, str],
+    summary="Delete user account",
+    description="""
+    Delete or deactivate the current user's account.
+    
+    This is a destructive operation and requires password verification for security.
+    All active sessions will be terminated and the user will need to register again to use the system.
+    
+    By default, this performs a soft delete (account marked as inactive but data preserved).
+    """,
+    responses={
+        200: {
+            "description": "Account successfully deleted",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "default": {"message": "Account successfully deleted"}
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized - Invalid password",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "default": {"detail": "Incorrect password"}
+                    }
+                }
+            }
+        }
+    }
+)
+@limiter.limit("3/minute")
+async def delete_user_account(
+    request: Request,
+    delete_data: DeleteAccount = Body(...),
+    current_user = Depends(get_current_active_user)
+):
+    """
+    Delete the current user's account.
+    
+    Requires password verification to prevent unauthorized deletions.
+    This implementation uses a soft delete that preserves user data but prevents login.
+    """
+    user_id = str(current_user["_id"])
+    
+    # Verify password
+    if not verify_password(delete_data.password, current_user["hashed_password"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect password"
+        )
+    
+    # Revoke all refresh tokens
+    revoke_all_user_tokens(user_id)
+    
+    # Delete or deactivate the user account
+    delete_user(user_id)
+    
+    return {"message": "Account successfully deleted"}
 
 @router.get(
     "/protected", 

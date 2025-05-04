@@ -170,4 +170,11 @@ class RefreshToken(BaseModel):
                 "created_at": "2023-07-15T10:00:00",
                 "is_revoked": False
             }
-        } 
+        }
+
+class DeleteAccount(BaseModel):
+    password: str = Field(
+        ...,
+        description="Current password to confirm account deletion",
+        example="securepassword123"
+    ) 
