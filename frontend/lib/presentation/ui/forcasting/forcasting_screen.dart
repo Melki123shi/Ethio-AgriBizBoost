@@ -3,6 +3,7 @@ import 'package:app/application/forcasting/forcasting_event.dart';
 import 'package:app/application/forcasting/forcasting_state.dart';
 import 'package:app/domain/entity/forcasting_result_entity.dart';
 import 'package:app/presentation/ui/common/custom_input_field.dart';
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -48,8 +49,8 @@ class _ForcastingScreenState extends State<ForcastingScreen> {
           }
         } else if (state is ForcastingFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Forecasting failed. Please try again.'),
+            SnackBar(
+              content: Text(context.commonLocals.assessment_failed),
             ),
           );
         }
@@ -61,13 +62,13 @@ class _ForcastingScreenState extends State<ForcastingScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInput('Region', 'region'),
-              _buildInput('Zone', 'zone'),
-              _buildInput('Woreda', 'woreda'),
-              _buildInput('Market name', 'marketname'),
-              _buildInput('Crop name', 'cropname'),
-              _buildInput('Variety name', 'varietyname'),
-              _buildInput('Season', 'season'),
+              _buildInput(context.commonLocals.region, 'region'),
+              _buildInput(context.commonLocals.zone, 'zone'),
+              _buildInput(context.commonLocals.woreda, 'woreda'),
+              _buildInput(context.commonLocals.market_name, 'marketname'),
+              _buildInput(context.commonLocals.crop_type, 'cropname'),
+              _buildInput(context.commonLocals.variety_name, 'varietyname'),
+              _buildInput(context.commonLocals.season, 'season'),
               const SizedBox(height: 50),
               Center(
                 child: TextButton(
@@ -95,7 +96,7 @@ class _ForcastingScreenState extends State<ForcastingScreen> {
                     ),
                   ),
                   child: Text(
-                    'Submit',
+                    context.commonLocals.submit,
                     style: TextStyle(
                       color: Theme.of(context).focusColor,
                       fontSize: 16,

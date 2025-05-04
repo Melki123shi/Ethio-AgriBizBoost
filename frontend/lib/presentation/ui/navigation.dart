@@ -1,19 +1,21 @@
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 
 class NavigationTabs extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onTabSelected;
 
-  NavigationTabs({
+  const NavigationTabs({
     super.key,
     required this.selectedIndex,
     required this.onTabSelected,
   });
 
-  final List<String> tabs = ['Health', 'Forecasting', 'Recommendation'];
 
   @override
   Widget build(BuildContext context) {
+  final List<String> tabs = [context.commonLocals.health, context.commonLocals.forcasting, context.commonLocals.recommendation];
+  
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(tabs.length, (index) {

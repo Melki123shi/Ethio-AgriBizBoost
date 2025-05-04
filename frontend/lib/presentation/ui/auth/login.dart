@@ -3,6 +3,7 @@ import 'package:app/application/auth/auth_event.dart';
 import 'package:app/application/auth/auth_state.dart';
 import 'package:app/domain/entity/login_input_entity.dart';
 import 'package:app/presentation/ui/common/custom_input_field.dart';
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +28,13 @@ class LoginScreen extends StatelessWidget {
             ),
           );
     } else {
-      print('Form validation failed.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please correct the highlighted fields.'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
 
@@ -141,8 +148,9 @@ class LoginScreen extends StatelessWidget {
                                 child: Column(
                                   children: [
                                     Text(
-                                      'Login',
-                                      style: theme.textTheme.headlineSmall?.copyWith(
+                                      context.commonLocals.login,
+                                      style: theme.textTheme.headlineSmall
+                                          ?.copyWith(
                                         color: theme.focusColor,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -172,9 +180,11 @@ class LoginScreen extends StatelessWidget {
                                         onPressed: () => _submitForm(context),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: theme.primaryColor,
-                                          padding: const EdgeInsets.symmetric(vertical: 12),
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 12),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(30),
+                                            borderRadius:
+                                                BorderRadius.circular(30),
                                           ),
                                         ),
                                         child: Text(
@@ -193,10 +203,12 @@ class LoginScreen extends StatelessWidget {
                                         children: [
                                           TextSpan(
                                             text: "Sign Up",
-                                            style: theme.textTheme.bodyMedium?.copyWith(
+                                            style: theme.textTheme.bodyMedium
+                                                ?.copyWith(
                                               color: theme.primaryColor,
                                               fontWeight: FontWeight.bold,
-                                              decoration: TextDecoration.underline,
+                                              decoration:
+                                                  TextDecoration.underline,
                                             ),
                                             recognizer: TapGestureRecognizer()
                                               ..onTap = () {

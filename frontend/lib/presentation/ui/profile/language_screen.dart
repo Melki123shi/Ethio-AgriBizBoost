@@ -1,3 +1,5 @@
+import 'package:app/main.dart';
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 
 class LanguageScreen extends StatefulWidget {
@@ -8,66 +10,96 @@ class LanguageScreen extends StatefulWidget {
 }
 
 class _LanguageScreenState extends State<LanguageScreen> {
-  String selectedLanguage = 'English';
-
-  final List<String> languages = [
-  'English',
-  'Amharic',
-  'Afan Oromo',
-  'Tigrigna',
-];
+  late String selectedLanguage;
 
   final GlobalKey _fieldKey = GlobalKey();
 
-  void _selectLanguage(BuildContext context) async {
-  final RenderBox renderBox = _fieldKey.currentContext!.findRenderObject() as RenderBox;
-  final Offset offset = renderBox.localToGlobal(Offset.zero);
-  final Size size = renderBox.size;
+  @override
+  @override
+void didChangeDependencies() {
+  super.didChangeDependencies();
 
-  final selected = await showMenu<String>(
-    context: context,
-    position: RelativeRect.fromLTRB(
-      offset.dx,
-      offset.dy + size.height,
-      offset.dx + size.width,
-      0,
-    ),
-    color: Theme.of(context).indicatorColor, 
-    items: languages
-        .map(
-          (lang) => PopupMenuItem(
-            value: lang,
-            child: SizedBox(
-              width: size.width,
-              child: Text(
-                lang,
-                style: TextStyle(color: Theme.of(context).focusColor), 
+  final currentLocale = localeNotifier.value.languageCode;
+
+  final map = {
+    'en': context.commonLocals.english,
+    'am': context.commonLocals.amharic,
+    'om': context.commonLocals.afan_oromo,
+    'ti': context.commonLocals.tigrigna,
+  };
+
+  selectedLanguage = map[currentLocale] ?? context.commonLocals.english;
+}
+
+
+  void _selectLanguage(BuildContext context) async {
+    final languages = [
+      context.commonLocals.english,
+      context.commonLocals.amharic,
+      context.commonLocals.afan_oromo,
+      context.commonLocals.tigrigna,
+    ];
+
+    final languageMap = {
+      context.commonLocals.english: const Locale('en'),
+      context.commonLocals.amharic: const Locale('am'),
+      context.commonLocals.afan_oromo: const Locale('om'),
+      context.commonLocals.tigrigna: const Locale('ti'),
+    };
+
+    final renderBox = _fieldKey.currentContext!.findRenderObject() as RenderBox;
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    final selected = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy + size.height,
+        offset.dx + size.width,
+        0,
+      ),
+      color: Theme.of(context).indicatorColor,
+      items: languages
+          .map(
+            (lang) => PopupMenuItem(
+              value: lang,
+              child: SizedBox(
+                width: size.width,
+                child: Text(
+                  lang,
+                  style: TextStyle(color: Theme.of(context).focusColor),
+                ),
               ),
             ),
-          ),
-        )
-        .toList(),
-  );
+          )
+          .toList(),
+    );
 
-  if (selected != null) {
-    setState(() {
-      selectedLanguage = selected;
-    });
+    if (selected != null) {
+      setState(() {
+        selectedLanguage = selected;
+      });
+
+      final newLocale = languageMap[selected];
+      if (newLocale != null) {
+        localeNotifier.value = newLocale;
+      }
+    }
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Language')),
+      appBar: AppBar(title: Text(context.commonLocals.language)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Select Language',
-              style: TextStyle(
+            Text(
+              context.commonLocals.select_language,
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
               ),
@@ -91,7 +123,8 @@ class _LanguageScreenState extends State<LanguageScreen> {
                         style: const TextStyle(fontSize: 16),
                       ),
                     ),
-                    const Icon(Icons.arrow_drop_down, color: Color.fromARGB(255, 148, 196, 149)),
+                    const Icon(Icons.arrow_drop_down,
+                        color: Color.fromARGB(255, 148, 196, 149)),
                   ],
                 ),
               ),

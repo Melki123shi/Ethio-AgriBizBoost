@@ -1,3 +1,4 @@
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 
 class LogoutScreen extends StatelessWidget {
@@ -6,16 +7,16 @@ class LogoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Logout')),
+      appBar: AppBar(title: Text(context.commonLocals.log_out)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Center(
           child: Column(
             children: [
               const Spacer(),
-              const Text(
-                'Are you sure you want to logout?',
-                style: TextStyle(fontSize: 18),
+              Text(
+                context.commonLocals.confirm_logout,
+                style: const TextStyle(fontSize: 18),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 32),
@@ -32,14 +33,14 @@ class LogoutScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Save Changes',
+                    context.commonLocals.save_changes,
                     style: TextStyle(color: Theme.of(context).focusColor, fontSize: 16),
                   ),
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('Cancel', style: TextStyle(color: Theme.of(context).focusColor, fontSize: 16),),
+                child: Text(context.commonLocals.cancel, style: TextStyle(color: Theme.of(context).focusColor, fontSize: 16),),
               ),
               const Spacer(),
             ],

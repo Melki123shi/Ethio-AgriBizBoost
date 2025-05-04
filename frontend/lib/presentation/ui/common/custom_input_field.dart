@@ -1,3 +1,4 @@
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 
 class CustomInputField extends StatelessWidget {
@@ -50,7 +51,7 @@ class CustomInputField extends StatelessWidget {
               validator: validator ??
                   (value) {
                     if (isRequired && (value == null || value.trim().isEmpty)) {
-                      return '$hintText cannot be empty';
+                      return '$hintText ${context.commonLocals.cannot_be_empty}';
                     }
                     return null;
                   },

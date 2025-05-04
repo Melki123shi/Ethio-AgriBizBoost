@@ -1,3 +1,4 @@
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -13,47 +14,57 @@ class IncomeExpenseChart extends StatelessWidget {
     required this.profit,
   });
 
-  static const _months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final months = [
+      context.commonLocals.jan,
+      context.commonLocals.feb,
+      context.commonLocals.mar,
+      context.commonLocals.apr,
+      context.commonLocals.may,
+      context.commonLocals.jun,
+      context.commonLocals.jul,
+      context.commonLocals.aug,
+      context.commonLocals.sep,
+      context.commonLocals.oct,
+      context.commonLocals.nov,
+      context.commonLocals.dec,
+    ];
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8),
       child: Container(
-        height: 220,                                   
+        height: 220,
         decoration: BoxDecoration(
           color: const Color(0xFF222222),
-          borderRadius: BorderRadius.circular(16),      
+          borderRadius: BorderRadius.circular(16),
         ),
-        padding: const EdgeInsets.all(8),               
+        padding: const EdgeInsets.all(8),
         child: Column(
           children: [
             Expanded(
               child: LineChart(
                 LineChartData(
                   gridData: const FlGridData(show: false),
-                  titlesData: _buildTitles(),
+                  titlesData: _buildTitles(months),
                   borderData: FlBorderData(show: false),
                   lineBarsData: [
-                    _flatLine(totalIncome, Colors.yellow),
-                    _flatLine(totalExpense, Colors.redAccent),
-                    _flatLine(profit, Colors.greenAccent),
+                    _flatLine(months.length, totalIncome, Colors.yellow),
+                    _flatLine(months.length, totalExpense, Colors.redAccent),
+                    _flatLine(months.length, profit, Colors.greenAccent),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 6),
-            Wrap(                                         
+            Wrap(
               alignment: WrapAlignment.center,
               spacing: 8,
               runSpacing: 4,
               children: [
-                _legend(Colors.yellow,  'Income'),
-                _legend(Colors.redAccent, 'Expense'),
-                _legend(Colors.greenAccent, 'Profit'),
+                _legend(Colors.yellow, context.commonLocals.income),
+                _legend(Colors.redAccent, context.commonLocals.expense),
+                _legend(Colors.greenAccent, context.commonLocals.profit),
               ],
             ),
           ],
@@ -62,28 +73,28 @@ class IncomeExpenseChart extends StatelessWidget {
     );
   }
 
-  LineChartBarData _flatLine(double value, Color color) =>
+  LineChartBarData _flatLine(int count, double value, Color color) =>
       LineChartBarData(
         spots: List.generate(
-          _months.length,
+          count,
           (i) => FlSpot(i.toDouble(), value),
         ),
         isCurved: false,
         color: color,
-        barWidth: 2,                       
+        barWidth: 2,
         isStrokeCapRound: true,
       );
 
-  FlTitlesData _buildTitles() => FlTitlesData(
+  FlTitlesData _buildTitles(List<String> months) => FlTitlesData(
         leftTitles: AxisTitles(
           sideTitles: SideTitles(
             showTitles: true,
-            reservedSize: 32,              
+            reservedSize: 32,
             getTitlesWidget: (v, _) => Text(
               v.toInt().toString(),
               style: const TextStyle(
                 color: Colors.white,
-                fontSize: 10,               
+                fontSize: 10,
               ),
               textAlign: TextAlign.right,
             ),
@@ -97,7 +108,7 @@ class IncomeExpenseChart extends StatelessWidget {
             reservedSize: 16,
             interval: 1,
             getTitlesWidget: (v, _) => Text(
-              _months[v.toInt() % _months.length],
+              months[v.toInt() % months.length],
               style: const TextStyle(color: Colors.white, fontSize: 9),
             ),
           ),

@@ -1,3 +1,4 @@
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:app/main.dart';
 
@@ -31,14 +32,14 @@ class _DarkmodeScreenState extends State<DarkmodeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Dark Mode')),
+      appBar: AppBar(title: Text(context.commonLocals.darkmode)),
       body: Padding(
         padding: const EdgeInsets.all(14.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              _isDark ? 'Dark Mode is ON' : 'Dark Mode is OFF',
+              _isDark ? context.commonLocals.dark_mode_on : context.commonLocals.dark_mode_off,
               style: const TextStyle(fontSize: 18),
             ),
             const SizedBox(height: 16),

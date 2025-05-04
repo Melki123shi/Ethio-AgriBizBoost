@@ -1,3 +1,4 @@
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 
 class SearchInputField extends StatelessWidget {
@@ -11,7 +12,7 @@ class SearchInputField extends StatelessWidget {
       child: TextField(
         style: TextStyle(color: Theme.of(context).textTheme.bodyLarge?.color),
         decoration: InputDecoration(
-          labelText: 'Search...', 
+          labelText: '${context.commonLocals.search}...', 
           labelStyle: const TextStyle(color: Colors.grey), 
           filled: true,
           fillColor: Theme.of(context).scaffoldBackgroundColor, 
