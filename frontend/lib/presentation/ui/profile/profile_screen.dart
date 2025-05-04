@@ -1,4 +1,5 @@
 import 'package:app/presentation/ui/profile/header.dart';
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,28 +28,28 @@ class ProfileScreen extends StatelessWidget {
                 children: [
                   _profileHeader(context, theme),
                   const SizedBox(height: 32),
-                  _sectionHeader('Account', theme),
+                  _sectionHeader(context.commonLocals.account, theme),
                   _settingsCard(theme, children: [
                     _settingsTile(context, theme,
-                        icon: Icons.person, label: 'Edit profile'),
+                        icon: Icons.person, label: context.commonLocals.edit_profile),
                     _settingsTile(context, theme,
-                        icon: Icons.security, label: 'Security'),
+                        icon: Icons.security, label: context.commonLocals.security),
                     _settingsTile(context, theme,
-                        icon: Icons.notifications, label: 'Notifications'),
+                        icon: Icons.notifications, label: context.commonLocals.notifications),
                   ]),
                   const SizedBox(height: 24),
-                  _sectionHeader('Preference', theme),
+                  _sectionHeader(context.commonLocals.preference, theme),
                   _settingsCard(theme, children: [
                     _settingsTile(context, theme,
-                        icon: Icons.language, label: 'Language'),
+                        icon: Icons.language, label: context.commonLocals.language),
                     _settingsTile(context, theme,
-                        icon: Icons.dark_mode, label: 'Darkmode'),
+                        icon: Icons.dark_mode, label: context.commonLocals.darkmode),
                   ]),
                   const SizedBox(height: 24),
-                  _sectionHeader('Actions', theme),
+                  _sectionHeader(context.commonLocals.actions, theme),
                   _settingsCard(theme, children: [
                     _settingsTile(context, theme,
-                        icon: Icons.logout, label: 'Log out'),
+                        icon: Icons.logout, label: context.commonLocals.log_out),
                   ]),
                 ],
               ),
@@ -140,12 +141,12 @@ class ProfileScreen extends StatelessWidget {
     return InkWell(
       onTap: () {
         final routeMap = {
-          'Edit profile': '/editProfile',
-          'Security': '/security',
-          'Notifications': '/notifications',
-          'Language': '/language',
-          'Darkmode': '/darkmode',
-          'Log out': '/logout',
+          context.commonLocals.edit_profile: '/editProfile',
+          context.commonLocals.security: '/security',
+          context.commonLocals.notifications: '/notifications',
+          context.commonLocals.language: '/language',
+          context.commonLocals.darkmode: '/darkmode',
+          context.commonLocals.log_out: '/logout',
         };
 
         final route = routeMap[label];

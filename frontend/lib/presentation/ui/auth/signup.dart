@@ -3,6 +3,7 @@ import 'package:app/application/auth/auth_event.dart';
 import 'package:app/application/auth/auth_state.dart';
 import 'package:app/domain/entity/signup_input_entity.dart';
 import 'package:app/presentation/ui/common/custom_input_field.dart';
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -35,7 +36,13 @@ class SignupScreen extends StatelessWidget {
             ),
           );
     } else {
-      print('Form validation failed.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please correct the highlighted fields.'),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     }
   }
 
@@ -158,7 +165,7 @@ class SignupScreen extends StatelessWidget {
                                 child: Column(
                                   children: [
                                     Text(
-                                      'Sign up',
+                                      context.commonLocals.sign_up,
                                       style: Theme.of(context)
                                           .textTheme
                                           .headlineSmall

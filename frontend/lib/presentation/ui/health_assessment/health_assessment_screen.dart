@@ -1,3 +1,4 @@
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/application/health_assessment/health_assessment_bloc.dart';
@@ -53,8 +54,8 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomInputField(
-                label:'Crop Type' ,
-                hintText: 'Crop Type',
+                label: context.commonLocals.crop_type,
+                hintText: context.commonLocals.crop_type,
                 isRequired: true,
                 onChanged: (value) {
                   _formData['cropType'] = value;
@@ -63,8 +64,8 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
               ),
               const SizedBox(height: 30),
               CustomInputField(
-                label: 'Government Subsidy',
-                hintText: 'Government Subsidy',
+                label: context.commonLocals.government_subsidy,
+                hintText: context.commonLocals.government_subsidy,
                 isRequired: true,
                 onChanged: (value) {
                   _formData['subsidy'] = value;
@@ -73,8 +74,8 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
               ),
               const SizedBox(height: 30),
               CustomInputField(
-                label: 'Sale Price Per Quintal',
-                hintText: 'Sale Price Per Quintal',
+                label: context.commonLocals.sale_price_per_quintal,
+                hintText: context.commonLocals.sale_price_per_quintal,
                 isRequired: true,
                 onChanged: (value) {
                   _formData['salePrice'] = value;
@@ -86,8 +87,8 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
                 children: [
                   Expanded(
                     child: CustomInputField(
-                      label: 'Total Cost',
-                      hintText: 'Total Cost',
+                      label: context.commonLocals.total_cost,
+                      hintText: context.commonLocals.total_cost,
                       isRequired: true,
                       onChanged: (value) {
                         _formData['totalCost'] = value;
@@ -98,8 +99,8 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: CustomInputField(
-                      label: 'Quantity Sold',
-                      hintText: 'Quantity Sold',
+                      label: context.commonLocals.quantity_sold,
+                      hintText: context.commonLocals.quantity_sold,
                       isRequired: true,
                       onChanged: (value) {
                         _formData['quantitySold'] = value;
@@ -134,7 +135,7 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
                     ),
                   ),
                   child: Text(
-                    "Submit",
+                    context.commonLocals.submit,
                     style: TextStyle(
                       color: Theme.of(context).focusColor,
                       fontSize: 16,

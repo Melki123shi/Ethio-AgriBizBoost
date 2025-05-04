@@ -1,3 +1,4 @@
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:app/presentation/ui/common/bottom_border_input_field.dart';
 
@@ -26,24 +27,24 @@ class _SecurityScreenState extends State<SecurityScreen> {
   void _updatePassword() {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Password updated successfully.')),
+        SnackBar(content: Text(context.commonLocals.password_updated)),
       );
     }
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Password cannot be empty';
+      return context.commonLocals.password_empty;
     }
     if (value.length < 6) {
-      return 'Password must be at least 6 characters';
+      return context.commonLocals.password_too_short;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value != _newPasswordController.text) {
-      return 'Passwords do not match';
+      return context.commonLocals.passwords_do_not_match;
     }
     return _validatePassword(value);
   }
@@ -53,7 +54,7 @@ class _SecurityScreenState extends State<SecurityScreen> {
     const green = Color(0xFF94C495);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Security')),
+      appBar: AppBar(title: Text(context.commonLocals.security)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -62,21 +63,21 @@ class _SecurityScreenState extends State<SecurityScreen> {
             children: [
               BottomBorderInputField(
                 controller: _currentPasswordController,
-                labelText: 'Current Password',
+                labelText: context.commonLocals.current_password,
                 obscureText: true,
                 validator: _validatePassword,
               ),
               const SizedBox(height: 16),
               BottomBorderInputField(
                 controller: _newPasswordController,
-                labelText: 'New Password',
+                labelText: context.commonLocals.new_password,
                 obscureText: true,
                 validator: _validatePassword,
               ),
               const SizedBox(height: 16),
               BottomBorderInputField(
                 controller: _confirmPasswordController,
-                labelText: 'Confirm New Password',
+                labelText: context.commonLocals.confirm_new_password,
                 obscureText: true,
                 validator: _validateConfirmPassword,
               ),
@@ -92,9 +93,9 @@ class _SecurityScreenState extends State<SecurityScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: const Text(
-                    'Update Password',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  child: Text(
+                    context.commonLocals.update_password,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
                 ),
               ),

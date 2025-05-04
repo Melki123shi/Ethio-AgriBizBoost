@@ -47,10 +47,10 @@ app.*.map.json
 frontend/lib/l10n/*/localization_classes/
 
 # Ignore generated plugin registration files
-app/windows/flutter/generated_plugins.cmake
-app/windows/flutter/generated_plugin_registrant.cc
-app/windows/flutter/generated_plugin_registrant.h
-app/macos/Flutter/GeneratedPluginRegistrant.swift
-app/linux/flutter/generated_plugin_registrant.cc
-app/linux/flutter/generated_plugin_registrant.h
-app/linux/flutter/generated_plugins.cmake
+frontend/windows/flutter/generated_plugins.cmake
+frontend/windows/flutter/generated_plugin_registrant.cc
+frontend/windows/flutter/generated_plugin_registrant.h
+frontend/macos/Flutter/GeneratedPluginRegistrant.swift
+frontend/linux/flutter/generated_plugin_registrant.cc
+frontend/linux/flutter/generated_plugin_registrant.h
+frontend/linux/flutter/generated_plugins.cmake

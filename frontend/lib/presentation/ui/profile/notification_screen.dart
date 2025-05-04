@@ -1,3 +1,4 @@
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 
 class NotificationScreen extends StatefulWidget {
@@ -19,7 +20,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Notifications')),
+      appBar: AppBar(title: Text(context.commonLocals.notifications)),
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: notifications.length,

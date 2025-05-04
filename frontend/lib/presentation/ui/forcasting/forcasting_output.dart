@@ -1,4 +1,5 @@
 import 'package:app/domain/entity/forcasting_result_entity.dart';
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
@@ -25,9 +26,9 @@ class ForcastingOutput extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  const Text(
-                    "Price Forecast",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  Text(
+                    context.commonLocals.price_forecast,
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
@@ -46,12 +47,12 @@ class ForcastingOutput extends StatelessWidget {
                               getTitlesWidget: (value, meta) {
                                 switch (value.toInt()) {
                                   case 0:
-                                    return const Text('Min Price',
-                                        style: TextStyle(
+                                    return Text(context.commonLocals.min_price,
+                                        style: const TextStyle(
                                             color: Colors.white, fontSize: 10));
                                   case 1:
-                                    return const Text('Max Price',
-                                        style: TextStyle(
+                                    return Text(context.commonLocals.max_price,
+                                        style: const TextStyle(
                                             color: Colors.white, fontSize: 10));
                                   default:
                                     return const SizedBox.shrink();
@@ -108,7 +109,7 @@ class ForcastingOutput extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
                   Text(
-                    "Demand : ${result.predictedDemand}",
+                    "${context.commonLocals.demand} : ${result.predictedDemand}",
                     style:
                         const TextStyle(color: Colors.white, fontSize: 14),
                   ),

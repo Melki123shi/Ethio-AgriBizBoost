@@ -1,4 +1,5 @@
 import 'package:app/presentation/ui/common/bottom_border_input_field.dart';
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -46,7 +47,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     const green = Color(0xFF94C495);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Edit Profile')),
+      appBar: AppBar(title: Text(context.commonLocals.edit_profile)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -66,22 +67,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             const SizedBox(height: 24),
             BottomBorderInputField(
               controller: _nameController,
-              labelText: 'Name',
+              labelText: context.commonLocals.name,
             ),
             const SizedBox(height: 16),
             BottomBorderInputField(
               controller: _emailController,
-              labelText: 'Email',
+              labelText: context.commonLocals.email,
             ),
             const SizedBox(height: 16),
             BottomBorderInputField(
               controller: _phoneController,
-              labelText: 'Phone Number',
+              labelText: context.commonLocals.phone_number,
             ),
             const SizedBox(height: 16),
             BottomBorderInputField(
               controller: _locationController,
-              labelText: 'Location',
+              labelText: context.commonLocals.location,
             ),
             const SizedBox(height: 32),
             SizedBox(
@@ -97,7 +98,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   ),
                 ),
                 child: Text(
-                  'Save Changes',
+                  context.commonLocals.save_changes,
                   style: TextStyle(color: Theme.of(context).focusColor, fontSize: 16),
                 ),
               ),
