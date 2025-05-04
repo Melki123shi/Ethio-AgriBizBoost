@@ -44,16 +44,6 @@ dependencies:
   image_picker: ^1.0.7
   flutter_localizations:
     sdk: flutter
-  # localizations:
-  #   arb-dir: lib/l10n
-  #   template-arb-file: common_en.arb
-  #   output-localization-file: common_localizations.dart
-  #   output-class: CommonLocalizations
-  #   preferred-supported-locales:
-  #     - en
-  #     - am
-  #     - om
-  #     - ti
 
   intl: ^0.19.0
   path: ^1.9.0
