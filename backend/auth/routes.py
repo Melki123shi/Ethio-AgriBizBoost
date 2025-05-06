@@ -548,6 +548,7 @@ async def get_user_profile(request: Request, current_user = Depends(get_current_
     - email: User's email address
     - phone_number: User's Ethiopian phone number (must be valid and not already registered)
     - password: User's password (will be securely hashed)
+    - location: User's location (optional)
     
     Requires authentication with a valid access token.
     """,
@@ -562,7 +563,8 @@ async def get_user_profile(request: Request, current_user = Depends(get_current_
                             "user": {
                                 "name": "Abebe Kebede",
                                 "email": "abebe@example.com",
-                                "phone_number": "+251912345678"
+                                "phone_number": "+251912345678",
+                                "location": "Addis Ababa"
                             }
                         }
                     }
@@ -603,7 +605,8 @@ async def update_user_profile(
             "user": {
                 "name": current_user.get("name"),
                 "email": current_user.get("email"),
-                "phone_number": current_user.get("phone_number")
+                "phone_number": current_user.get("phone_number"),
+                "location": current_user.get("location")
             }
         }
     
@@ -636,7 +639,8 @@ async def update_user_profile(
         "user": {
             "name": update_data.get("name", current_user.get("name")),
             "email": update_data.get("email", current_user.get("email")),
-            "phone_number": update_data.get("phone_number", current_user.get("phone_number"))
+            "phone_number": update_data.get("phone_number", current_user.get("phone_number")),
+            "location": update_data.get("location", current_user.get("location"))
         }
     }
 
