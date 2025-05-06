@@ -1,8 +1,10 @@
 import 'package:app/application/auth/auth_bloc.dart';
+import 'package:app/application/user/user_bloc.dart';
 import 'package:app/l10n/common/localization_classes/common_localizations.dart';
 import 'package:app/l10n/om_material_localizations.dart';
 import 'package:app/l10n/ti_material_localizations.dart';
 import 'package:app/services/api/auth_service.dart';
+import 'package:app/services/api/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/application/forcasting/forcasting_bloc.dart';
@@ -19,6 +21,7 @@ void main() {
   final healthService = HealthAssessmentService();
   final forcastingService = ForcastingService();
   final authService = AuthService();
+  final userService = UserService();
 
   runApp(
     MultiBlocProvider(
@@ -31,6 +34,9 @@ void main() {
         ),
         BlocProvider<AuthBloc>(
           create: (context) => AuthBloc(authService),
+        ),
+        BlocProvider<UserBloc>(
+          create: (context) => UserBloc(userService),
         ),
       ],
       child: ValueListenableBuilder<ThemeMode>(
