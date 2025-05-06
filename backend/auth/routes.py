@@ -3,14 +3,15 @@ from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from typing import Dict
 
-from auth.models import UserCreate, Token, UserInDB
+from auth.models import UserCreate, Token, UserInDB, UserUpdate, DeleteAccount
 from auth.utils import (
     authenticate_user, 
     create_access_token, 
     ACCESS_TOKEN_EXPIRE_MINUTES, 
     get_password_hash,
     create_tokens_for_user,
-    validate_refresh_token
+    validate_refresh_token,
+    verify_password
 )
 from auth.validators import normalize_phone_number, check_phone_exists
 from auth.database import (
@@ -18,7 +19,9 @@ from auth.database import (
     create_user, 
     revoke_refresh_token, 
     revoke_all_user_tokens,
-    get_user_by_id
+    get_user_by_id,
+    update_user,
+    delete_user
 )
 from auth.dependencies import get_current_active_user
 from security.rate_limiter import limiter
@@ -483,6 +486,223 @@ async def read_users_me(request: Request, current_user = Depends(get_current_act
         "phone_number": current_user.get("phone_number"),
         "email": current_user.get("email")
     }
+
+@router.get(
+    "/profile", 
+    response_model=dict,
+    summary="Get user profile",
+    description="""
+    Returns the complete profile information for the currently authenticated user.
+    
+    This endpoint returns all non-sensitive profile information, including
+    custom fields and account details like creation date.
+    
+    Requires authentication with a valid access token.
+    """,
+    responses={
+        200: {
+            "description": "User profile retrieved successfully",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "default": {
+                            "name": "Abebe Kebede",
+                            "phone_number": "+251912345678",
+                            "email": "abebe@example.com",
+                            "created_at": "2023-07-15T10:00:00",
+                            "updated_at": "2023-07-16T15:30:00"
+                        }
+                    }
+                }
+            }
+        }
+    }
+)
+@limiter.limit("30/minute")
+async def get_user_profile(request: Request, current_user = Depends(get_current_active_user)):
+    """
+    Get the complete profile information for the currently authenticated user.
+    Requires a valid access token.
+    """
+    # Remove sensitive information
+    profile = {k: v for k, v in current_user.items() if k != "hashed_password"}
+    
+    # Convert ObjectId to string for serialization
+    if "_id" in profile:
+        profile["_id"] = str(profile["_id"])
+    
+    return profile
+
+@router.patch(
+    "/profile", 
+    response_model=dict,
+    summary="Update user profile",
+    description="""
+    Update the profile information for the currently authenticated user.
+    
+    This endpoint allows updating specific fields in the user profile
+    without changing others. Only the provided fields will be updated.
+    
+    You can update:
+    - name: User's full name
+    - email: User's email address
+    - phone_number: User's Ethiopian phone number (must be valid and not already registered)
+    - password: User's password (will be securely hashed)
+    
+    Requires authentication with a valid access token.
+    """,
+    responses={
+        200: {
+            "description": "User profile updated successfully",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "default": {
+                            "message": "Profile updated successfully",
+                            "user": {
+                                "name": "Abebe Kebede",
+                                "email": "abebe@example.com",
+                                "phone_number": "+251912345678"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        400: {
+            "description": "Bad Request - Invalid input or phone number already registered",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "default": {"detail": "Phone number already registered by another user"}
+                    }
+                }
+            }
+        }
+    }
+)
+@limiter.limit("10/minute")
+async def update_user_profile(
+    request: Request, 
+    user_update: UserUpdate = Body(...),
+    current_user = Depends(get_current_active_user)
+):
+    """
+    Update profile information for the currently authenticated user.
+    Only the fields provided in the request will be updated.
+    Requires a valid access token.
+    """
+    user_id = str(current_user["_id"])
+    
+    # Get only non-None values
+    update_data = {k: v for k, v in user_update.dict().items() if v is not None}
+    
+    if not update_data:
+        return {
+            "message": "No fields to update",
+            "user": {
+                "name": current_user.get("name"),
+                "email": current_user.get("email"),
+                "phone_number": current_user.get("phone_number")
+            }
+        }
+    
+    # Handle phone number update
+    if "phone_number" in update_data:
+        # Normalize the phone number
+        normalized_phone = normalize_phone_number(update_data["phone_number"])
+        update_data["phone_number"] = normalized_phone
+        
+        # Check if phone number is already taken by another user
+        existing_user = check_phone_exists(get_user_by_phone, normalized_phone)
+        if existing_user and str(existing_user["_id"]) != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Phone number already registered by another user"
+            )
+    
+    if "password" in update_data:
+        hashed_password = get_password_hash(update_data["password"])
+        update_data["hashed_password"] = hashed_password
+        del update_data["password"]
+        
+        # optionally revoke all tokens for security
+        revoke_all_user_tokens(user_id)
+    
+    update_user(user_id, update_data)
+    
+    return {
+        "message": "Profile updated successfully",
+        "user": {
+            "name": update_data.get("name", current_user.get("name")),
+            "email": update_data.get("email", current_user.get("email")),
+            "phone_number": update_data.get("phone_number", current_user.get("phone_number"))
+        }
+    }
+
+@router.delete(
+    "/profile", 
+    response_model=Dict[str, str],
+    summary="Delete user account",
+    description="""
+    Delete or deactivate the current user's account.
+    
+    This is a destructive operation and requires password verification for security.
+    All active sessions will be terminated and the user will need to register again to use the system.
+    
+    By default, this performs a soft delete (account marked as inactive but data preserved).
+    """,
+    responses={
+        200: {
+            "description": "Account successfully deleted",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "default": {"message": "Account successfully deleted"}
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized - Invalid password",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "default": {"detail": "Incorrect password"}
+                    }
+                }
+            }
+        }
+    }
+)
+@limiter.limit("3/minute")
+async def delete_user_account(
+    request: Request,
+    delete_data: DeleteAccount = Body(...),
+    current_user = Depends(get_current_active_user)
+):
+    """
+    Delete the current user's account.
+    
+    Requires password verification to prevent unauthorized deletions.
+    This implementation uses a soft delete that preserves user data but prevents login.
+    """
+    user_id = str(current_user["_id"])
+    
+    # Verify password
+    if not verify_password(delete_data.password, current_user["hashed_password"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect password"
+        )
+    
+    # Revoke all refresh tokens
+    revoke_all_user_tokens(user_id)
+    
+    # Delete or deactivate the user account
+    delete_user(user_id)
+    
+    return {"message": "Account successfully deleted"}
 
 @router.get(
     "/protected", 

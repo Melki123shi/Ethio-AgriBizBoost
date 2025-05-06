@@ -30,6 +30,24 @@ def update_user(user_id, update_data):
         {"$set": update_data}
     )
 
+def delete_user(user_id):
+    """
+    Deactivate a user account by setting is_active to False.
+    This soft deletion preserves user data but prevents login.
+    """
+    return users_collection.update_one(
+        {"_id": ObjectId(user_id)},
+        {"$set": {
+            "is_active": False,
+            "deactivated_at": datetime.utcnow()
+        }}
+    )
+
+# Hard delete - for permanently removing user data
+# def delete_user(user_id):
+#     """Permanently delete a user account and all associated data."""
+#     return users_collection.delete_one({"_id": ObjectId(user_id)})
+
 # Refresh token operations
 def store_refresh_token(user_id, refresh_token, expires_in_days=None):
     """Store a new refresh token in the database"""
