@@ -45,6 +45,11 @@ class UserUpdate(BaseModel):
         description="New password (will be hashed)",
         example="newsecurepassword123",
         min_length=8
+    ),
+    location: Optional[str] = Field(
+        None,
+        description="User's location (optional)",
+        example="Addis Ababa, Ethiopia"
     )
     
     @validator('phone_number')
