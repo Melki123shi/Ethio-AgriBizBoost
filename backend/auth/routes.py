@@ -3,7 +3,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 from typing import Dict
 
-from auth.models import UserCreate, Token, UserInDB, UserUpdate, DeleteAccount
+from auth.models import UserCreate, Token, UserInDB, UserUpdate, DeleteAccount, UpdatePassword
 from auth.utils import (
     authenticate_user, 
     create_access_token, 
@@ -547,9 +547,8 @@ async def get_user_profile(request: Request, current_user = Depends(get_current_
     - name: User's full name
     - email: User's email address
     - phone_number: User's Ethiopian phone number (must be valid and not already registered)
-    - password: User's password (will be securely hashed)
     - location: User's location (optional)
-    
+
     Requires authentication with a valid access token.
     """,
     responses={
@@ -624,16 +623,10 @@ async def update_user_profile(
                 detail="Phone number already registered by another user"
             )
     
-    if "password" in update_data:
-        hashed_password = get_password_hash(update_data["password"])
-        update_data["hashed_password"] = hashed_password
-        del update_data["password"]
-        
-        # optionally revoke all tokens for security
-        revoke_all_user_tokens(user_id)
-    
+    # Update user in database
     update_user(user_id, update_data)
     
+    # Return updated user info
     return {
         "message": "Profile updated successfully",
         "user": {
@@ -643,6 +636,76 @@ async def update_user_profile(
             "location": update_data.get("location", current_user.get("location"))
         }
     }
+
+@router.post(
+    "/password", 
+    response_model=Dict[str, str],
+    summary="Update user password",
+    description="""
+    Update the password for the currently authenticated user.
+    
+    This endpoint requires:
+    - current_password: Your existing password for verification
+    - new_password: Your new password (minimum 8 characters)
+    
+    For security reasons, after a password change, all your active sessions
+    will be invalidated and you'll need to log in again.
+    
+    Requires authentication with a valid access token.
+    """,
+    responses={
+        200: {
+            "description": "Password successfully updated",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "default": {"message": "Password successfully updated. Please log in again."}
+                    }
+                }
+            }
+        },
+        401: {
+            "description": "Unauthorized - Current password is incorrect",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "default": {"detail": "Current password is incorrect"}
+                    }
+                }
+            }
+        }
+    }
+)
+@limiter.limit("5/minute")
+async def update_password(
+    request: Request,
+    password_update: UpdatePassword = Body(...),
+    current_user = Depends(get_current_active_user)
+):
+    """
+    Update the password for the currently authenticated user.
+    Requires verification with current password.
+    After password change, all active sessions will be invalidated.
+    """
+    user_id = str(current_user["_id"])
+    
+    # Verify current password
+    if not verify_password(password_update.current_password, current_user["hashed_password"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Current password is incorrect"
+        )
+    
+    # Hash the new password
+    hashed_password = get_password_hash(password_update.new_password)
+    
+    # Update password in database
+    update_user(user_id, {"hashed_password": hashed_password})
+    
+    # Revoke all tokens for security
+    revoke_all_user_tokens(user_id)
+    
+    return {"message": "Password successfully updated. Please log in again."}
 
 @router.delete(
     "/profile", 
