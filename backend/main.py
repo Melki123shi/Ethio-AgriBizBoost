@@ -1,9 +1,11 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from forcasting.routes import router as predict_router
 from health_assessment.route import router as health_router
 from recommendation.route import router as recommendation_router
 from forcasting.routes import router as forcasting_router
+from expense_tracking.route import router as expense_tracking_router
 import uvicorn
 from auth.routes import router as auth_router
 from security.rate_limiter import limiter
@@ -46,11 +48,22 @@ This API uses **OAuth2 with JWT tokens**.
     }
 )
 
-
 app.openapi_schema = None  
 
 
 original_openapi = app.openapi
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError) -> Response:
+    errors = exc.errors()
+    error_messages = [
+        {"field": error["loc"][-1], "message": error["msg"]}
+        for error in errors
+    ]
+    return JSONResponse(
+        status_code=422,
+        content={"success": False, "errors": error_messages},
+    )
 
 def custom_openapi():
     """Create a custom OpenAPI schema for better Swagger UI documentation"""
@@ -150,6 +163,7 @@ app.include_router(health_router)
 app.include_router(recommendation_router)
 app.include_router(auth_router)
 app.include_router(forcasting_router)
+app.include_router(expense_tracking_router)
 
 @app.get(
     "/",
