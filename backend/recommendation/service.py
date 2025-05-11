@@ -1,28 +1,43 @@
-from .model import AssessmentResult
-from health_assessment.service import calculateFinancials
+import pandas as pd
+import pickle
+import pandas as pd
+import os
 
-def makeRecommendations(data: AssessmentResult):
+from .utils import translations
+basemodel_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "..", "model")
+basemodel_path = os.path.abspath(basemodel_path)  # Ensure the path is absolute
 
-    assessment_result = calculateFinancials(data)
+def make_prediction(input_data: dict, language: str = "en"):
+    recommendation_model_path = basemodel_path + '/recommendation_model.pkl'
+    encoders = basemodel_path + '/encoders.pkl'
 
-    if isinstance(assessment_result, dict):
-        assessment_result = AssessmentResult(**assessment_result)
+    # Load model and encoders
+    with open(recommendation_model_path, 'rb') as f:
+        model = pickle.load(f)
 
-    financial_stability = assessment_result.financialStability
+    with open(encoders, 'rb') as f:
+        encoders = pickle.load(f)
 
-    cash_flow = assessment_result.cashFlow
+    # Create a DataFrame for prediction
+    input_df = pd.DataFrame([input_data])
 
-    if financial_stability >= 50 and cash_flow <= 50:
-        return (
-            "Your financial stability is in a strong position, and your cash flow indicates healthy business operations. "
-            "At this stage, it would be beneficial to reinvest your profits into expanding your business, optimizing production, or improving efficiency. "
-            "Since you are not heavily reliant on external funding, maintaining a financial buffer for unexpected costs is advisable. "
-            "Additionally, exploring new opportunities such as expanding your market reach or diversifying your product line could further strengthen your position."
-        )
-    else:
-        return (
-            "Your financial stability and cash flow are currently not at an optimal level, which may pose challenges in sustaining operations. "
-            "It would be wise to explore funding options, such as applying for a business loan or seeking government grants, to support your financial needs. "
-            "Additionally, focusing on cost-cutting measures, improving operational efficiency, and increasing revenue streams through better pricing strategies or higher sales volumes "
-            "can help stabilize your finances. Careful financial planning and seeking expert advice could also contribute to long-term business sustainability."
-        )
+    # Handle unseen labels
+    if input_df['crop_type'].iloc[0] not in encoders['crop_type'].classes_:
+        input_df['crop_type'] = "teff"  
+
+    if input_df['season'].iloc[0] not in encoders['season'].classes_:
+        input_df['season'] = "bega"  
+
+    # Preprocess the input data
+    input_df['crop_type'] = encoders['crop_type'].transform(input_df['crop_type'])
+    input_df['season'] = encoders['season'].transform(input_df['season'])
+
+    # Make prediction
+    predicted_class = model.predict(input_df)[0]
+    recommendation = encoders['recommendation'].inverse_transform([predicted_class])[0]
+
+    # For different languages, use the translations dictionary
+    if language != "en":
+        recommendation = translations.get(recommendation, {}).get(language, recommendation)
+
+    return {"recommendation": recommendation}

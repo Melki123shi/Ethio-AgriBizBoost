@@ -40,11 +40,10 @@ class UserUpdate(BaseModel):
         description="Ethiopian phone number (Ethio Telecom or Safaricom)",
         example="0912345678"
     )
-    password: Optional[str] = Field(
+    location: Optional[str] = Field(
         None,
-        description="New password (will be hashed)",
-        example="newsecurepassword123",
-        min_length=8
+        description="User's location (optional)",
+        example="Addis Ababa, Ethiopia"
     )
     
     @validator('phone_number')
@@ -177,4 +176,17 @@ class DeleteAccount(BaseModel):
         ...,
         description="Current password to confirm account deletion",
         example="securepassword123"
+    )
+
+class UpdatePassword(BaseModel):
+    current_password: str = Field(
+        ...,
+        description="Current user password",
+        example="oldsecurepassword123"
+    )
+    new_password: str = Field(
+        ...,
+        description="New password (will be hashed)",
+        example="newsecurepassword123",
+        min_length=8
     ) 

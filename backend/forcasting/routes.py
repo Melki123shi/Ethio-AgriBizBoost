@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from forcasting.schemas import PredictionInput
+from forcasting.model import PredictionInput
 from forcasting.services import make_predictions
 
 router = APIRouter()
