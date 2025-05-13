@@ -3,10 +3,10 @@ import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:app/presentation/ui/common/custom_input_field.dart';
 
-class RecommnedationScreen extends StatelessWidget {
+class LoanAdviceScreen extends StatelessWidget {
   final VoidCallback? onSubmitted;
 
-  const RecommnedationScreen({super.key, this.onSubmitted});
+  const LoanAdviceScreen({super.key, this.onSubmitted});
 
   @override
   Widget build(BuildContext context) {

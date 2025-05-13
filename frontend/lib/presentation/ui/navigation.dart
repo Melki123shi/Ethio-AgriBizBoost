@@ -11,11 +11,14 @@ class NavigationTabs extends StatelessWidget {
     required this.onTabSelected,
   });
 
-
   @override
   Widget build(BuildContext context) {
-  final List<String> tabs = [context.commonLocals.health, context.commonLocals.forcasting, context.commonLocals.recommendation];
-  
+    final List<String> tabs = [
+      context.commonLocals.health,
+      context.commonLocals.forcasting,
+      context.commonLocals.recommendation
+    ];
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(tabs.length, (index) {
@@ -32,17 +35,23 @@ class NavigationTabs extends StatelessWidget {
                 borderRadius: BorderRadius.circular(30),
                 gradient: isSelected
                     ? const LinearGradient(
-                        colors: [Color.fromARGB(255, 97, 166, 45), Color.fromARGB(255, 0, 120, 32)],
+                        colors: [
+                          Color.fromARGB(255, 115, 155, 85),
+                          Color.fromARGB(255, 87, 187, 114)
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       )
                     : const LinearGradient(
-                        colors: [Color(0xFFB0FF72), Color(0xFF7EFFA1)],
+                        colors: [
+                          Color.fromARGB(255, 142, 196, 101),
+                          Color(0xFF7EFFA1)
+                        ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                 border: Border.all(
-                  color: Colors.greenAccent,
+                  color: const Color.fromARGB(255, 140, 190, 166),
                   width: 1.5,
                 ),
               ),
@@ -62,4 +71,3 @@ class NavigationTabs extends StatelessWidget {
     );
   }
 }
-

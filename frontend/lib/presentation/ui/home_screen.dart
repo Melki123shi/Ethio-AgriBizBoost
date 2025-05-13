@@ -2,7 +2,6 @@ import 'package:app/domain/entity/forcasting_result_entity.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
 import 'package:app/presentation/ui/forcasting/forcasting_output.dart';
 import 'package:app/presentation/ui/health_assessment/health_assessmet_output.dart';
-import 'package:app/presentation/ui/recommendation/loan_advice_mock_data.dart';
 import 'package:flutter/material.dart';
 import 'package:app/presentation/ui/profile/header.dart';
 import 'package:app/presentation/ui/navigation.dart';
@@ -23,7 +22,6 @@ class HomeScreenState extends State<HomeScreen> {
 
   AssessmentResultEntity? _healthResult;
   ForcastingResultEntity? _forecastResult;
-  bool _showLoanAdvice = false;
 
   void onTabSelected(int index) {
     setState(() {
@@ -39,8 +37,7 @@ class HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           const Header(),
-          const SizedBox(height: 25),
-          const SearchInputField(),
+          // const SearchInputField(),
           const SizedBox(height: 30),
           NavigationTabs(
             selectedIndex: selectedIndex,
@@ -81,14 +78,9 @@ class HomeScreenState extends State<HomeScreen> {
         },
       );
     } else if (selectedIndex == 2) {
-      if (_showLoanAdvice) {
-        return const LoanAdviceMockData();
-      }
       return RecommnedationScreen(
         onSubmitted: () {
-          setState(() {
-            _showLoanAdvice = true;
-          });
+          setState(() {});
         },
       );
     } else {

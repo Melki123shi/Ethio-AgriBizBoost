@@ -1,4 +1,4 @@
-import 'package:app/domain/entity/signup_input_entity.dart';
+import 'package:app/domain/entity/signup_entity.dart';
 
 class SignupRequestDTO {
   final String phoneNumber;
@@ -31,7 +31,7 @@ class SignupRequestDTO {
     };
   }
 
-  static SignupRequestDTO fromEntity(SignupInputEntity entity) {
+  static SignupRequestDTO fromEntity(SignupRequestEntity entity) {
     return SignupRequestDTO(
       name: entity.name,
       email: entity.email,
@@ -39,13 +39,32 @@ class SignupRequestDTO {
       password: entity.password,
     );
   }
+}
 
-  SignupInputEntity toEntity() {
-    return SignupInputEntity(
-      name: name,
-      email: email,
-      phoneNumber: phoneNumber,
-      password: password,
+class SignupResponseDTO {
+  final String userId;
+  final String? message;
+
+  SignupResponseDTO({
+    required this.userId,
+    this.message,
+  });
+
+  factory SignupResponseDTO.fromJson(Map<String, dynamic> json) {
+    return SignupResponseDTO(
+      userId: json['user_id'] ?? '',
+      message: json['message'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+        'user_id': userId,
+        if (message != null) 'message': message,
+      };
+
+  static SignupResponseDTO fromEntity(SignupResponseEntity e) =>
+      SignupResponseDTO(userId: e.userId, message: e.message);
+
+  SignupResponseEntity toEntity() =>
+      SignupResponseEntity(userId: userId, message: message);
 }

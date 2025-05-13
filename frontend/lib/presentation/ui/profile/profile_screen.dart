@@ -8,8 +8,19 @@ import 'package:app/application/user/user_bloc.dart';
 import 'package:app/application/user/user_state.dart';
 import 'package:app/application/user/user_event.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<UserBloc>().add(FetchUser());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,62 +33,59 @@ class ProfileScreen extends StatelessWidget {
           if (state is UserLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is UserLoaded) {
-            final user = state.user;
-
-            return Column(
-              children: [
-                const Header(),
-                Expanded(
-                  child: SafeArea(
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 3),
-                      children: [
-                        _profileHeader(context, theme, user),
-                        const SizedBox(height: 32),
-                        _sectionHeader(context.commonLocals.account, theme),
-                        _settingsCard(theme, children: [
-                          _settingsTile(context, theme,
-                              icon: Icons.person,
-                              label: context.commonLocals.edit_profile),
-                          _settingsTile(context, theme,
-                              icon: Icons.security,
-                              label: context.commonLocals.security),
-                          _settingsTile(context, theme,
-                              icon: Icons.notifications,
-                              label: context.commonLocals.notifications),
-                        ]),
-                        const SizedBox(height: 24),
-                        _sectionHeader(context.commonLocals.preference, theme),
-                        _settingsCard(theme, children: [
-                          _settingsTile(context, theme,
-                              icon: Icons.language,
-                              label: context.commonLocals.language),
-                          _settingsTile(context, theme,
-                              icon: Icons.dark_mode,
-                              label: context.commonLocals.darkmode),
-                        ]),
-                        const SizedBox(height: 24),
-                        _sectionHeader(context.commonLocals.actions, theme),
-                        _settingsCard(theme, children: [
-                          _settingsTile(context, theme,
-                              icon: Icons.logout,
-                              label: context.commonLocals.log_out),
-                        ]),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            );
+            return _buildProfile(context, theme, state.user);
           } else if (state is UserError) {
             return Center(child: Text('Failed to load user: ${state.message}'));
-          } else {
-            context.read<UserBloc>().add(FetchUser());
-            return const Center(child: CircularProgressIndicator());
           }
+          return const SizedBox.shrink();
         },
       ),
+    );
+  }
+
+  Widget _buildProfile(BuildContext context, ThemeData theme, UserEntity user) {
+    return Column(
+      children: [
+        const Header(),
+        Expanded(
+          child: SafeArea(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+              children: [
+                _profileHeader(context, theme, user),
+                const SizedBox(height: 32),
+                _sectionHeader(context.commonLocals.account, theme),
+                _settingsCard(theme, children: [
+                  _settingsTile(context, theme,
+                      icon: Icons.person,
+                      label: context.commonLocals.edit_profile),
+                  _settingsTile(context, theme,
+                      icon: Icons.security,
+                      label: context.commonLocals.security),
+                ]),
+                const SizedBox(height: 24),
+                _sectionHeader(context.commonLocals.preference, theme),
+                _settingsCard(theme, children: [
+                  _settingsTile(context, theme,
+                      icon: Icons.language,
+                      label: context.commonLocals.language),
+                  _settingsTile(context, theme,
+                      icon: Icons.dark_mode,
+                      label: context.commonLocals.darkmode),
+                ]),
+                const SizedBox(height: 24),
+                _sectionHeader(context.commonLocals.actions, theme),
+                _settingsCard(theme, children: [
+                  _settingsTile(context, theme,
+                      icon: Icons.logout, label: context.commonLocals.log_out),
+                  _settingsTile(context, theme,
+                      icon: Icons.delete, label: 'Delete'),
+                ]),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -106,10 +114,11 @@ class ProfileScreen extends StatelessWidget {
                     Text(user.name ?? '---',
                         style: theme.textTheme.titleMedium!
                             .copyWith(color: Colors.white)),
-                    Text(user.job ?? '---',
+                    const SizedBox(height: 4),
+                    Text("Farmer",
                         style: theme.textTheme.bodyMedium!
                             .copyWith(color: Colors.white70)),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 5),
                     Row(
                       children: [
                         const Icon(Icons.location_on,
@@ -117,7 +126,7 @@ class ProfileScreen extends StatelessWidget {
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(user.location ?? '---',
-                              style: theme.textTheme.bodySmall!
+                              style: theme.textTheme.bodyMedium!
                                   .copyWith(color: Colors.white70)),
                         ),
                       ],
@@ -166,10 +175,10 @@ class ProfileScreen extends StatelessWidget {
         final routeMap = {
           context.commonLocals.edit_profile: '/editProfile',
           context.commonLocals.security: '/security',
-          context.commonLocals.notifications: '/notifications',
           context.commonLocals.language: '/language',
           context.commonLocals.darkmode: '/darkmode',
           context.commonLocals.log_out: '/logout',
+          'Delete': '/delete',
         };
 
         final route = routeMap[label];
@@ -200,17 +209,16 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _settingsCard(ThemeData theme, {required List<Widget> children}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: _addDividers(theme, children),
-      ),
-    );
-  }
+  Widget _settingsCard(ThemeData theme, {required List<Widget> children}) =>
+      Container(
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: _addDividers(theme, children),
+        ),
+      );
 
   List<Widget> _addDividers(ThemeData theme, List<Widget> tiles) {
     final list = <Widget>[];

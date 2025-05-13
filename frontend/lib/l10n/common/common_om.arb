@@ -80,7 +80,7 @@
         "dark_mode_off": "Haala Dukkanaaʼaa OFF taʼeera",
         "password_updated": "Jecha Darbii sirnaan haaromfameera",
         "password_empty": "Jecha darbii duwwaa ta’uu hin danda’u",
-        "password_too_short": "Jecha darbii hanga xiqqaa 6 qabaachuu qaba",
+        "password_too_short": "Jecha darbii hanga xiqqaa 8 qabaachuu qaba",
         "passwords_do_not_match": "Jechoonni darbii walfakkaachuu hin qaban",
         "cannot_be_empty": "Duwwaa ta’uu hin danda’u",
         "update_password": "Jecha Darbii Haaromsuu"

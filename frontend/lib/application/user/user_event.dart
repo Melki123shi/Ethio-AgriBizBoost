@@ -1,11 +1,20 @@
-import 'package:app/domain/entity/user_entity.dart';
+import 'package:app/domain/entity/update_profile_entity.dart';
+import 'package:app/domain/entity/update_password_entity.dart';
 
 abstract class UserEvent {}
 
 class FetchUser extends UserEvent {}
 
-class UpdateUser extends UserEvent {
-  final UserEntity user;
+class ClearUser extends UserEvent {}
 
-  UpdateUser(this.user);
+class AppStartedUser extends UserEvent {}
+
+class UpdateUserProfile extends UserEvent {
+  final UpdateProfileEntity data;
+  UpdateUserProfile(this.data);
+}
+
+class UpdateUserPassword extends UserEvent {
+  final UpdatePasswordEntity data;
+  UpdateUserPassword(this.data);
 }

@@ -1,3 +1,4 @@
+import 'package:app/presentation/ui/common/loading_button.dart';
 import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,7 +38,7 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
     return BlocListener<HealthAssessmentBloc, HealthAssessmentState>(
       listener: (context, state) {
         if (state is HealthAssessmentSuccess) {
-          widget.onSubmitted(state.assessmentResult); 
+          widget.onSubmitted(state.assessmentResult);
         } else if (state is HealthAssessmentFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -112,35 +113,36 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
               ),
               const SizedBox(height: 80),
               Center(
-                child: TextButton(
-                  onPressed: () {
-                    final isValid = _formKey.currentState?.validate() ?? false;
-                    if (isValid) {
-                      context.read<HealthAssessmentBloc>().add(
-                            SubmitHealthAssessmentEvent(
-                              cropType: _formData['cropType'],
-                              governmentSubsidy: double.parse(_formData['subsidy']),
-                              salePricePerQuintal: double.parse(_formData['salePrice']),
-                              totalCost: double.parse(_formData['totalCost']),
-                              quantitySold: double.parse(_formData['quantitySold']),
-                            ),
-                          );
-                    }
+                child: BlocBuilder<HealthAssessmentBloc, HealthAssessmentState>(
+                  builder: (context, state) {
+                    final isLoading = state is HealthAssessmentLoading;
+
+                    return LoadingButton(
+                      label: context.commonLocals.submit,
+                      loading: isLoading,
+                      onPressed: isLoading
+                          ? null
+                          : () {
+                              final isValid =
+                                  _formKey.currentState?.validate() ?? false;
+                              if (isValid) {
+                                context.read<HealthAssessmentBloc>().add(
+                                      SubmitHealthAssessmentEvent(
+                                        cropType: _formData['cropType'],
+                                        governmentSubsidy:
+                                            double.parse(_formData['subsidy']),
+                                        salePricePerQuintal: double.parse(
+                                            _formData['salePrice']),
+                                        totalCost: double.parse(
+                                            _formData['totalCost']),
+                                        quantitySold: double.parse(
+                                            _formData['quantitySold']),
+                                      ),
+                                    );
+                              }
+                            },
+                    );
                   },
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.red.shade400,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 12,
-                    ),
-                  ),
-                  child: Text(
-                    context.commonLocals.submit,
-                    style: TextStyle(
-                      color: Theme.of(context).focusColor,
-                      fontSize: 16,
-                    ),
-                  ),
                 ),
               ),
             ],
