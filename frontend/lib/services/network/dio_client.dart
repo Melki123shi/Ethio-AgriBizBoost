@@ -14,6 +14,7 @@ class DioClient {
         baseUrl: 'https://ethio-agribizboost.onrender.com',
         connectTimeout: const Duration(seconds: 10),
         receiveTimeout: const Duration(seconds: 10),
+        persistentConnection: false,
         followRedirects: true,
         validateStatus: (status) => status != null && status < 300,
       ),
@@ -31,12 +32,15 @@ class DioClient {
           handler.next(options);
         },
         onResponse: (response, handler) {
-          print('← RESPONSE ← [${response.statusCode}] ${response.requestOptions.uri}');
+          print(
+              '← RESPONSE ← [${response.statusCode}] ${response.requestOptions.uri}');
           handler.next(response);
         },
         onError: (err, handler) async {
-          print('‼ ERROR ‼ [${err.response?.statusCode}] ${err.requestOptions.method} ${err.requestOptions.uri}');
-          if (err.response?.statusCode == 401 && err.requestOptions.extra['retry'] != true) {
+          print(
+              '‼ ERROR ‼ [${err.response?.statusCode}] ${err.requestOptions.method} ${err.requestOptions.uri}');
+          if (err.response?.statusCode == 401 &&
+              err.requestOptions.extra['retry'] != true) {
             print('Attempting token refresh…');
             final didRefresh = await _refreshToken();
             if (didRefresh) {
@@ -83,7 +87,8 @@ class DioClient {
       return false;
     }
     try {
-      final plainDio = Dio(BaseOptions(baseUrl: 'https://ethio-agribizboost.onrender.com'));
+      final plainDio =
+          Dio(BaseOptions(baseUrl: 'https://ethio-agribizboost.onrender.com'));
       final res = await plainDio.post(
         '/auth/refresh',
         data: {'refreshToken': refresh},

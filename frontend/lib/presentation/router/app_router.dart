@@ -1,5 +1,6 @@
 import 'package:app/domain/entity/assessment_result_entity.dart';
 import 'package:app/domain/entity/forcasting_result_entity.dart';
+import 'package:app/presentation/ui/expense_tracking_screen.dart';
 import 'package:app/presentation/ui/auth/login.dart';
 import 'package:app/presentation/ui/auth/signup.dart';
 import 'package:app/presentation/ui/forcasting/forcasting_output.dart';
@@ -121,6 +122,10 @@ class AppRouter {
       GoRoute(
         path: '/cost_cutting_strategies',
         builder: (_, __) => const CostCuttingStrategiesScreen(),
+      ),
+       GoRoute(
+        path: '/expense_tracking',
+        builder: (_, __) => const ExpenseTrackingScreen(),
       ),
     ],
   );

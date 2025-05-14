@@ -65,7 +65,6 @@ void main() {
                   ],
                   debugShowCheckedModeBanner: false,
                   routerConfig: appRouter,
-                  // routerConfig: router,
                   themeMode: themeMode,
                   theme: ThemeData(
                   textTheme: GoogleFonts.notoSansEthiopicTextTheme(),
@@ -86,7 +85,6 @@ void main() {
                   ),
                   darkTheme: ThemeData(
                     brightness: Brightness.dark,
-                    // primaryColor: const Color.fromARGB(255, 153, 215, 82),
                     primaryColor: const Color.fromARGB(255, 100, 163, 86),
                     scaffoldBackgroundColor: Colors.black,
                     dividerColor: Colors.white12,

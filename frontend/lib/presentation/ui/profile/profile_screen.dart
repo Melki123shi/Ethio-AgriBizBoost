@@ -54,6 +54,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 _profileHeader(context, theme, user),
                 const SizedBox(height: 32),
+                _settingsCard(theme, children: [
+                  _settingsTile(context, theme,
+                      icon: Icons.assessment_rounded,
+                      label: 'Expense Tracking'),
+                ]),
+                const SizedBox(height: 24),
                 _sectionHeader(context.commonLocals.account, theme),
                 _settingsCard(theme, children: [
                   _settingsTile(context, theme,
@@ -173,6 +179,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return InkWell(
       onTap: () {
         final routeMap = {
+          'Expense Tracking': '/expense_tracking',
           context.commonLocals.edit_profile: '/editProfile',
           context.commonLocals.security: '/security',
           context.commonLocals.language: '/language',

@@ -99,7 +99,7 @@ class _ChatScreenState extends State<ChatScreen> {
           });
         });
       }
-    } on DioError catch (e) {
+    } on DioException catch (e) {
       final errorMsg = e.response != null
           ? 'Error ${e.response!.statusCode}'
           : 'Failed to connect to backend';
