@@ -247,7 +247,7 @@ class CommonLocalizationsEn extends CommonLocalizations {
   String get password_empty => 'Password cannot be empty';
 
   @override
-  String get password_too_short => 'Password must be at least 6 characters';
+  String get password_too_short => 'Password must be at least 8 characters';
 
   @override
   String get passwords_do_not_match => 'Passwords do not match';
@@ -257,4 +257,28 @@ class CommonLocalizationsEn extends CommonLocalizations {
 
   @override
   String get update_password => 'Update Password';
+
+  @override
+  String get farm_size => 'Farm size (in hectares)';
+
+  @override
+  String get fertilizer_expense => 'Fertilizer expense';
+
+  @override
+  String get pesticide_expense => 'Pesticide expense';
+
+  @override
+  String get transportation_expense => 'Transportation expense';
+
+  @override
+  String get equipment_expense => 'Equipment expense';
+
+  @override
+  String get seed_expense => 'Seed expense';
+
+  @override
+  String get labour_expense => 'Labour expense';
+
+  @override
+  String get other_utilities => 'Other utilities';
 }

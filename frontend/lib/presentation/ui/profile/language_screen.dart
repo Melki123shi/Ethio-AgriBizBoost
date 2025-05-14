@@ -16,21 +16,20 @@ class _LanguageScreenState extends State<LanguageScreen> {
 
   @override
   @override
-void didChangeDependencies() {
-  super.didChangeDependencies();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-  final currentLocale = localeNotifier.value.languageCode;
+    final currentLocale = localeNotifier.value.languageCode;
 
-  final map = {
-    'en': context.commonLocals.english,
-    'am': context.commonLocals.amharic,
-    'om': context.commonLocals.afan_oromo,
-    'ti': context.commonLocals.tigrigna,
-  };
+    final map = {
+      'en': context.commonLocals.english,
+      'am': context.commonLocals.amharic,
+      'om': context.commonLocals.afan_oromo,
+      'ti': context.commonLocals.tigrigna,
+    };
 
-  selectedLanguage = map[currentLocale] ?? context.commonLocals.english;
-}
-
+    selectedLanguage = map[currentLocale] ?? context.commonLocals.english;
+  }
 
   void _selectLanguage(BuildContext context) async {
     final languages = [
@@ -112,7 +111,8 @@ void didChangeDependencies() {
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: const BoxDecoration(
                   border: Border(
-                    bottom: BorderSide(color: Color.fromARGB(255, 148, 196, 149)),
+                    bottom:
+                        BorderSide(color: Color.fromARGB(255, 148, 196, 149)),
                   ),
                 ),
                 child: Row(

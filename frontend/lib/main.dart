@@ -1,8 +1,11 @@
 import 'package:app/application/auth/auth_bloc.dart';
+import 'package:app/application/auth/auth_event.dart';
+import 'package:app/application/user/user_bloc.dart';
 import 'package:app/l10n/common/localization_classes/common_localizations.dart';
 import 'package:app/l10n/om_material_localizations.dart';
 import 'package:app/l10n/ti_material_localizations.dart';
 import 'package:app/services/api/auth_service.dart';
+import 'package:app/services/api/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/application/forcasting/forcasting_bloc.dart';
@@ -11,6 +14,7 @@ import 'package:app/services/api/forcasting_service.dart';
 import 'package:app/services/api/health_assessment_service.dart';
 import 'package:app/presentation/router/app_router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 final themeNotifier = ValueNotifier(ThemeMode.system);
 final ValueNotifier<Locale> localeNotifier = ValueNotifier(const Locale('en'));
@@ -19,6 +23,9 @@ void main() {
   final healthService = HealthAssessmentService();
   final forcastingService = ForcastingService();
   final authService = AuthService();
+  final userService = UserService();
+  final authBloc = AuthBloc(authService)..add(AppStarted());
+  final appRouter = AppRouter(authBloc).router;
 
   runApp(
     MultiBlocProvider(
@@ -29,8 +36,9 @@ void main() {
         BlocProvider<ForcastingBloc>(
           create: (context) => ForcastingBloc(forcastingService),
         ),
-        BlocProvider<AuthBloc>(
-          create: (context) => AuthBloc(authService),
+        BlocProvider.value(value: authBloc),   
+        BlocProvider<UserBloc>(
+          create: (context) => UserBloc(userService),
         ),
       ],
       child: ValueListenableBuilder<ThemeMode>(
@@ -56,9 +64,10 @@ void main() {
                     GlobalCupertinoLocalizations.delegate,
                   ],
                   debugShowCheckedModeBanner: false,
-                  routerConfig: router,
+                  routerConfig: appRouter,
                   themeMode: themeMode,
                   theme: ThemeData(
+                  textTheme: GoogleFonts.notoSansEthiopicTextTheme(),
                     brightness: Brightness.light,
                     primaryColor: const Color.fromARGB(255, 132, 203, 133),
                     scaffoldBackgroundColor: Colors.white,
@@ -76,7 +85,7 @@ void main() {
                   ),
                   darkTheme: ThemeData(
                     brightness: Brightness.dark,
-                    primaryColor: const Color.fromARGB(255, 153, 215, 82),
+                    primaryColor: const Color.fromARGB(255, 100, 163, 86),
                     scaffoldBackgroundColor: Colors.black,
                     dividerColor: Colors.white12,
                     focusColor: Colors.white,

@@ -121,7 +121,7 @@ class CommonLocalizationsAm extends CommonLocalizations {
   String get search => 'ፈልግ';
 
   @override
-  String get crop_type => 'የተክለ አይነት';
+  String get crop_type => 'የተክል አይነት';
 
   @override
   String get government_subsidy => 'የመንግስት ድጋፍ';
@@ -247,7 +247,7 @@ class CommonLocalizationsAm extends CommonLocalizations {
   String get password_empty => 'የይለፍ ቃል መሞላት አለበት';
 
   @override
-  String get password_too_short => 'የይለፍ ቃል ቢያንስ 6 ፊደላት መሆን አለበት';
+  String get password_too_short => 'የይለፍ ቃል ቢያንስ 8 ፊደላት መሆን አለበት';
 
   @override
   String get passwords_do_not_match => 'የይለፍ ቃሎች አይመሳሰሉም';
@@ -257,4 +257,28 @@ class CommonLocalizationsAm extends CommonLocalizations {
 
   @override
   String get update_password => 'የይለፍ ቃል አዘምን';
+
+  @override
+  String get farm_size => 'የእርሻ መጠን (በሄክታር)';
+
+  @override
+  String get fertilizer_expense => 'የተክል መዋቂያ ወጪ';
+
+  @override
+  String get pesticide_expense => 'የአሳዳጊ ወጪ';
+
+  @override
+  String get transportation_expense => 'የመጓጓዣ ወጪ';
+
+  @override
+  String get equipment_expense => 'የመሣሪያ ወጪ';
+
+  @override
+  String get seed_expense => 'የዘር ወጪ';
+
+  @override
+  String get labour_expense => 'የሥራ ኃይል ወጪ';
+
+  @override
+  String get other_utilities => 'ሌሎች አገልግሎቶች';
 }

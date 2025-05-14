@@ -1,15 +1,26 @@
+import 'package:app/domain/entity/user_entity.dart';
 import 'package:app/presentation/ui/profile/header.dart';
 import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:app/application/user/user_bloc.dart';
+import 'package:app/application/user/user_state.dart';
+import 'package:app/application/user/user_event.dart';
 
-class ProfileScreen extends StatelessWidget {
-  static const _userName = 'Favour Isechap';
-  static const _userRole = 'Farmer';
-  static const _userCity = 'Adis Ababa, Ethiopia';
-  static const _avatarUrl = 'https://via.placeholder.com/150';
-
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<UserBloc>().add(FetchUser());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,50 +28,75 @@ class ProfileScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: Column(
-        children: [
-          const Header(),
-          Expanded(
-            child: SafeArea(
-              child: ListView(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
-                children: [
-                  _profileHeader(context, theme),
-                  const SizedBox(height: 32),
-                  _sectionHeader(context.commonLocals.account, theme),
-                  _settingsCard(theme, children: [
-                    _settingsTile(context, theme,
-                        icon: Icons.person, label: context.commonLocals.edit_profile),
-                    _settingsTile(context, theme,
-                        icon: Icons.security, label: context.commonLocals.security),
-                    _settingsTile(context, theme,
-                        icon: Icons.notifications, label: context.commonLocals.notifications),
-                  ]),
-                  const SizedBox(height: 24),
-                  _sectionHeader(context.commonLocals.preference, theme),
-                  _settingsCard(theme, children: [
-                    _settingsTile(context, theme,
-                        icon: Icons.language, label: context.commonLocals.language),
-                    _settingsTile(context, theme,
-                        icon: Icons.dark_mode, label: context.commonLocals.darkmode),
-                  ]),
-                  const SizedBox(height: 24),
-                  _sectionHeader(context.commonLocals.actions, theme),
-                  _settingsCard(theme, children: [
-                    _settingsTile(context, theme,
-                        icon: Icons.logout, label: context.commonLocals.log_out),
-                  ]),
-                ],
-              ),
-            ),
-          ),
-        ],
+      body: BlocBuilder<UserBloc, UserState>(
+        builder: (context, state) {
+          if (state is UserLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is UserLoaded) {
+            return _buildProfile(context, theme, state.user);
+          } else if (state is UserError) {
+            return Center(child: Text('Failed to load user: ${state.message}'));
+          }
+          return const SizedBox.shrink();
+        },
       ),
     );
   }
 
-  Widget _profileHeader(BuildContext context, ThemeData theme) {
+  Widget _buildProfile(BuildContext context, ThemeData theme, UserEntity user) {
+    return Column(
+      children: [
+        const Header(),
+        Expanded(
+          child: SafeArea(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+              children: [
+                _profileHeader(context, theme, user),
+                const SizedBox(height: 32),
+                _settingsCard(theme, children: [
+                  _settingsTile(context, theme,
+                      icon: Icons.assessment_rounded,
+                      label: 'Expense Tracking'),
+                ]),
+                const SizedBox(height: 24),
+                _sectionHeader(context.commonLocals.account, theme),
+                _settingsCard(theme, children: [
+                  _settingsTile(context, theme,
+                      icon: Icons.person,
+                      label: context.commonLocals.edit_profile),
+                  _settingsTile(context, theme,
+                      icon: Icons.security,
+                      label: context.commonLocals.security),
+                ]),
+                const SizedBox(height: 24),
+                _sectionHeader(context.commonLocals.preference, theme),
+                _settingsCard(theme, children: [
+                  _settingsTile(context, theme,
+                      icon: Icons.language,
+                      label: context.commonLocals.language),
+                  _settingsTile(context, theme,
+                      icon: Icons.dark_mode,
+                      label: context.commonLocals.darkmode),
+                ]),
+                const SizedBox(height: 24),
+                _sectionHeader(context.commonLocals.actions, theme),
+                _settingsCard(theme, children: [
+                  _settingsTile(context, theme,
+                      icon: Icons.logout, label: context.commonLocals.log_out),
+                  _settingsTile(context, theme,
+                      icon: Icons.delete, label: 'Delete'),
+                ]),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _profileHeader(
+      BuildContext context, ThemeData theme, UserEntity user) {
     return Stack(
       children: [
         Container(
@@ -71,30 +107,32 @@ class ProfileScreen extends StatelessWidget {
           ),
           child: Row(
             children: [
-              const CircleAvatar(
+              CircleAvatar(
                 radius: 32,
-                backgroundImage: NetworkImage(_avatarUrl),
+                backgroundImage: NetworkImage(user.profilePictureUrl ??
+                    'https://via.placeholder.com/150'),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_userName,
+                    Text(user.name ?? '---',
                         style: theme.textTheme.titleMedium!
                             .copyWith(color: Colors.white)),
-                    Text(_userRole,
+                    const SizedBox(height: 4),
+                    Text("Farmer",
                         style: theme.textTheme.bodyMedium!
                             .copyWith(color: Colors.white70)),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 5),
                     Row(
                       children: [
                         const Icon(Icons.location_on,
                             size: 16, color: Colors.white70),
                         const SizedBox(width: 4),
                         Flexible(
-                          child: Text(_userCity,
-                              style: theme.textTheme.bodySmall!
+                          child: Text(user.location ?? '---',
+                              style: theme.textTheme.bodyMedium!
                                   .copyWith(color: Colors.white70)),
                         ),
                       ],
@@ -141,12 +179,13 @@ class ProfileScreen extends StatelessWidget {
     return InkWell(
       onTap: () {
         final routeMap = {
+          'Expense Tracking': '/expense_tracking',
           context.commonLocals.edit_profile: '/editProfile',
           context.commonLocals.security: '/security',
-          context.commonLocals.notifications: '/notifications',
           context.commonLocals.language: '/language',
           context.commonLocals.darkmode: '/darkmode',
           context.commonLocals.log_out: '/logout',
+          'Delete': '/delete',
         };
 
         final route = routeMap[label];
@@ -177,17 +216,16 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 
-  Widget _settingsCard(ThemeData theme, {required List<Widget> children}) {
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.cardColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: _addDividers(theme, children),
-      ),
-    );
-  }
+  Widget _settingsCard(ThemeData theme, {required List<Widget> children}) =>
+      Container(
+        decoration: BoxDecoration(
+          color: theme.cardColor,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: _addDividers(theme, children),
+        ),
+      );
 
   List<Widget> _addDividers(ThemeData theme, List<Widget> tiles) {
     final list = <Widget>[];

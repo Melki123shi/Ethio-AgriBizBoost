@@ -80,9 +80,18 @@
         "dark_mode_off": "ጨለማ ዘይቤ ተሰናብቷል",
         "password_updated": "የይለፍ ቃል በተሳካ ሁኔታ ተዘምኗል",
         "password_empty": "የይለፍ ቃል መሞላት አለበት",
-        "password_too_short": "የይለፍ ቃል ቢያንስ 6 ፊደላት መሆን አለበት",
+        "password_too_short": "የይለፍ ቃል ቢያንስ 8 ፊደላት መሆን አለበት",
         "passwords_do_not_match": "የይለፍ ቃሎች አይመሳሰሉም",
         "cannot_be_empty": "ባዶ መሆን አይቻልም",
-        "update_password": "የይለፍ ቃል አዘምን"
-
+        "update_password": "የይለፍ ቃል አዘምን",
+        "farm_size": "የእርሻ መጠን (በሄክታር)",
+        "crop_type": "የተክል አይነት",
+        "season": "ወቅት",
+        "fertilizer_expense": "የተክል መዋቂያ ወጪ",
+        "pesticide_expense": "የአሳዳጊ ወጪ",
+        "transportation_expense": "የመጓጓዣ ወጪ",
+        "equipment_expense": "የመሣሪያ ወጪ",
+        "seed_expense": "የዘር ወጪ",
+        "labour_expense": "የሥራ ኃይል ወጪ",
+        "other_utilities": "ሌሎች አገልግሎቶች"
 }

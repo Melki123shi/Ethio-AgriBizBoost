@@ -80,9 +80,18 @@
         "dark_mode_off": "Haala Dukkanaaʼaa OFF taʼeera",
         "password_updated": "Jecha Darbii sirnaan haaromfameera",
         "password_empty": "Jecha darbii duwwaa ta’uu hin danda’u",
-        "password_too_short": "Jecha darbii hanga xiqqaa 6 qabaachuu qaba",
+        "password_too_short": "Jecha darbii hanga xiqqaa 8 qabaachuu qaba",
         "passwords_do_not_match": "Jechoonni darbii walfakkaachuu hin qaban",
         "cannot_be_empty": "Duwwaa ta’uu hin danda’u",
-        "update_password": "Jecha Darbii Haaromsuu"
-
+        "update_password": "Jecha Darbii Haaromsuu",
+        "farm_size": "Bal’ina lafa (hektar)",
+        "crop_type": "Gosa biqilaa",
+        "season": "Yeroo",
+        "fertilizer_expense": "Baasi fertiizara",
+        "pesticide_expense": "Baasi pestisaaydi",
+        "transportation_expense": "Baasi geejjibaa",
+        "equipment_expense": "Baasi meeshaalee",
+        "seed_expense": "Baasi biqiltii",
+        "labour_expense": "Baasi hojjettootaa",
+        "other_utilities": "Tajaajiloota biroo"
 }

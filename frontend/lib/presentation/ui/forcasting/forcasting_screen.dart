@@ -3,6 +3,7 @@ import 'package:app/application/forcasting/forcasting_event.dart';
 import 'package:app/application/forcasting/forcasting_state.dart';
 import 'package:app/domain/entity/forcasting_result_entity.dart';
 import 'package:app/presentation/ui/common/custom_input_field.dart';
+import 'package:app/presentation/ui/common/loading_button.dart';
 import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,7 +46,7 @@ class _ForcastingScreenState extends State<ForcastingScreen> {
       listener: (context, state) {
         if (state is ForcastingSuccess) {
           if (widget.onSubmitted != null) {
-            widget.onSubmitted!(state.forcastingResult); 
+            widget.onSubmitted!(state.forcastingResult);
           }
         } else if (state is ForcastingFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -71,37 +72,29 @@ class _ForcastingScreenState extends State<ForcastingScreen> {
               _buildInput(context.commonLocals.season, 'season'),
               const SizedBox(height: 50),
               Center(
-                child: TextButton(
-                  onPressed: () {
-                    final isValid = _formKey.currentState?.validate() ?? false;
-                    if (isValid) {
-                      context.read<ForcastingBloc>().add(
-                            SubmitForcastingEvent(
-                              region: _getList('region'),
-                              zone: _getList('zone'),
-                              woreda: _getList('woreda'),
-                              marketname: _getList('marketname'),
-                              cropname: _getList('cropname'),
-                              varietyname: _getList('varietyname'),
-                              season: _getList('season'),
-                            ),
-                          );
-                    }
+                child: BlocBuilder<ForcastingBloc, ForcastingState>(
+                  builder: (context, state) {
+                    final isLoading = state is ForcastingLoading;
+                    return LoadingButton(
+                      label: context.commonLocals.submit,
+                      loading: isLoading,
+                      onPressed: () {
+                        if (_formKey.currentState?.validate() ?? false) {
+                          context.read<ForcastingBloc>().add(
+                                SubmitForcastingEvent(
+                                  region: _getList('region'),
+                                  zone: _getList('zone'),
+                                  woreda: _getList('woreda'),
+                                  marketname: _getList('marketname'),
+                                  cropname: _getList('cropname'),
+                                  varietyname: _getList('varietyname'),
+                                  season: _getList('season'),
+                                ),
+                              );
+                        }
+                      },
+                    );
                   },
-                  style: TextButton.styleFrom(
-                    backgroundColor: Colors.red.shade400,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 30,
-                      vertical: 12,
-                    ),
-                  ),
-                  child: Text(
-                    context.commonLocals.submit,
-                    style: TextStyle(
-                      color: Theme.of(context).focusColor,
-                      fontSize: 16,
-                    ),
-                  ),
                 ),
               ),
             ],

@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:app/domain/entity/signup_input_entity.dart';
-import 'package:app/domain/entity/login_input_entity.dart';
+import 'package:app/domain/entity/signup_entity.dart';
+import 'package:app/domain/entity/login_entity.dart';
 
 abstract class AuthEvent extends Equatable {
   const AuthEvent();
@@ -10,7 +10,7 @@ abstract class AuthEvent extends Equatable {
 }
 
 class SignupSubmitted extends AuthEvent {
-  final SignupInputEntity signupData;
+  final SignupRequestEntity signupData;
 
   const SignupSubmitted({required this.signupData});
 
@@ -19,10 +19,14 @@ class SignupSubmitted extends AuthEvent {
 }
 
 class LoginSubmitted extends AuthEvent {
-  final LoginInputEntity loginData;
+  final LoginRequestEntity loginData;
 
   const LoginSubmitted({required this.loginData});
 
   @override
   List<Object?> get props => [loginData];
 }
+
+class AppStarted extends AuthEvent {}
+
+class LogoutRequested extends AuthEvent {}

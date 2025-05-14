@@ -1,9 +1,11 @@
 import 'package:app/application/auth/auth_bloc.dart';
 import 'package:app/application/auth/auth_event.dart';
 import 'package:app/application/auth/auth_state.dart';
-import 'package:app/domain/entity/login_input_entity.dart';
+import 'package:app/application/user/user_bloc.dart';
+import 'package:app/application/user/user_event.dart';
+import 'package:app/domain/entity/login_entity.dart';
 import 'package:app/presentation/ui/common/custom_input_field.dart';
-import 'package:app/presentation/utils/localization_extension.dart';
+import 'package:app/presentation/ui/common/loading_button.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,17 +15,16 @@ class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
   final _formKey = GlobalKey<FormState>();
+  final _phoneCtrl = TextEditingController();
+  final _pwdCtrl = TextEditingController();
 
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  void _submitForm(BuildContext context) {
+  void _submit(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(
             LoginSubmitted(
-              loginData: LoginInputEntity(
-                phoneNumber: _phoneController.text.trim(),
-                password: _passwordController.text.trim(),
+              loginData: LoginRequestEntity(
+                phoneNumber: _phoneCtrl.text.trim(),
+                password: _pwdCtrl.text.trim(),
               ),
             ),
           );
@@ -38,74 +39,21 @@ class LoginScreen extends StatelessWidget {
     }
   }
 
-  String? _validatePhone(String? value) {
-    if (value == null || value.trim().isEmpty) {
-      return 'Phone number is required.';
-    }
-    final cleanedValue = value.replaceAll(' ', '');
-    final ethioPhoneRegex = RegExp(r'^(?:\+2519\d{8}|09\d{8})\$');
-    if (!ethioPhoneRegex.hasMatch(cleanedValue)) {
-      return 'Enter a valid Ethiopian phone number.';
-    }
-    return null;
-  }
-
-  String? _validatePassword(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Password is required.';
-    }
-    if (value.length < 8) {
-      return 'Password must be at least 8 characters.';
-    }
-    return null;
-  }
+  String? _validatePwd(String? v) => (v == null || v.length < 8)
+      ? 'Password must be at least 8 characters.'
+      : null;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: Stack(
         children: [
-          Positioned(
-            top: -60,
-            left: -80,
-            child: Container(
-              width: 220,
-              height: 220,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 207, 255, 149),
-                    Color.fromARGB(255, 188, 247, 161)
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-            ),
-          ),
-          Positioned(
-            top: -60,
-            left: 45,
-            child: Container(
-              width: 280,
-              height: 140,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    Color.fromARGB(255, 179, 216, 134),
-                    Color.fromARGB(255, 200, 255, 174)
-                  ],
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                ),
-              ),
-            ),
-          ),
+          _bCircle(const [Color(0xFFDFFF95), Color(0xFFBCF7A1)], -60, -80, 220),
+          _bCircle(const [Color(0xFFB3D886), Color(0xFFC8FFAE)], -60, 45, 280,
+              h: 140),
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,73 +75,60 @@ class LoginScreen extends StatelessWidget {
                           horizontal: 24, vertical: 32),
                       child: BlocListener<AuthBloc, AuthState>(
                         listener: (context, state) {
+                          context.read<UserBloc>().add(FetchUser());
                           if (state is AuthSuccess) {
                             context.go('/home');
-                          } else if (state is AuthFailure) {
+                          } 
+                          // else if (state is AuthInitial) {
+                          //   context.read<UserBloc>().add(ClearUser());
+                          // } 
+                          else if (state is AuthFailure) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(state.errorMessage)),
                             );
                           }
                         },
-                        child: Column(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(24),
-                              decoration: BoxDecoration(
-                                color: Theme.of(context).cardColor,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Form(
-                                key: _formKey,
+                        child: BlocBuilder<AuthBloc, AuthState>(
+                          builder: (context, state) {
+                            final isLoading = state is AuthLoading;
+                            return Form(
+                              key: _formKey,
+                              child: Container(
+                                padding: const EdgeInsets.all(24),
+                                decoration: BoxDecoration(
+                                  color: theme.cardColor,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
                                 child: Column(
                                   children: [
-                                    Text(
-                                      context.commonLocals.login,
-                                      style: theme.textTheme.headlineSmall
-                                          ?.copyWith(
-                                        color: theme.focusColor,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
+                                    Text('Login',
+                                        style: theme.textTheme.headlineSmall
+                                            ?.copyWith(
+                                          color: theme.focusColor,
+                                          fontWeight: FontWeight.bold,
+                                        )),
                                     const SizedBox(height: 24),
                                     CustomInputField(
                                       label: 'Phone Number',
                                       hintText: 'Enter your phone number',
-                                      controller: _phoneController,
+                                      controller: _phoneCtrl,
                                       keyboardType: TextInputType.phone,
                                       isRequired: true,
-                                      validator: _validatePhone,
                                     ),
                                     const SizedBox(height: 16),
                                     CustomInputField(
                                       label: 'Password',
                                       hintText: 'Enter your password',
-                                      controller: _passwordController,
+                                      controller: _pwdCtrl,
                                       obscureText: true,
                                       isRequired: true,
-                                      validator: _validatePassword,
+                                      validator: _validatePwd,
                                     ),
                                     const SizedBox(height: 24),
-                                    SizedBox(
-                                      width: 140,
-                                      child: ElevatedButton(
-                                        onPressed: () => _submitForm(context),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: theme.primaryColor,
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          'Login',
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: theme.focusColor),
-                                        ),
-                                      ),
+                                    LoadingButton(
+                                      label: 'Login',
+                                      loading: isLoading,
+                                      onPressed: () => _submit(context),
                                     ),
                                     const SizedBox(height: 15),
                                     RichText(
@@ -211,9 +146,8 @@ class LoginScreen extends StatelessWidget {
                                                   TextDecoration.underline,
                                             ),
                                             recognizer: TapGestureRecognizer()
-                                              ..onTap = () {
-                                                context.go('/signup');
-                                              },
+                                              ..onTap =
+                                                  () => context.go('/signup'),
                                           ),
                                         ],
                                       ),
@@ -221,8 +155,8 @@ class LoginScreen extends StatelessWidget {
                                   ],
                                 ),
                               ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -235,4 +169,19 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget _bCircle(List<Color> colors, double t, double l, double w,
+          {double? h}) =>
+      Positioned(
+        top: t,
+        left: l,
+        child: Container(
+          width: w,
+          height: h ?? w,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: LinearGradient(colors: colors),
+          ),
+        ),
+      );
 }

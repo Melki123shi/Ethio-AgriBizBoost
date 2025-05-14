@@ -1,5 +1,5 @@
-import 'package:app/presentation/ui/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class Header extends StatelessWidget {
   final String? image;
@@ -18,12 +18,18 @@ class Header extends StatelessWidget {
           ),
           Row(
             children: [
+              IconButton(
+                  icon: const Icon(Icons.chat_rounded),
+                  iconSize: 30,
+                  color: Theme.of(context).primaryColor,
+                  onPressed: () {
+                    context.push('/chatbot');
+                  }),
+              const SizedBox(width: 5),
               GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const ProfileScreen(),
-                  ),
-                ),
+                onTap: () {
+                  context.push('/profile');
+                },
                 child: image != null
                     ? CircleAvatar(
                         radius: 15,
@@ -32,28 +38,18 @@ class Header extends StatelessWidget {
                     : Container(
                         width: 30,
                         height: 30,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).primaryColor,
                           shape: BoxShape.circle,
-                          gradient: LinearGradient(
-                            colors: [Color(0xFFB0FF72), Color(0xFF7EFFA1)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
                         ),
                         alignment: Alignment.center,
                         child: Icon(
                           Icons.person,
                           size: 18,
-                          color: Theme.of(context).dividerColor,
+                          color: Theme.of(context).scaffoldBackgroundColor,
                         ),
                       ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.notifications),
-                color: Theme.of(context).focusColor,
-                splashRadius: 20,
-                onPressed: () {},
-              ),
+              )
             ],
           )
         ],

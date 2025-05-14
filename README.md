@@ -72,7 +72,13 @@ Ethio-AgriBoost addresses the critical need for business management tools tailor
    ```
    flutter run
    ```
+4. Adding Localization
 
+Generate localization files for every feature by running the following command from the root directory:
+
+```bash
+dart run frontend/lib/l10n/generate_localizations.dart
+```
 ## Usage
 
 1. **Business Health Assessment**:
