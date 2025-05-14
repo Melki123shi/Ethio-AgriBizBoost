@@ -1,8 +1,8 @@
+import 'package:app/services/network/dio_client.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:dio/dio.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -14,7 +14,7 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _controller = TextEditingController();
   final List<Map<String, String>> _messages = [];
-  String _selectedLanguage = 'am';
+  String _selectedLanguage = 'en';
 
   final Map<String, Map<String, String>> translations = {
     'en': {
@@ -77,28 +77,34 @@ class _ChatScreenState extends State<ChatScreen> {
     });
 
     try {
-      final response = await http.post(
-        Uri.parse('http://192.168.43.188:8000/chatbot'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
+      final dio = DioClient.getDio();
+      final response = await dio.post(
+        '/chatbot',
+        data: {
           'message': message,
           'language': _selectedLanguage,
-        }),
+        },
       );
 
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
+        final botText = (response.data['response'] ?? '').toString();
         setState(() {
-          _messages.add({'sender': 'bot', 'text': data['response'] ?? ''});
+          _messages.add({'sender': 'bot', 'text': botText});
         });
       } else {
         setState(() {
-          _messages.add({'sender': 'bot', 'text': 'Server error'});
+          _messages.add({
+            'sender': 'bot',
+            'text': 'Server error: ${response.statusCode}'
+          });
         });
       }
-    } catch (e) {
+    } on DioError catch (e) {
+      final errorMsg = e.response != null
+          ? 'Error ${e.response!.statusCode}'
+          : 'Failed to connect to backend';
       setState(() {
-        _messages.add({'sender': 'bot', 'text': 'Failed to connect to backend'});
+        _messages.add({'sender': 'bot', 'text': errorMsg});
       });
     }
   }
@@ -110,44 +116,41 @@ class _ChatScreenState extends State<ChatScreen> {
 
     showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: EdgeInsets.zero,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
+      builder: (_) => AlertDialog(
+        contentPadding: EdgeInsets.zero,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildMenuButton(
+              icon: Icons.content_copy,
+              text: lang['copy']!,
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: message['text'] ?? ''));
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context)
+                    .showSnackBar(SnackBar(content: Text(lang['copied']!)));
+              },
+            ),
+            if (isUser)
               _buildMenuButton(
-                icon: Icons.content_copy,
-                text: lang['copy']!,
+                icon: Icons.edit,
+                text: lang['edit']!,
                 onTap: () {
-                  Clipboard.setData(ClipboardData(text: message['text'] ?? ''));
                   Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(lang['copied']!)),
-                  );
+                  _showEditDialog(index);
                 },
               ),
-              if (isUser)
-                _buildMenuButton(
-                  icon: Icons.edit,
-                  text: lang['edit']!,
-                  onTap: () {
-                    Navigator.pop(context);
-                    _showEditDialog(index);
-                  },
-                ),
-              _buildMenuButton(
-                icon: Icons.delete,
-                text: lang['delete']!,
-                onTap: () {
-                  setState(() => _messages.removeAt(index));
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
+            _buildMenuButton(
+              icon: Icons.delete,
+              text: lang['delete']!,
+              onTap: () {
+                setState(() => _messages.removeAt(index));
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -155,30 +158,23 @@ class _ChatScreenState extends State<ChatScreen> {
     required IconData icon,
     required String text,
     required VoidCallback onTap,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        child: Row(
-          children: [
-            Icon(icon, size: 20),
-            const SizedBox(width: 16),
-            Text(text),
-          ],
+  }) =>
+      InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          child: Row(children: [Icon(icon), const SizedBox(width: 16), Text(text)]),
         ),
-      ),
-    );
-  }
+      );
 
   void _showEditDialog(int index) {
     final lang = translations[_selectedLanguage]!;
-    final TextEditingController editController = 
-      TextEditingController(text: _messages[index]['text']);
+    final editController =
+        TextEditingController(text: _messages[index]['text']);
 
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (_) => AlertDialog(
         title: Text(lang['edit_message']!),
         content: TextField(
           controller: editController,
@@ -195,9 +191,7 @@ class _ChatScreenState extends State<ChatScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              setState(() {
-                _messages[index]['text'] = editController.text;
-              });
+              setState(() => _messages[index]['text'] = editController.text);
               Navigator.pop(context);
             },
             child: Text(lang['save']!),
@@ -218,7 +212,10 @@ class _ChatScreenState extends State<ChatScreen> {
         title: Text(
           lang['title']!,
           style: GoogleFonts.notoSansEthiopic(
-              fontWeight: FontWeight.bold, color: Theme.of(context).focusColor, fontSize: 16),
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).focusColor,
+            fontSize: 16,
+          ),
         ),
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 0,
@@ -230,13 +227,7 @@ class _ChatScreenState extends State<ChatScreen> {
               dropdownColor: Theme.of(context).indicatorColor,
               icon: Icon(Icons.language, color: Theme.of(context).focusColor),
               underline: const SizedBox(),
-              onChanged: (String? newLang) {
-                if (newLang != null) {
-                  setState(() {
-                    _selectedLanguage = newLang;
-                  });
-                }
-              },
+              onChanged: (v) => setState(() => _selectedLanguage = v!),
               items: [
                 DropdownMenuItem(value: 'en', child: Text('English', style: TextStyle(color: Theme.of(context).focusColor))),
                 DropdownMenuItem(value: 'am', child: Text('አማርኛ', style: TextStyle(color: Theme.of(context).focusColor))),
@@ -267,7 +258,8 @@ class _ChatScreenState extends State<ChatScreen> {
                         margin: const EdgeInsets.symmetric(vertical: 4),
                         padding: const EdgeInsets.all(12),
                         constraints: BoxConstraints(
-                            maxWidth: MediaQuery.of(context).size.width * 0.75),
+                          maxWidth: MediaQuery.of(context).size.width * 0.75,
+                        ),
                         decoration: BoxDecoration(
                           color: isUser ? Colors.green[300] : Colors.white,
                           borderRadius: BorderRadius.only(

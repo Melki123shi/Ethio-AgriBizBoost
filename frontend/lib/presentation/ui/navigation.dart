@@ -4,31 +4,32 @@ import 'package:flutter/material.dart';
 class NavigationTabs extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onTabSelected;
+  final List<String>? labels;
 
   const NavigationTabs({
     super.key,
     required this.selectedIndex,
     required this.onTabSelected,
+    this.labels,
   });
 
   @override
   Widget build(BuildContext context) {
-    final List<String> tabs = [
-      context.commonLocals.health,
-      context.commonLocals.forcasting,
-      context.commonLocals.recommendation
-    ];
+    final tabs = labels ??
+        [
+          context.commonLocals.health,
+          context.commonLocals.forcasting,
+          context.commonLocals.recommendation,
+        ];
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: List.generate(tabs.length, (index) {
-        bool isSelected = selectedIndex == index;
+        final isSelected = selectedIndex == index;
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 5),
           child: GestureDetector(
-            onTap: () {
-              onTabSelected(index);
-            },
+            onTap: () => onTabSelected(index),
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
               decoration: BoxDecoration(
@@ -37,7 +38,7 @@ class NavigationTabs extends StatelessWidget {
                     ? const LinearGradient(
                         colors: [
                           Color.fromARGB(255, 115, 155, 85),
-                          Color.fromARGB(255, 87, 187, 114)
+                          Color.fromARGB(255, 87, 187, 114),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -45,7 +46,7 @@ class NavigationTabs extends StatelessWidget {
                     : const LinearGradient(
                         colors: [
                           Color.fromARGB(255, 142, 196, 101),
-                          Color(0xFF7EFFA1)
+                          Color(0xFF7EFFA1),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,

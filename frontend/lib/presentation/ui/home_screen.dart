@@ -5,7 +5,6 @@ import 'package:app/presentation/ui/health_assessment/health_assessmet_output.da
 import 'package:flutter/material.dart';
 import 'package:app/presentation/ui/profile/header.dart';
 import 'package:app/presentation/ui/navigation.dart';
-import 'package:app/presentation/ui/search_input.dart';
 import 'package:app/presentation/ui/forcasting/forcasting_screen.dart';
 import 'package:app/presentation/ui/health_assessment/health_assessment_screen.dart';
 import 'package:app/presentation/ui/recommendation/recommnedation_screen.dart';
@@ -37,7 +36,6 @@ class HomeScreenState extends State<HomeScreen> {
       body: Column(
         children: [
           const Header(),
-          // const SearchInputField(),
           const SizedBox(height: 30),
           NavigationTabs(
             selectedIndex: selectedIndex,
@@ -78,7 +76,7 @@ class HomeScreenState extends State<HomeScreen> {
         },
       );
     } else if (selectedIndex == 2) {
-      return RecommnedationScreen(
+      return RecommendationScreen(
         onSubmitted: () {
           setState(() {});
         },

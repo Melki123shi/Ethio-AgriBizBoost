@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/services/api/user_service.dart';
 import 'package:app/application/user/user_event.dart';
 import 'package:app/application/user/user_state.dart';

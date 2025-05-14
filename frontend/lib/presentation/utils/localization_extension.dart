@@ -3,5 +3,4 @@ import 'package:flutter/material.dart';
 
 extension LocalisationExtension on BuildContext {
   CommonLocalizations get commonLocals => CommonLocalizations.of(this)!;
-
 }

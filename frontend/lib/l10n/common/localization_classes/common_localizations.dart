@@ -582,7 +582,7 @@ abstract class CommonLocalizations {
   /// No description provided for @password_too_short.
   ///
   /// In en, this message translates to:
-  /// **'Password must be at least 6 characters'**
+  /// **'Password must be at least 8 characters'**
   String get password_too_short;
 
   /// No description provided for @passwords_do_not_match.
@@ -602,6 +602,54 @@ abstract class CommonLocalizations {
   /// In en, this message translates to:
   /// **'Update Password'**
   String get update_password;
+
+  /// No description provided for @farm_size.
+  ///
+  /// In en, this message translates to:
+  /// **'Farm size (in hectares)'**
+  String get farm_size;
+
+  /// No description provided for @fertilizer_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Fertilizer expense'**
+  String get fertilizer_expense;
+
+  /// No description provided for @pesticide_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Pesticide expense'**
+  String get pesticide_expense;
+
+  /// No description provided for @transportation_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Transportation expense'**
+  String get transportation_expense;
+
+  /// No description provided for @equipment_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Equipment expense'**
+  String get equipment_expense;
+
+  /// No description provided for @seed_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Seed expense'**
+  String get seed_expense;
+
+  /// No description provided for @labour_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour expense'**
+  String get labour_expense;
+
+  /// No description provided for @other_utilities.
+  ///
+  /// In en, this message translates to:
+  /// **'Other utilities'**
+  String get other_utilities;
 }
 
 class _CommonLocalizationsDelegate extends LocalizationsDelegate<CommonLocalizations> {

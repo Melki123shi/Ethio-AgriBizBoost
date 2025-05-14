@@ -121,7 +121,7 @@ class CommonLocalizationsOm extends CommonLocalizations {
   String get search => 'Barbaadi';
 
   @override
-  String get crop_type => 'Gosa Qonnaa';
+  String get crop_type => 'Gosa biqilaa';
 
   @override
   String get government_subsidy => 'Deeggarsa mootummaa';
@@ -247,7 +247,7 @@ class CommonLocalizationsOm extends CommonLocalizations {
   String get password_empty => 'Jecha darbii duwwaa ta’uu hin danda’u';
 
   @override
-  String get password_too_short => 'Jecha darbii hanga xiqqaa 6 qabaachuu qaba';
+  String get password_too_short => 'Jecha darbii hanga xiqqaa 8 qabaachuu qaba';
 
   @override
   String get passwords_do_not_match => 'Jechoonni darbii walfakkaachuu hin qaban';
@@ -257,4 +257,28 @@ class CommonLocalizationsOm extends CommonLocalizations {
 
   @override
   String get update_password => 'Jecha Darbii Haaromsuu';
+
+  @override
+  String get farm_size => 'Bal’ina lafa (hektar)';
+
+  @override
+  String get fertilizer_expense => 'Baasi fertiizara';
+
+  @override
+  String get pesticide_expense => 'Baasi pestisaaydi';
+
+  @override
+  String get transportation_expense => 'Baasi geejjibaa';
+
+  @override
+  String get equipment_expense => 'Baasi meeshaalee';
+
+  @override
+  String get seed_expense => 'Baasi biqiltii';
+
+  @override
+  String get labour_expense => 'Baasi hojjettootaa';
+
+  @override
+  String get other_utilities => 'Tajaajiloota biroo';
 }

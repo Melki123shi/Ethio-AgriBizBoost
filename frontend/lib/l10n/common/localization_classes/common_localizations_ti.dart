@@ -121,7 +121,7 @@ class CommonLocalizationsTi extends CommonLocalizations {
   String get search => 'ድለ';
 
   @override
-  String get crop_type => 'ዓይነት ሰብሓት';
+  String get crop_type => 'ዓይነት ተክል';
 
   @override
   String get government_subsidy => 'ድገት መንግስቲ';
@@ -157,7 +157,7 @@ class CommonLocalizationsTi extends CommonLocalizations {
   String get variety_name => 'ስም ዝርዝር';
 
   @override
-  String get season => 'ወቕታት';
+  String get season => 'ወቅት';
 
   @override
   String get expense_reduction => 'ወጪ መቕናን';
@@ -247,7 +247,7 @@ class CommonLocalizationsTi extends CommonLocalizations {
   String get password_empty => 'መሕለፊ ቃል ባዶ ክኸውን ኣይኽእልን';
 
   @override
-  String get password_too_short => 'መሕለፊ ቃል ዝንሥሓ 6 ፊደላት ክኸውን ኣለዎ';
+  String get password_too_short => 'መሕለፊ ቃል ዝንሥሓ 8 ፊደላት ክኸውን ኣለዎ';
 
   @override
   String get passwords_do_not_match => 'መሕለፊ ቃላት ኣይዛመዱን';
@@ -257,4 +257,28 @@ class CommonLocalizationsTi extends CommonLocalizations {
 
   @override
   String get update_password => 'መሕለፊ ቃል ኣድስ ኣድርግ';
+
+  @override
+  String get farm_size => 'መጠን ናይ እርሻ (ብሄክታር)';
+
+  @override
+  String get fertilizer_expense => 'ወጪ መዋቂያ ተክል';
+
+  @override
+  String get pesticide_expense => 'ወጪ ኣሳዳጊ';
+
+  @override
+  String get transportation_expense => 'ወጪ መጓጓዣ';
+
+  @override
+  String get equipment_expense => 'ወጪ መሳርሒ';
+
+  @override
+  String get seed_expense => 'ወጪ ዕዳል';
+
+  @override
+  String get labour_expense => 'ወጪ ስራሕ';
+
+  @override
+  String get other_utilities => 'ሌሎች ኣገልግሎታት';
 }

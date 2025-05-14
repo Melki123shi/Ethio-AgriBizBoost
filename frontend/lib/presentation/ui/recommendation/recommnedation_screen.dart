@@ -1,41 +1,59 @@
-import 'package:app/presentation/ui/common/loading_button.dart';
+import 'package:app/presentation/ui/navigation.dart';
+import 'package:app/presentation/ui/recommendation/cost_cutting_strategies.dart';
+import 'package:app/presentation/ui/recommendation/loan_advice.dart';
 import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:app/presentation/ui/common/custom_input_field.dart';
 
-class RecommnedationScreen extends StatelessWidget {
+class RecommendationScreen extends StatefulWidget {
   final VoidCallback? onSubmitted;
 
-  const RecommnedationScreen({super.key, this.onSubmitted});
+  const RecommendationScreen({super.key, this.onSubmitted});
+
+  @override
+  RecommendationScreenState createState() => RecommendationScreenState();
+}
+
+class RecommendationScreenState extends State<RecommendationScreen> {
+  int selectedIndex = 0;
+
+  void onTabSelected(int index) {
+    setState(() => selectedIndex = index);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final labels = [
+      context.commonLocals.loan_advice,
+      'cost cutting strategies',
+    ];
+
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          CustomInputField(
-              label: context.commonLocals.expense_reduction,
-              hintText: context.commonLocals.expense_reduction),
-          const SizedBox(height: 30),
-          CustomInputField(
-              label: context.commonLocals.crop_selection,
-              hintText: context.commonLocals.crop_selection),
-          const SizedBox(height: 30),
-          CustomInputField(
-              label: context.commonLocals.loan_advice,
-              hintText: context.commonLocals.loan_advice),
-          const SizedBox(height: 150),
-          Center(
-            child: LoadingButton(
-              onPressed: onSubmitted,
-              label: context.commonLocals.submit,
-              loading: false,
-            ),
+          NavigationTabs(
+            selectedIndex: selectedIndex,
+            onTabSelected: onTabSelected,
+            labels: labels,           // pass your custom labels
+          ),
+          const SizedBox(height: 25),
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: _currentTab(),
           ),
         ],
       ),
     );
+  }
+
+  Widget _currentTab() {
+    switch (selectedIndex) {
+      case 0:
+        return LoanAdviceScreen(onSubmitted: widget.onSubmitted);
+      case 1:
+        return CostCuttingStrategiesScreen(onSubmitted: widget.onSubmitted);
+      default:
+        return const SizedBox.shrink();
+    }
   }
 }

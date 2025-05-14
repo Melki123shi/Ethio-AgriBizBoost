@@ -83,6 +83,15 @@
         "password_too_short": "Password must be at least 8 characters",
         "passwords_do_not_match": "Passwords do not match",
         "cannot_be_empty": "Cannot be empty",
-        "update_password": "Update Password"   
-
+        "update_password": "Update Password",
+        "farm_size": "Farm size (in hectares)",
+        "crop_type": "Crop type",
+        "season": "Season",
+        "fertilizer_expense": "Fertilizer expense",
+        "pesticide_expense": "Pesticide expense",
+        "transportation_expense": "Transportation expense",
+        "equipment_expense": "Equipment expense",
+        "seed_expense": "Seed expense",
+        "labour_expense": "Labour expense",
+        "other_utilities": "Other utilities"  
 }

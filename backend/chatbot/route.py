@@ -6,7 +6,7 @@ router = APIRouter()
 
 class ChatRequest(BaseModel):
     message: str
-    language: str = "am"
+    language: str = "en"
 
 @router.post("/chatbot")
 async def chat_endpoint(

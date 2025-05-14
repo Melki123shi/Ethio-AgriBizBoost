@@ -4,6 +4,6 @@ from .service import makeRecommendations
 
 router = APIRouter()
 
-@router.post("/recommendation")
+@router.post("/loan_advice")
 def makeRecommendation(data: AssessmentResult):
     return makeRecommendations(data)

@@ -83,6 +83,15 @@
         "password_too_short": "መሕለፊ ቃል ዝንሥሓ 8 ፊደላት ክኸውን ኣለዎ",
         "passwords_do_not_match": "መሕለፊ ቃላት ኣይዛመዱን",
         "cannot_be_empty": "ባዶ ክኸውን ኣይኽእልን",
-        "update_password": "መሕለፊ ቃል ኣድስ ኣድርግ"
-
+        "update_password": "መሕለፊ ቃል ኣድስ ኣድርግ",
+        "farm_size": "መጠን ናይ እርሻ (ብሄክታር)",
+        "crop_type": "ዓይነት ተክል",
+        "season": "ወቅት",
+        "fertilizer_expense": "ወጪ መዋቂያ ተክል",
+        "pesticide_expense": "ወጪ ኣሳዳጊ",
+        "transportation_expense": "ወጪ መጓጓዣ",
+        "equipment_expense": "ወጪ መሳርሒ",
+        "seed_expense": "ወጪ ዕዳል",
+        "labour_expense": "ወጪ ስራሕ",
+        "other_utilities": "ሌሎች ኣገልግሎታት"
 }

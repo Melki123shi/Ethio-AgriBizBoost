@@ -12,78 +12,9 @@ import 'package:app/presentation/ui/profile/logout_screen.dart';
 import 'package:app/presentation/ui/profile/notification_screen.dart';
 import 'package:app/presentation/ui/profile/profile_screen.dart';
 import 'package:app/presentation/ui/profile/security_screen.dart';
+import 'package:app/presentation/ui/recommendation/cost_cutting_strategies.dart';
+import 'package:app/presentation/ui/recommendation/loan_advice.dart';
 import 'package:go_router/go_router.dart';
-
-// final GoRouter router = GoRouter(
-//   routes: [
-//     GoRoute(
-//       path: '/',
-//       builder: (context, state) => SignupScreen(),
-//       routes: [
-//         GoRoute(
-//           path: 'signup',
-//           builder: (context, state) => SignupScreen(),
-//         ),
-//         GoRoute(
-//           path: 'login',
-//           builder: (context, state) => LoginScreen(),
-//         ),
-//         GoRoute(
-//           path: 'home',
-//           builder: (context, state) => const HomeScreen(),
-//         ),
-//         GoRoute(
-//           path: 'healthAssessmentOutput',
-//           builder: (context, state) {
-//             final result = state.extra
-//                 as AssessmentResultEntity; 
-//             return HealthAssessmentOutput(result: result);
-//           },
-//         ),
-//         GoRoute(
-//           path: 'forcastingOutput',
-//           builder: (context, state) {
-//             final result = state.extra as ForcastingResultEntity;
-//             return ForcastingOutput(result: result);
-//           },
-//         ),
-//         GoRoute(
-//           path: 'profile',
-//           builder: (context, state) => const ProfileScreen(),
-//         ),
-//         GoRoute(
-//           path: 'editProfile',
-//           builder: (context, state) => const EditProfileScreen(),
-//         ),
-//         GoRoute(
-//           path: 'security',
-//           builder: (context, state) => const SecurityScreen(),
-//         ),
-//         GoRoute(
-//           path: 'notifications',
-//           builder: (context, state) => const NotificationScreen(),
-//         ),
-//         GoRoute(
-//           path: 'language',
-//           builder: (context, state) => const LanguageScreen(),
-//         ),
-//         GoRoute(
-//           path: 'darkmode',
-//           builder: (context, state) => const DarkmodeScreen(),
-//         ),
-//         GoRoute(
-//           path: 'logout',
-//           builder: (context, state) => const LogoutScreen(),
-//         ),
-//       ],
-//     ),
-//   ],
-// );
-
-
-
-
-
 import 'dart:async';
 import 'package:app/presentation/ui/chatbot/chatbot_screen.dart';
 import 'package:flutter/material.dart';
@@ -182,6 +113,14 @@ class AppRouter {
       GoRoute(
         path: '/chatbot',
         builder: (_, __) => const ChatScreen(),
+      ),
+      GoRoute(
+        path: '/loan_advice',
+        builder: (_, __) => const LoanAdviceScreen(),
+      ),
+      GoRoute(
+        path: '/cost_cutting_strategies',
+        builder: (_, __) => const CostCuttingStrategiesScreen(),
       ),
     ],
   );

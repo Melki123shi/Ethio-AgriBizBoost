@@ -3,9 +3,10 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from forcasting.routes import router as predict_router
 from health_assessment.route import router as health_router
-from recommendation.route import router as recommendation_router
 from forcasting.routes import router as forcasting_router
 from expense_tracking.route import router as expense_tracking_router
+from recommendation.loan_advice.route import router as loan_adivce_router
+from recommendation.cost_cutting_strategies.route import router as cost_cutting_strategies_router
 from chatbot.route import router as chatbot_router
 import uvicorn
 from auth.routes import router as auth_router
@@ -161,10 +162,11 @@ app.add_middleware(
 
 # Include routers
 app.include_router(health_router)
-app.include_router(recommendation_router)
 app.include_router(auth_router)
 app.include_router(forcasting_router)
 app.include_router(expense_tracking_router)
+app.include_router(loan_adivce_router)
+app.include_router(cost_cutting_strategies_router)
 app.include_router(chatbot_router)
 
 @app.get(
