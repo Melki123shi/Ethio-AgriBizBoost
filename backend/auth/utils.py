@@ -1,10 +1,11 @@
 from passlib.context import CryptContext
-from jose import JWTError, jwt
+from jose import JWTError, jwt, ExpiredSignatureError
 from datetime import datetime, timedelta
 import os
 import secrets
 from typing import Optional, Dict, Tuple
 import config
+from fastapi import HTTPException, status
 
 from auth.models import TokenData, UserInDB
 from auth.database import get_user_by_phone, store_refresh_token, is_token_valid, get_refresh_token, get_user_by_id
@@ -87,13 +88,24 @@ def validate_refresh_token(refresh_token: str) -> Tuple[bool, Optional[str]]:
     return True, token_data["user_id"]
 
 async def get_current_user(token: str):
-    credentials_exception = Exception("Could not validate credentials")
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         phone_number: str = payload.get("sub")
         if phone_number is None:
             raise credentials_exception
         token_data = TokenData(phone_number=phone_number)
+    except ExpiredSignatureError:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token has expired",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     except JWTError:
         raise credentials_exception
     
