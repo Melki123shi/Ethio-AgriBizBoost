@@ -3,6 +3,7 @@ import 'package:app/domain/dto/signup_dto.dart';
 import 'package:app/domain/entity/login_entity.dart';
 import 'package:app/domain/entity/signup_entity.dart';
 import 'package:app/services/network/dio_client.dart';
+import 'package:app/services/token_storage.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -92,14 +93,14 @@ class AuthService {
     if (refresh != null && refresh.isNotEmpty) {
       try {
         await dio.post('/auth/logout', data: {'refreshToken': refresh});
-      } catch (_) {/* ignore */}
+      } catch (_) {}
     }
     await _storage.deleteAll();
   }
 
   Future<void> _writeTokens(String access, String refresh, String type) async {
     await _storage.write(key: 'access', value: access);
-    await _storage.write(key: 'refresh', value: refresh);
+    await TokenStorage.saveRefreshToken(refresh);
     await _storage.write(key: 'type', value: type);
   }
 

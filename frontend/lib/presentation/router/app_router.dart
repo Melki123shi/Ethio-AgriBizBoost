@@ -14,7 +14,7 @@ import 'package:app/presentation/ui/profile/notification_screen.dart';
 import 'package:app/presentation/ui/profile/profile_screen.dart';
 import 'package:app/presentation/ui/profile/security_screen.dart';
 import 'package:app/presentation/ui/recommendation/cost_cutting_strategies.dart';
-import 'package:app/presentation/ui/recommendation/loan_advice.dart';
+import 'package:app/presentation/ui/recommendation/loan_advice_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:async';
 import 'package:app/presentation/ui/chatbot/chatbot_screen.dart';

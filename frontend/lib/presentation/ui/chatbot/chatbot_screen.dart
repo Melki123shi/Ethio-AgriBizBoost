@@ -261,7 +261,7 @@ class _ChatScreenState extends State<ChatScreen> {
                           maxWidth: MediaQuery.of(context).size.width * 0.75,
                         ),
                         decoration: BoxDecoration(
-                          color: isUser ? Colors.green[300] : Colors.white,
+                          color: isUser ? Theme.of(context).primaryColor : Theme.of(context).hintColor,
                           borderRadius: BorderRadius.only(
                             topLeft: const Radius.circular(16),
                             topRight: const Radius.circular(16),
@@ -278,7 +278,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                         child: Text(
                           message['text'] ?? '',
-                          style: GoogleFonts.notoSansEthiopic(fontSize: 16),
+                          style: GoogleFonts.notoSansEthiopic(fontSize: 16, color: Theme.of(context).focusColor),
                         ),
                       ),
                     ),

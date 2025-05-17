@@ -1,10 +1,12 @@
 import 'package:app/application/auth/auth_bloc.dart';
 import 'package:app/application/auth/auth_event.dart';
+import 'package:app/application/recommendation/loan_advice/loan_advice_bloc.dart';
 import 'package:app/application/user/user_bloc.dart';
 import 'package:app/l10n/common/localization_classes/common_localizations.dart';
 import 'package:app/l10n/om_material_localizations.dart';
 import 'package:app/l10n/ti_material_localizations.dart';
 import 'package:app/services/api/auth_service.dart';
+import 'package:app/services/api/loan_advice_service.dart';
 import 'package:app/services/api/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -24,6 +26,7 @@ void main() {
   final forcastingService = ForcastingService();
   final authService = AuthService();
   final userService = UserService();
+  final loanAdviceService = LoanAdviceService();
   final authBloc = AuthBloc(authService)..add(AppStarted());
   final appRouter = AppRouter(authBloc).router;
 
@@ -39,6 +42,9 @@ void main() {
         BlocProvider.value(value: authBloc),   
         BlocProvider<UserBloc>(
           create: (context) => UserBloc(userService),
+        ),
+         BlocProvider<LoanAdviceBloc>(
+          create: (context) => LoanAdviceBloc(loanAdviceService),
         ),
       ],
       child: ValueListenableBuilder<ThemeMode>(
@@ -77,6 +83,7 @@ void main() {
                     splashColor: Colors.black12,
                     canvasColor: Colors.black26,
                     indicatorColor: const Color(0xFF94C495),
+                    hintColor: const Color.fromARGB(255, 201, 201, 201),
                     appBarTheme: const AppBarTheme(
                       backgroundColor: Colors.white,
                       foregroundColor: Colors.black,
@@ -93,6 +100,7 @@ void main() {
                     splashColor: Colors.white10,
                     canvasColor: Colors.white24,
                     indicatorColor: const Color.fromARGB(255, 64, 85, 64),
+                    hintColor: const Color.fromARGB(255, 130, 130, 130),
                     appBarTheme: const AppBarTheme(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
