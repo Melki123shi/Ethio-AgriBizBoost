@@ -12,11 +12,11 @@ class DioClient {
     final dio = Dio(
       BaseOptions(
         baseUrl: 'https://ethio-agribizboost.onrender.com',
-        connectTimeout: const Duration(seconds: 10),
-        receiveTimeout: const Duration(seconds: 10),
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
         persistentConnection: false,
         followRedirects: true,
-        validateStatus: (status) => status != null && status < 300,
+        validateStatus: (_) => true,
       ),
     );
 
@@ -24,43 +24,46 @@ class DioClient {
       InterceptorsWrapper(
         onRequest: (options, handler) async {
           final access = await TokenStorage.readAccessToken();
-          print('→ REQUEST → [${options.method}] ${options.uri}');
           if (access != null && access.isNotEmpty) {
             options.headers['Authorization'] = 'Bearer $access';
-            print('Added Authorization header');
           }
           handler.next(options);
         },
-        onResponse: (response, handler) {
-          print(
-              '← RESPONSE ← [${response.statusCode}] ${response.requestOptions.uri}');
-          handler.next(response);
-        },
-        onError: (err, handler) async {
-          print(
-              '‼ ERROR ‼ [${err.response?.statusCode}] ${err.requestOptions.method} ${err.requestOptions.uri}');
-          if (err.response?.statusCode == 401 &&
-              err.requestOptions.extra['retry'] != true) {
-            print('Attempting token refresh…');
+        onResponse: (response, handler) async {
+          if (response.statusCode == 401 &&
+              response.requestOptions.extra['retry'] != true) {
             final didRefresh = await _refreshToken();
             if (didRefresh) {
               final newAccess = await TokenStorage.readAccessToken();
               if (newAccess != null && newAccess.isNotEmpty) {
-                print('Token refreshed, retrying request…');
-                final opts = err.requestOptions;
-                opts.headers['Authorization'] = 'Bearer $newAccess';
-                opts.extra['retry'] = true;
-                try {
-                  final clone = await dio.fetch(opts);
-                  return handler.resolve(clone);
-                } catch (e) {
-                  print('Retry failed: $e');
-                }
+                final opts = response.requestOptions;
+
+                final clonedResponse = await dio.request(
+                  opts.path,
+                  data: opts.data,
+                  queryParameters: opts.queryParameters,
+                  options: Options(
+                    method: opts.method,
+                    headers: {
+                      ...opts.headers,
+                      'Authorization': 'Bearer $newAccess',
+                    },
+                    contentType: opts.contentType,
+                    responseType: opts.responseType,
+                    extra: {
+                      ...opts.extra,
+                      'retry': true,
+                    },
+                  ),
+                );
+                return handler.resolve(clonedResponse);
               }
-            } else {
-              print('Refresh token failed');
-            }
+            } else {}
           }
+
+          handler.next(response);
+        },
+        onError: (err, handler) async {
           handler.next(err);
         },
       ),
@@ -80,10 +83,8 @@ class DioClient {
   }
 
   static Future<bool> _refreshToken() async {
-    print('🔄 Refreshing token…');
     final refresh = await TokenStorage.readRefreshToken();
     if (refresh == null || refresh.isEmpty) {
-      print('No refresh token available');
       return false;
     }
     try {
@@ -91,9 +92,9 @@ class DioClient {
           Dio(BaseOptions(baseUrl: 'https://ethio-agribizboost.onrender.com'));
       final res = await plainDio.post(
         '/auth/refresh',
-        data: {'refreshToken': refresh},
+        data: {"refresh_token": refresh},
       );
-      print('Refresh response: ${res.statusCode} ${res.data}');
+
       if (res.statusCode != 200) return false;
 
       final newAccess = res.data['access_token'] as String?;
@@ -109,10 +110,9 @@ class DioClient {
       if (type != null && type.isNotEmpty) {
         await TokenStorage.saveTokenType(type);
       }
-      print('Token refresh successful');
+
       return true;
     } catch (e) {
-      print('Exception during refresh: $e');
       return false;
     }
   }

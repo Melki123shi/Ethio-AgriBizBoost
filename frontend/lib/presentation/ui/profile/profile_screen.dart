@@ -35,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           } else if (state is UserLoaded) {
             return _buildProfile(context, theme, state.user);
           } else if (state is UserError) {
-            return Center(child: Text('Failed to load user: ${state.message}'));
+            return const Center(child: Text('Failed to fetch user'));
           }
           return const SizedBox.shrink();
         },

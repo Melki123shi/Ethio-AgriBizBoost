@@ -1,12 +1,15 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class AssessmentResult(BaseModel):
+
+class CropData(BaseModel):
+    cropType: Optional[str] = None
+    governmentSubsidy: float = 0
+    salePricePerQuintal: float = 0
+    totalCost: float = 0
+    quantitySold: float = 0
+
+
+class AssessmentResult(CropData):
     financialStability: float
     cashFlow: float
-    quantitySold: Optional[float] = None 
-    salePricePerQuintal: Optional[float] = None
-    cropType: Optional[str] = None
-    governmentSubsidy: Optional[float] = None
-    totalCost: Optional[float] = None
-   
