@@ -281,4 +281,73 @@ class CommonLocalizationsOm extends CommonLocalizations {
 
   @override
   String get other_utilities => 'Tajaajiloota biroo';
+
+  @override
+  String get loan_advice_result => 'Bu\'aa Gorsa Liqaa';
+
+  @override
+  String get loan_advice_failed => 'Gorsichi liqaa hin milkoofne';
+
+  @override
+  String get pick_date => 'Guyyaa Filadhu';
+
+  @override
+  String get date => 'Guyyaa';
+
+  @override
+  String get goods => 'Meeshaalee';
+
+  @override
+  String get amount => 'Baay\'ina';
+
+  @override
+  String get price_etb => 'Gatii (ETB)';
+
+  @override
+  String get add => 'Galchi';
+
+  @override
+  String get add_assessment => 'Qorannoo Galchi';
+
+  @override
+  String get expenses => 'Baasiwwan';
+
+  @override
+  String get stability => 'Itti fufiinsa';
+
+  @override
+  String get confirm_delete => 'Haqummaa Mirkaneessi';
+
+  @override
+  String get delete_entry_prompt => 'Are you sure you want to delete this entry?';
+
+  @override
+  String get delete => 'Haqi';
+
+  @override
+  String get edit_entry => 'Galmee Gulaali';
+
+  @override
+  String get edit_not_implemented => 'Gulaalli ammas hin hojjatamne.';
+
+  @override
+  String get ok => 'Tole';
+
+  @override
+  String get expense_tracking => 'Raawwii Baasii';
+
+  @override
+  String get assessment_history => 'Seenaa Qorannoo';
+
+  @override
+  String get add_expense => 'Baasi galchi';
+
+  @override
+  String get farmer => 'Qotee bulaa';
+
+  @override
+  String get failed_to_fetch_user => 'Fayyadamaa argachuu hin dandeenye';
+
+  @override
+  String get action => 'Hojii';
 }

@@ -35,7 +35,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           } else if (state is UserLoaded) {
             return _buildProfile(context, theme, state.user);
           } else if (state is UserError) {
-            return const Center(child: Text('Failed to fetch user'));
+            return Center(
+                child: Text(context.commonLocals.failed_to_fetch_user));
           }
           return const SizedBox.shrink();
         },
@@ -57,7 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _settingsCard(theme, children: [
                   _settingsTile(context, theme,
                       icon: Icons.assessment_rounded,
-                      label: 'Expense Tracking'),
+                      label: context.commonLocals.expense_tracking),
                 ]),
                 const SizedBox(height: 24),
                 _sectionHeader(context.commonLocals.account, theme),
@@ -85,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   _settingsTile(context, theme,
                       icon: Icons.logout, label: context.commonLocals.log_out),
                   _settingsTile(context, theme,
-                      icon: Icons.delete, label: 'Delete'),
+                      icon: Icons.delete, label: context.commonLocals.delete),
                 ]),
               ],
             ),
@@ -121,7 +122,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         style: theme.textTheme.titleMedium!
                             .copyWith(color: Colors.white)),
                     const SizedBox(height: 4),
-                    Text("Farmer",
+                    Text(context.commonLocals.farmer,
                         style: theme.textTheme.bodyMedium!
                             .copyWith(color: Colors.white70)),
                     const SizedBox(height: 5),
@@ -179,13 +180,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return InkWell(
       onTap: () {
         final routeMap = {
-          'Expense Tracking': '/expense_tracking',
+          context.commonLocals.expense_tracking: '/expense_tracking',
           context.commonLocals.edit_profile: '/editProfile',
           context.commonLocals.security: '/security',
           context.commonLocals.language: '/language',
           context.commonLocals.darkmode: '/darkmode',
           context.commonLocals.log_out: '/logout',
-          'Delete': '/delete',
+          context.commonLocals.delete: '/delete',
         };
 
         final route = routeMap[label];

@@ -1,3 +1,4 @@
+import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseTrackingScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
       builder: (ctx) {
         final theme = Theme.of(ctx);
         return AlertDialog(
-          title: const Text('Add Expense'),
+          title: Text(context.commonLocals.add_expense),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -49,21 +50,21 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                 },
                 child: Text(
                   selectedDate == null
-                      ? 'Pick Date'
-                      : 'Date: ${selectedDate!.toLocal()}'.split(' ')[0],
+                      ? context.commonLocals.pick_date
+                      : '${context.commonLocals.date}: ${selectedDate!.toLocal()}'.split(' ')[0],
                 ),
               ),
               const SizedBox(height: 10),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Goods',
+                  labelText: context.commonLocals.goods,
                   labelStyle: theme.textTheme.bodyMedium,
                 ),
                 onChanged: (val) => goods = val,
               ),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Amount',
+                  labelText: context.commonLocals.amount,
                   labelStyle: theme.textTheme.bodyMedium,
                 ),
                 onChanged: (val) => amount = val,
@@ -71,7 +72,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
               ),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Price (ETB)',
+                  labelText: context.commonLocals.price_etb,
                   labelStyle: theme.textTheme.bodyMedium,
                 ),
                 onChanged: (val) => price = val,
@@ -96,7 +97,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                 });
                 Navigator.pop(ctx);
               },
-              child: const Text('Add'),
+              child: Text(context.commonLocals.add),
             ),
           ],
         );
@@ -117,7 +118,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
       builder: (ctx) {
         final theme = Theme.of(ctx);
         return AlertDialog(
-          title: const Text('Add Assessment'),
+          title: Text(context.commonLocals.add_assessment),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -139,42 +140,42 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                 },
                 child: Text(
                   selectedDate == null
-                      ? 'Pick Date'
-                      : 'Date: ${selectedDate!.toLocal()}'.split(' ')[0],
+                      ? context.commonLocals.pick_date
+                      : '${context.commonLocals.date}: ${selectedDate!.toLocal()}'.split(' ')[0],
                 ),
               ),
               const SizedBox(height: 10),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Goods',
+                  labelText: context.commonLocals.goods,
                   labelStyle: theme.textTheme.bodyMedium,
                 ),
                 onChanged: (val) => goods = val,
               ),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Expenses',
+                  labelText: context.commonLocals.expenses,
                   labelStyle: theme.textTheme.bodyMedium,
                 ),
                 onChanged: (val) => expensesStr = val,
               ),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Profit',
+                  labelText: context.commonLocals.profit,
                   labelStyle: theme.textTheme.bodyMedium,
                 ),
                 onChanged: (val) => profit = val,
               ),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Stability',
+                  labelText: context.commonLocals.stability,
                   labelStyle: theme.textTheme.bodyMedium,
                 ),
                 onChanged: (val) => stability = val,
               ),
               TextField(
                 decoration: InputDecoration(
-                  labelText: 'Cash Flow',
+                  labelText: context.commonLocals.cash_flow,
                   labelStyle: theme.textTheme.bodyMedium,
                 ),
                 onChanged: (val) => cashFlow = val,
@@ -200,7 +201,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                 });
                 Navigator.pop(ctx);
               },
-              child: const Text('Add'),
+              child: Text(context.commonLocals.add),
             ),
           ],
         );
@@ -214,15 +215,15 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
       builder: (ctx) {
         final theme = Theme.of(ctx);
         return AlertDialog(
-          title: const Text('Confirm Delete'),
-          content: const Text('Are you sure you want to delete this entry?'),
+          title:  Text(context.commonLocals.confirm_delete),
+          content: Text(context.commonLocals.delete_entry_prompt),
           actions: [
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: theme.colorScheme.onSurface,
               ),
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel'),
+              child: Text(context.commonLocals.cancel),
             ),
             TextButton(
               style: TextButton.styleFrom(
@@ -238,7 +239,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                 });
                 Navigator.pop(ctx);
               },
-              child: const Text('Delete'),
+              child: Text(context.commonLocals.delete),
             ),
           ],
         );
@@ -252,15 +253,15 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
       builder: (ctx) {
         final theme = Theme.of(ctx);
         return AlertDialog(
-          title: const Text('Edit Entry'),
-          content: const Text('Editing is not yet implemented.'),
+          title: Text(context.commonLocals.edit_entry),
+          content: Text(context.commonLocals.edit_not_implemented),
           actions: [
             TextButton(
               style: TextButton.styleFrom(
                 foregroundColor: theme.primaryColor,
               ),
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('OK'),
+              child: Text(context.commonLocals.ok),
             ),
           ],
         );
@@ -294,7 +295,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                 backgroundColor: primary,
                 foregroundColor: theme.colorScheme.onPrimary,
               ),
-              child: const Text('Add'),
+              child: Text(context.commonLocals.add),
             ),
         ],
       );
@@ -306,7 +307,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
         padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 16),
         child: Column(
           children: [
-            sectionTitle('Expense Tracking', _showAddExpenseDialog),
+            sectionTitle(context.commonLocals.expense_tracking, _showAddExpenseDialog),
             const SizedBox(height: 10),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -342,8 +343,8 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                         },
                         child: Row(
                           children: [
-                            const Flexible(
-                              child: Text('Date', overflow: TextOverflow.ellipsis),
+                            Flexible(
+                              child: Text(context.commonLocals.date, overflow: TextOverflow.ellipsis),
                             ),
                             Icon(
                               _isDateAscendingExpense ? Icons.arrow_upward : Icons.arrow_downward,
@@ -355,16 +356,16 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                       ),
                     ),
                   ),
-                  const DataColumn(
+                  DataColumn(
                     label: SizedBox(
                       width: 56,
-                      child: Center(child: Text('Goods')),
+                      child: Center(child: Text(context.commonLocals.goods)),
                     ),
                   ),
-                  const DataColumn(
+                 DataColumn(
                     label: SizedBox(
                       width: 52,
-                      child: Center(child: Text('Amount')),
+                      child: Center(child: Text(context.commonLocals.amount)),
                     ),
                   ),
                   DataColumn(
@@ -383,7 +384,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                         },
                         child: Row(
                           children: [
-                            const Flexible(child: Text('Price (ETB)')),
+                             Flexible(child: Text(context.commonLocals.price_etb)),
                             Icon(
                               _isPriceAscending ? Icons.arrow_upward : Icons.arrow_downward,
                               size: 13,
@@ -394,7 +395,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                       ),
                     ),
                   ),
-                  const DataColumn(label: SizedBox(width: 56, child: Center(child: Text('Action')))),
+                 DataColumn(label: SizedBox(width: 56, child: Center(child: Text(context.commonLocals.action)))),
                 ],
                 rows: expenses.asMap().entries.map((entry) {
                   final idx = entry.key;
@@ -429,7 +430,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
             ),
 
             const SizedBox(height: 40),
-            sectionTitle('Assessment History', _showAddAssessmentDialog),
+            sectionTitle(context.commonLocals.assessment_history, _showAddAssessmentDialog),
             const SizedBox(height: 10),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -465,7 +466,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                         },
                         child: Row(
                           children: [
-                            const Flexible(child: Text('Date', overflow: TextOverflow.ellipsis)),
+                             Flexible(child: Text(context.commonLocals.date, overflow: TextOverflow.ellipsis)),
                             Icon(
                               _isDateAscendingAssessment ? Icons.arrow_upward : Icons.arrow_downward,
                               size: 10,
@@ -476,8 +477,8 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                       ),
                     ),
                   ),
-                  const DataColumn(label: SizedBox(width: 50, child: Center(child: Text('Goods')))),
-                  const DataColumn(label: SizedBox(width: 60, child: Center(child: Text('Expenses')))),
+                  DataColumn(label: SizedBox(width: 50, child: Center(child: Text(context.commonLocals.goods)))),
+                   DataColumn(label: SizedBox(width: 60, child: Center(child: Text(context.commonLocals.expenses)))),
                   DataColumn(
                     label: SizedBox(
                       width: 50,
@@ -494,7 +495,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                         },
                         child: Row(
                           children: [
-                            const Flexible(child: Text('Profit', overflow: TextOverflow.ellipsis)),
+                             Flexible(child: Text(context.commonLocals.profit, overflow: TextOverflow.ellipsis)),
                             Icon(
                               _isProfitAscending ? Icons.arrow_upward : Icons.arrow_downward,
                               size: 10,
@@ -505,9 +506,9 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                       ),
                     ),
                   ),
-                  const DataColumn(label: SizedBox(width: 60, child: Center(child: Text('Stability')))),
-                  const DataColumn(label: SizedBox(width: 70, child: Center(child: Text('Cash Flow')))),
-                  const DataColumn(label: SizedBox(width: 60, child: Center(child: Text('Action')))),
+                   DataColumn(label: SizedBox(width: 60, child: Center(child: Text(context.commonLocals.stability)))),
+                  DataColumn(label: SizedBox(width: 70, child: Center(child: Text(context.commonLocals.cash_flow)))),
+                  DataColumn(label: SizedBox(width: 60, child: Center(child: Text(context.commonLocals.action)))),
                 ],
                 rows: assessments.asMap().entries.map((e) {
                   final idx = e.key;

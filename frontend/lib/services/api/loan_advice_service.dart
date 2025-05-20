@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:app/domain/dto/loan_advice_input_dto.dart';
 import 'package:app/services/network/dio_client.dart';
 import 'package:dio/dio.dart';
@@ -8,8 +9,16 @@ class LoanAdviceService {
   Future<Map<String, dynamic>> giveLoanAdvice(
       LoanAdviceInputDto loanAdviceInputDTO) async {
     try {
-      final response = await dio.post('/loan_advice',
-          data: loanAdviceInputDTO);
+      final jsonBody = jsonEncode(loanAdviceInputDTO.toJson());
+      final response = await dio.post(
+        '/loan_advice',
+        data: jsonBody,
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
       return response.data as Map<String, dynamic>;
     } on DioException {
       throw Exception('Failed to fetch loan advice');

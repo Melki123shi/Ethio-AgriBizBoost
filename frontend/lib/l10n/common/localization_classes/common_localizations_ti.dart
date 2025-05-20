@@ -281,4 +281,73 @@ class CommonLocalizationsTi extends CommonLocalizations {
 
   @override
   String get other_utilities => 'ሌሎች ኣገልግሎታት';
+
+  @override
+  String get loan_advice_result => 'ውጽኢት መኣር ብዕድል';
+
+  @override
+  String get loan_advice_failed => 'መኣር ብዕድል ኣልተሳነን';
+
+  @override
+  String get pick_date => 'ዕለት ምረጽ';
+
+  @override
+  String get date => 'ዕለት';
+
+  @override
+  String get goods => 'እቃታት';
+
+  @override
+  String get amount => 'መጠን';
+
+  @override
+  String get price_etb => 'ዋጋ (ብር)';
+
+  @override
+  String get add => 'ኣኣትው';
+
+  @override
+  String get add_assessment => 'ግምገማ ኣኣትው';
+
+  @override
+  String get expenses => 'ክፍያታት';
+
+  @override
+  String get stability => 'መንእሰይነት';
+
+  @override
+  String get confirm_delete => 'ምስዳስ ኣረጋግፅ';
+
+  @override
+  String get delete_entry_prompt => 'Are you sure you want to delete this entry?';
+
+  @override
+  String get delete => 'ስደድ';
+
+  @override
+  String get edit_entry => 'መዝገብ ኣስተካክል';
+
+  @override
+  String get edit_not_implemented => 'ምስማማ ኣልተሰራሕን';
+
+  @override
+  String get ok => 'እወ';
+
+  @override
+  String get expense_tracking => 'ክፍያታት ኣብ ተኸታተል';
+
+  @override
+  String get assessment_history => 'ታሪኽ ግምገማ';
+
+  @override
+  String get add_expense => 'ክፍያ ኣኣትው';
+
+  @override
+  String get farmer => 'ሰብ ምህዳር';
+
+  @override
+  String get failed_to_fetch_user => 'ተጠቃሚ ኣብ ምውሳን ኣይተሳነን';
+
+  @override
+  String get action => 'ተግባር';
 }
