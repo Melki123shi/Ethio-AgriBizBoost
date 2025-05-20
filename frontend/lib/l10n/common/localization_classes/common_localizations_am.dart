@@ -281,4 +281,73 @@ class CommonLocalizationsAm extends CommonLocalizations {
 
   @override
   String get other_utilities => 'ሌሎች አገልግሎቶች';
+
+  @override
+  String get loan_advice_result => 'የብድር ምክር ውጤት';
+
+  @override
+  String get loan_advice_failed => 'የብድር ምክር አልተሳካም';
+
+  @override
+  String get pick_date => 'ቀን ይምረጡ';
+
+  @override
+  String get date => 'ቀን';
+
+  @override
+  String get goods => 'እቃዎች';
+
+  @override
+  String get amount => 'መጠን';
+
+  @override
+  String get price_etb => 'ዋጋ (ብር)';
+
+  @override
+  String get add => 'አክል';
+
+  @override
+  String get add_assessment => 'ግምገማ አክል';
+
+  @override
+  String get expenses => 'ኪሳራዎች';
+
+  @override
+  String get stability => 'መረጋጋት';
+
+  @override
+  String get confirm_delete => 'አጥፋ ያረጋግጡ';
+
+  @override
+  String get delete_entry_prompt => 'Are you sure you want to delete this entry?';
+
+  @override
+  String get delete => 'ሰርዝ';
+
+  @override
+  String get edit_entry => 'መዝገብ አርትዕ';
+
+  @override
+  String get edit_not_implemented => 'ማስተካከያ ገና አልተተገበረም።';
+
+  @override
+  String get ok => 'እሺ';
+
+  @override
+  String get expense_tracking => 'የኪሳራ እቅፍ';
+
+  @override
+  String get assessment_history => 'የግምገማ ታሪክ';
+
+  @override
+  String get add_expense => 'ክፍያ አክል';
+
+  @override
+  String get farmer => 'ገበሬ';
+
+  @override
+  String get failed_to_fetch_user => 'ተጠቃሚን ማግኘት አልተሳካም';
+
+  @override
+  String get action => 'ተግባር';
 }

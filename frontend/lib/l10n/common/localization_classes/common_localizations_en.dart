@@ -281,4 +281,73 @@ class CommonLocalizationsEn extends CommonLocalizations {
 
   @override
   String get other_utilities => 'Other utilities';
+
+  @override
+  String get loan_advice_result => 'Loan Advice Result';
+
+  @override
+  String get loan_advice_failed => 'Loan advice failed';
+
+  @override
+  String get pick_date => 'Pick Date';
+
+  @override
+  String get date => 'Date';
+
+  @override
+  String get goods => 'Goods';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get price_etb => 'Price (ETB)';
+
+  @override
+  String get add => 'Add';
+
+  @override
+  String get add_assessment => 'Add Assessment';
+
+  @override
+  String get expenses => 'Expenses';
+
+  @override
+  String get stability => 'Stability';
+
+  @override
+  String get confirm_delete => 'Confirm Delete';
+
+  @override
+  String get delete_entry_prompt => 'Are you sure you want to delete this entry?';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get edit_entry => 'Edit Entry';
+
+  @override
+  String get edit_not_implemented => 'Editing is not yet implemented.';
+
+  @override
+  String get ok => 'Ok';
+
+  @override
+  String get expense_tracking => 'Expense Tracking';
+
+  @override
+  String get assessment_history => 'Assessment History';
+
+  @override
+  String get add_expense => 'Add expense';
+
+  @override
+  String get farmer => 'Farmer';
+
+  @override
+  String get failed_to_fetch_user => 'Failed to fetch user';
+
+  @override
+  String get action => 'Action';
 }

@@ -1,17 +1,17 @@
 class LoanAdviceResultEntity {
-  final String loanAdviceRecommendation;
+  final String recommendation;
 
-  LoanAdviceResultEntity({required this.loanAdviceRecommendation});
+  LoanAdviceResultEntity({required this.recommendation});
 
   factory LoanAdviceResultEntity.fromJson(Map<String, dynamic> json) {
     return LoanAdviceResultEntity(
-      loanAdviceRecommendation: json['loanAdviceRecommendation'] as String,
+      recommendation: json['recommendation']
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'loanAdviceRecommendation': loanAdviceRecommendation,
+      'recommendation': recommendation,
     };
   }
 }

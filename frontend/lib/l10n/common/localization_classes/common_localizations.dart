@@ -650,6 +650,144 @@ abstract class CommonLocalizations {
   /// In en, this message translates to:
   /// **'Other utilities'**
   String get other_utilities;
+
+  /// No description provided for @loan_advice_result.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan Advice Result'**
+  String get loan_advice_result;
+
+  /// No description provided for @loan_advice_failed.
+  ///
+  /// In en, this message translates to:
+  /// **'Loan advice failed'**
+  String get loan_advice_failed;
+
+  /// No description provided for @pick_date.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick Date'**
+  String get pick_date;
+
+  /// No description provided for @date.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get date;
+
+  /// No description provided for @goods.
+  ///
+  /// In en, this message translates to:
+  /// **'Goods'**
+  String get goods;
+
+  /// No description provided for @amount.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amount;
+
+  /// No description provided for @price_etb.
+  ///
+  /// In en, this message translates to:
+  /// **'Price (ETB)'**
+  String get price_etb;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No description provided for @add_assessment.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Assessment'**
+  String get add_assessment;
+
+  /// No description provided for @expenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get expenses;
+
+  /// No description provided for @stability.
+  ///
+  /// In en, this message translates to:
+  /// **'Stability'**
+  String get stability;
+
+  /// No description provided for @confirm_delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Delete'**
+  String get confirm_delete;
+
+  /// No description provided for @delete_entry_prompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this entry?'**
+  String get delete_entry_prompt;
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @edit_entry.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Entry'**
+  String get edit_entry;
+
+  /// No description provided for @edit_not_implemented.
+  ///
+  /// In en, this message translates to:
+  /// **'Editing is not yet implemented.'**
+  String get edit_not_implemented;
+
+  /// No description provided for @ok.
+  ///
+  /// In en, this message translates to:
+  /// **'Ok'**
+  String get ok;
+
+  /// No description provided for @expense_tracking.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Tracking'**
+  String get expense_tracking;
+
+  /// No description provided for @assessment_history.
+  ///
+  /// In en, this message translates to:
+  /// **'Assessment History'**
+  String get assessment_history;
+
+  /// No description provided for @add_expense.
+  ///
+  /// In en, this message translates to:
+  /// **'Add expense'**
+  String get add_expense;
+
+  /// No description provided for @farmer.
+  ///
+  /// In en, this message translates to:
+  /// **'Farmer'**
+  String get farmer;
+
+  /// No description provided for @failed_to_fetch_user.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to fetch user'**
+  String get failed_to_fetch_user;
+
+  /// No description provided for @action.
+  ///
+  /// In en, this message translates to:
+  /// **'Action'**
+  String get action;
 }
 
 class _CommonLocalizationsDelegate extends LocalizationsDelegate<CommonLocalizations> {

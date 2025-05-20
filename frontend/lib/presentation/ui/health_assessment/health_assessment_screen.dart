@@ -41,9 +41,7 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
           widget.onSubmitted(state.assessmentResult);
         } else if (state is HealthAssessmentFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Assessment failed. Please try again.'),
-            ),
+            SnackBar(content: Text(context.commonLocals.assessment_failed)),
           );
         }
       },

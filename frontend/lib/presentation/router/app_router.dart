@@ -1,5 +1,6 @@
 import 'package:app/domain/entity/assessment_result_entity.dart';
 import 'package:app/domain/entity/forcasting_result_entity.dart';
+import 'package:app/domain/entity/loan_advice_result_entity.dart';
 import 'package:app/presentation/ui/expense_tracking_screen.dart';
 import 'package:app/presentation/ui/auth/login.dart';
 import 'package:app/presentation/ui/auth/signup.dart';
@@ -14,6 +15,7 @@ import 'package:app/presentation/ui/profile/notification_screen.dart';
 import 'package:app/presentation/ui/profile/profile_screen.dart';
 import 'package:app/presentation/ui/profile/security_screen.dart';
 import 'package:app/presentation/ui/recommendation/cost_cutting_strategies.dart';
+import 'package:app/presentation/ui/recommendation/loan_advice_output_screen.dart';
 import 'package:app/presentation/ui/recommendation/loan_advice_screen.dart';
 import 'package:go_router/go_router.dart';
 import 'dart:async';
@@ -21,6 +23,7 @@ import 'package:app/presentation/ui/chatbot/chatbot_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app/application/auth/auth_bloc.dart';
 import 'package:app/application/auth/auth_state.dart';
+
 class RouterNotifier extends ChangeNotifier {
   RouterNotifier(Stream<dynamic> stream) {
     _sub = stream.listen((_) => notifyListeners());
@@ -53,7 +56,6 @@ class AppRouter {
       }
       return null;
     },
-
     routes: <RouteBase>[
       GoRoute(
         path: '/',
@@ -123,9 +125,13 @@ class AppRouter {
         path: '/cost_cutting_strategies',
         builder: (_, __) => const CostCuttingStrategiesScreen(),
       ),
-       GoRoute(
+      GoRoute(
         path: '/expense_tracking',
         builder: (_, __) => const ExpenseTrackingScreen(),
+      ),
+      GoRoute(
+        path: '/loan_advice_result',
+        builder: (_, state) => LoanAdviceResultScreen(result: state.extra as LoanAdviceResultEntity),
       ),
     ],
   );

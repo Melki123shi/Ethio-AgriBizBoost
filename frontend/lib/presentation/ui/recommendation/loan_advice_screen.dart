@@ -7,6 +7,7 @@ import 'package:app/domain/entity/loan_advice_input_entity.dart';
 import 'package:app/presentation/ui/common/custom_input_field.dart';
 import 'package:app/presentation/ui/common/loading_button.dart';
 import 'package:app/presentation/utils/localization_extension.dart';
+import 'package:go_router/go_router.dart';
 
 class LoanAdviceScreen extends StatefulWidget {
   final VoidCallback? onSubmitted;
@@ -38,9 +39,12 @@ class _LoanAdviceScreenState extends State<LoanAdviceScreen> {
       listener: (context, state) {
         if (state is LoanAdviceSuccess) {
           widget.onSubmitted?.call();
+          context.push('/loan_advice_result', extra: state.loanAdviceResult);
         } else if (state is LoanAdviceFailure) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Something went wrong. Try again.')),
+            SnackBar(
+              content: Text(context.commonLocals.loan_advice_failed),
+            ),
           );
         }
       },
@@ -100,24 +104,35 @@ class _LoanAdviceScreenState extends State<LoanAdviceScreen> {
                 },
               ),
               const SizedBox(height: 80),
-              Center(
-                child: LoadingButton(
-                  label: context.commonLocals.submit,
-                  loading: false,
-                  onPressed: () {
-                    final isValid = _formKey.currentState?.validate() ?? false;
-                    if (isValid) {
-                      final input = LoanAdviceInputEntity(
-                        cropType: _formData['cropType'],
-                        governmentSubsidy: double.parse(_formData['subsidy']),
-                        salePricePerQuintal: double.parse(_formData['salePrice']),
-                        totalCost: double.parse(_formData['totalCost']),
-                        quantitySold: double.parse(_formData['quantitySold']),
-                      );
-                      context.read<LoanAdviceBloc>().add(SubmitLoanAdviceEvent(input));
-                    }
-                  },
-                ),
+              BlocBuilder<LoanAdviceBloc, LoanAdviceState>(
+                builder: (context, state) {
+                  final isLoading = state is LoanAdviceLoading;
+                  return Center(
+                    child: LoadingButton(
+                      label: context.commonLocals.submit,
+                      loading: isLoading,
+                      onPressed: () {
+                        final isValid =
+                            _formKey.currentState?.validate() ?? false;
+                        if (isValid) {
+                          final input = LoanAdviceInputEntity(
+                            cropType: _formData['cropType'],
+                            governmentSubsidy:
+                                double.parse(_formData['subsidy']),
+                            salePricePerQuintal:
+                                double.parse(_formData['salePrice']),
+                            totalCost: double.parse(_formData['totalCost']),
+                            quantitySold:
+                                double.parse(_formData['quantitySold']),
+                          );
+                          context
+                              .read<LoanAdviceBloc>()
+                              .add(SubmitLoanAdviceEvent(input));
+                        }
+                      },
+                    ),
+                  );
+                },
               ),
             ],
           ),
