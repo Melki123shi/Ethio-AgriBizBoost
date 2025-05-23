@@ -33,3 +33,6 @@ var/
 
 # MongoDB
 data/
+
+#environement variables
+venv/
