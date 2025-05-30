@@ -10,12 +10,14 @@ import 'package:app/application/auth/auth_state.dart';
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final AuthService auth;
 
-  AuthBloc(this.auth) : super(AuthInitial()) {
+  AuthBloc(this.auth, {bool autoStart = true}) : super(AuthInitial()) {
     on<AppStarted>(_onAppStarted);
     on<SignupSubmitted>(_onSignup);
     on<LoginSubmitted>(_onLogin);
     on<LogoutRequested>(_onLogout);
-    add(AppStarted());
+    if (autoStart) {
+      add(AppStarted());
+    }
   }
 
   Future<void> _onAppStarted(AppStarted _, Emitter<AuthState> emit) async {
@@ -60,8 +62,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _onLogout(LogoutRequested _, Emitter<AuthState> emit) async {
-    await auth.logout();
-    await TokenStorage.clearAccessToken();
-    emit(AuthInitial());
+    try {
+      await auth.logout();
+    } catch (err) {
+      // Log the error but don't fail the logout process
+      // The user should be logged out locally even if server logout fails
+    } finally {
+      // Always clear local tokens and emit initial state
+      await TokenStorage.clearAccessToken();
+      DioClient.getDio().options.headers.remove('Authorization');
+      emit(AuthInitial());
+    }
   }
 }

@@ -8,6 +8,11 @@ class DioClient {
 
   static Dio getDio() => _dio ??= _buildDio();
 
+  // Reset singleton for testing
+  static void resetForTesting() {
+    _dio = null;
+  }
+
   static Dio _buildDio() {
     final dio = Dio(
       BaseOptions(

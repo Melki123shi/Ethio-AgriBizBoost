@@ -39,6 +39,15 @@ class SignupRequestDTO {
       password: entity.password,
     );
   }
+
+  SignupRequestEntity toEntity() {
+    return SignupRequestEntity(
+      phoneNumber: phoneNumber,
+      password: password,
+      name: name,
+      email: email,
+    );
+  }
 }
 
 class SignupResponseDTO {
