@@ -14,6 +14,7 @@ googletrans==4.0.0-rc1
 deep-translator
 google-generativeai
 lightgbm>=3.3.0
+scikit-learn>=1.3.0
 # Windows-specific and cross-platform servers
 waitress>=2.0.0
 # Windows tools (optional, install as needed)
