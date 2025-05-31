@@ -1,5 +1,5 @@
 import 'package:app/presentation/ui/navigation.dart';
-import 'package:app/presentation/ui/recommendation/cost_cutting_strategies.dart';
+import 'package:app/presentation/ui/recommendation/cost_cutting_strategies_screen.dart';
 import 'package:app/presentation/ui/recommendation/loan_advice_screen.dart';
 import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
