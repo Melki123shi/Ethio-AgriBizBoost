@@ -37,25 +37,27 @@ class RouterNotifier extends ChangeNotifier {
 }
 
 class AppRouter {
-  AppRouter(this._authBloc);
+  AppRouter(this._authBloc, this.loggedIn);
 
   final AuthBloc _authBloc;
+  final bool loggedIn;
 
   late final GoRouter router = GoRouter(
     refreshListenable: RouterNotifier(_authBloc.stream),
-    redirect: (BuildContext context, GoRouterState state) {
-      final loggedIn = _authBloc.state is AuthSuccess;
-      final loggingIn = state.uri.toString() == '/login';
-      final signingUp = state.uri.toString() == '/signup';
+    initialLocation: loggedIn ? '/home' : '/login',
+    // redirect: (BuildContext context, GoRouterState state) {
+    //   final loggedIn = _authBloc.state is AuthSuccess;
+    //   final loggingIn = state.uri.toString() == '/login';
+    //   final signingUp = state.uri.toString() == '/signup';
 
-      if (!loggedIn && !loggingIn && !signingUp) {
-        return '/login';
-      }
-      if (loggedIn && (loggingIn || signingUp)) {
-        return '/home';
-      }
-      return null;
-    },
+    //   if (!loggedIn && !loggingIn && !signingUp) {
+    //     return '/login';
+    //   }
+    //   if (loggedIn && (loggingIn || signingUp)) {
+    //     return '/home';
+    //   }
+    //   return null;
+    // },
     routes: <RouteBase>[
       GoRoute(
         path: '/',
