@@ -9,14 +9,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
   SignupScreen({super.key});
 
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
+
   final _nameCtrl = TextEditingController();
+
   final _emailCtrl = TextEditingController();
+
   final _phoneCtrl = TextEditingController();
+
   final _pwdCtrl = TextEditingController();
+
+  bool _isObsecure = true;
 
   void _submit(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
@@ -162,9 +173,19 @@ class SignupScreen extends StatelessWidget {
                                       label: 'Password',
                                       hintText: 'Enter your password',
                                       controller: _pwdCtrl,
-                                      obscureText: true,
+                                      obscureText: _isObsecure,
                                       isRequired: true,
                                       validator: _validatePwd,
+                                      suffixIcon: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _isObsecure = !_isObsecure;
+                                            });
+                                          },
+                                          icon: _isObsecure
+                                              ? const Icon(Icons.visibility)
+                                              : const Icon(
+                                                  Icons.visibility_off)),
                                     ),
                                     const SizedBox(height: 24),
                                     LoadingButton(

@@ -11,12 +11,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+
   final _phoneCtrl = TextEditingController();
+
   final _pwdCtrl = TextEditingController();
+
+  bool _isObsecure = true;
 
   void _submit(BuildContext context) {
     if (_formKey.currentState?.validate() ?? false) {
@@ -78,10 +87,10 @@ class LoginScreen extends StatelessWidget {
                           context.read<UserBloc>().add(FetchUser());
                           if (state is AuthSuccess) {
                             context.go('/home');
-                          } 
+                          }
                           // else if (state is AuthInitial) {
                           //   context.read<UserBloc>().add(ClearUser());
-                          // } 
+                          // }
                           else if (state is AuthFailure) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text(state.errorMessage)),
@@ -120,9 +129,18 @@ class LoginScreen extends StatelessWidget {
                                       label: 'Password',
                                       hintText: 'Enter your password',
                                       controller: _pwdCtrl,
-                                      obscureText: true,
+                                      obscureText: _isObsecure,
                                       isRequired: true,
                                       validator: _validatePwd,
+                                      suffixIcon: IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _isObsecure = !_isObsecure;
+                                            });
+                                          },
+                                          icon: _isObsecure
+                                              ? const Icon(Icons.visibility)
+                                              : const Icon(Icons.visibility_off)),
                                     ),
                                     const SizedBox(height: 24),
                                     LoadingButton(
