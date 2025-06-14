@@ -9,7 +9,7 @@ import 'package:app/application/forcasting/forcasting_state.dart';
 import 'package:app/domain/entity/forcasting_input_entity.dart';
 import 'package:app/domain/entity/forcasting_result_entity.dart';
 
-import 'forecasting_mock.mocks.dart';
+import 'forcasting_service_test.mocks.mocks.dart';
 
 
 void main() {
