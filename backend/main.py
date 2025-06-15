@@ -8,6 +8,7 @@ from expense_tracking.route import router as expense_tracking_router
 from recommendation.loan_advice.route import router as loan_adivce_router
 from recommendation.cost_cutting_strategies.route import router as cost_cutting_strategies_router
 from chatbot.route import router as chatbot_router
+from admin.routes import router as admin_router
 import uvicorn
 from auth.routes import router as auth_router
 from security.rate_limiter import limiter
@@ -114,6 +115,11 @@ def custom_openapi():
         if path.startswith("/health/") and not path.endswith("/public"):
             for method in openapi_schema["paths"][path]:
                 openapi_schema["paths"][path][method]["security"] = [{"bearerAuth": []}]
+                
+        # Secure admin endpoints - all admin endpoints require authentication
+        if path.startswith("/admin/") and not path.endswith("/health"):
+            for method in openapi_schema["paths"][path]:
+                openapi_schema["paths"][path][method]["security"] = [{"bearerAuth": []}]
     
     app.openapi_schema = openapi_schema
     return app.openapi_schema
@@ -168,6 +174,7 @@ app.include_router(expense_tracking_router)
 app.include_router(loan_adivce_router)
 app.include_router(cost_cutting_strategies_router)
 app.include_router(chatbot_router)
+app.include_router(admin_router)
 
 @app.get(
     "/",
