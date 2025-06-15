@@ -25,6 +25,7 @@ from auth.database import (
 )
 from auth.dependencies import get_current_active_user
 from security.rate_limiter import limiter
+from admin.database import log_activity
 
 router = APIRouter(
     prefix="/auth", 
@@ -208,6 +209,15 @@ async def login_for_access_token(
     # Create both access and refresh tokens
     tokens = create_tokens_for_user(str(user["_id"]), user["phone_number"])
     
+    # Log successful login
+    log_activity(
+        user_id=str(user["_id"]),
+        action="login",
+        service="auth",
+        ip_address=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent")
+    )
+    
     return Token(**tokens)
 
 @router.post(
@@ -282,6 +292,15 @@ async def login_with_json(
     
     # Create both access and refresh tokens
     tokens = create_tokens_for_user(str(user["_id"]), user["phone_number"])
+    
+    # Log successful login
+    log_activity(
+        user_id=str(user["_id"]),
+        action="login",
+        service="auth",
+        ip_address=request.client.host if request.client else None,
+        user_agent=request.headers.get("user-agent")
+    )
     
     return Token(**tokens)
 
