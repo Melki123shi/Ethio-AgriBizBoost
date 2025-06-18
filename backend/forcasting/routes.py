@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 @router.post("/predict", response_model=dict)
-@limiter.limit("30/minute")
+# @limiter.limit("30/minute")
 async def predict(
     data: PredictionInput,
     current_user: dict = Depends(get_current_active_user)
