@@ -116,5 +116,22 @@
         "add_expense": "ክፍያ ኣኣትው",
         "farmer": "ሰብ ምህዳር",
         "failed_to_fetch_user": "ተጠቃሚ ኣብ ምውሳን ኣይተሳነን",
-        "action": "ተግባር"
+        "action": "ግብሪ",
+        "fertilizer_expense": "ዋጋ ድኹዒ (ብር)",
+        "pesticide_expense": "ዋጋ ጸረ-ባልዕ (ብር)",
+        "transportation_expense": "ዋጋ መጓዓዝያ (ብር)",
+        "equipment_expense": "ዋጋ ኣቕሑ (ብር)",
+        "seed_expense": "ዋጋ ዘርኢ (ብር)",
+        "labour_expense": "ዋጋ ጉልበት (ብር)",
+        "other_utilities": "ዋጋ ካልኦት ኣገልግሎታት (ብር)",
+        "fill_all_fields": "እባኹም ኩሉ መርበባት ምልኡ።",
+        "invalid_input": "ጌጋ ምእታው",
+        "recommendation_success_title": "ምኽሪ",
+        "recommendation_error_title": "ጌጋ",
+        "language": "ቋንቋ",
+        "select_language": "ቋንቋ ምረጽ",
+        "is_required": "የድሊ",
+        "enter_valid_number": "ቅኑዕ ቁጽሪ የእቱ",
+        "cost_cutting_result_title": "ምኽሪ ምቑራጽ ወጻኢታት",
+        "recommendation_label": "ምኽሪ:"
 }
