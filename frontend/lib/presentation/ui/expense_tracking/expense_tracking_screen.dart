@@ -121,7 +121,6 @@
 //   );
 // }
 
-
 //   void _confirmDelete(bool isExpense, int index) {
 //     showDialog(
 //       context: context,
@@ -382,7 +381,7 @@
 //                   );
 //                 },
 //               ),
-        
+
 //               // second table code here
 //             ],
 //           ),
@@ -391,8 +390,6 @@
 //     );
 //   }
 // }
-
-
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -408,132 +405,144 @@ class ExpenseTrackingScreen extends StatefulWidget {
 }
 
 class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
-  bool _isDateAscendingExpense = true;
-  bool _isPriceAscending = true;
-
   @override
   void initState() {
     super.initState();
+    // Fetch initial expenses when the screen loads
     context.read<ExpenseTrackingBloc>().add(GetExpensesEvent());
   }
 
   Future<void> _showAddExpenseDialog() async {
-  final formKey = GlobalKey<FormState>();
-  String goods = '';
-  String amount = '';
-  String price = '';
-  DateTime? selectedDate;
+    final formKey = GlobalKey<FormState>();
+    String goods = '';
+    String amount = '';
+    String price = '';
+    DateTime? selectedDate;
 
-  await showDialog(
-    context: context,
-    builder: (ctx) {
-      final theme = Theme.of(ctx);
-      return AlertDialog(
-        title: Text(context.commonLocals.add_expense),
-        content: Form(
-          key: formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.primaryColor,
-                    foregroundColor: theme.colorScheme.onPrimary,
+    await showDialog(
+      context: context,
+      builder: (ctx) {
+        final theme = Theme.of(ctx);
+        // Use StatefulBuilder to manage the state of the dialog independently
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              title: Text(context.commonLocals.add_expense),
+              content: Form(
+                key: formKey,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.primaryColor,
+                          foregroundColor: theme.colorScheme.onPrimary,
+                        ),
+                        onPressed: () async {
+                          final picked = await showDatePicker(
+                            context: ctx,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate:
+                                DateTime.now().add(const Duration(days: 365)),
+                          );
+                          if (picked != null) {
+                            // Use the dialog's own setState
+                            setDialogState(() => selectedDate = picked);
+                          }
+                        },
+                        child: Text(
+                          selectedDate == null
+                              ? context.commonLocals.pick_date
+                              : '${context.commonLocals.date}: ${selectedDate!.toIso8601String().split('T')[0]}',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: context.commonLocals.goods,
+                          labelStyle: theme.textTheme.bodyMedium,
+                        ),
+                        validator: (val) =>
+                            (val == null || val.isEmpty) ? 'Required' : null,
+                        onChanged: (val) => goods = val,
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: context.commonLocals.amount,
+                          labelStyle: theme.textTheme.bodyMedium,
+                        ),
+                        validator: (val) {
+                          if (val == null || val.isEmpty) return 'Required';
+                          final parsed = int.tryParse(val);
+                          if (parsed == null || parsed <= 0)
+                            return 'Enter a valid amount';
+                          return null;
+                        },
+                        onChanged: (val) => amount = val,
+                        keyboardType: TextInputType.number,
+                      ),
+                      TextFormField(
+                        decoration: InputDecoration(
+                          labelText: context.commonLocals.price_etb,
+                          labelStyle: theme.textTheme.bodyMedium,
+                        ),
+                        validator: (val) {
+                          if (val == null || val.isEmpty) return 'Required';
+                          final parsed = double.tryParse(val);
+                          if (parsed == null || parsed < 0)
+                            return 'Enter valid price';
+                          return null;
+                        },
+                        onChanged: (val) => price = val,
+                        keyboardType: TextInputType.number,
+                      ),
+                    ],
                   ),
-                  onPressed: () async {
-                    final picked = await showDatePicker(
-                      context: ctx,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (picked != null) {
-                      setState(() => selectedDate = picked);
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: Text(context.commonLocals.cancel),
+                ),
+                TextButton(
+                  style: TextButton.styleFrom(
+                    foregroundColor: theme.primaryColor,
+                  ),
+                  onPressed: () {
+                    if (selectedDate == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(context.commonLocals.pick_date)),
+                      );
+                      return;
+                    }
+
+                    if (formKey.currentState!.validate()) {
+                      final expense = ExpenseTrackingEntity.fromUserInput(
+                        date: selectedDate!,
+                        goods: goods.trim(),
+                        amount: int.tryParse(amount) ?? 0,
+                        price_etb: double.tryParse(price) ?? 0.0,
+                      );
+                      context.read<ExpenseTrackingBloc>().add(
+                            AddExpenseTrackingEvent(expense),
+                          );
+
+                      Navigator.pop(ctx);
                     }
                   },
-                  child: Text(
-                    selectedDate == null
-                        ? context.commonLocals.pick_date
-                        : '${context.commonLocals.date}: ${selectedDate!.toIso8601String().split('T')[0]}',
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: context.commonLocals.goods,
-                    labelStyle: theme.textTheme.bodyMedium,
-                  ),
-                  validator: (val) =>
-                      (val == null || val.isEmpty) ? 'Required' : null,
-                  onChanged: (val) => goods = val,
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: context.commonLocals.amount,
-                    labelStyle: theme.textTheme.bodyMedium,
-                  ),
-                  validator: (val) {
-                    if (val == null || val.isEmpty) return 'Required';
-                    final parsed = int.tryParse(val);
-                    if (parsed == null || parsed <= 0) return 'Enter a valid amount';
-                    return null;
-                  },
-                  onChanged: (val) => amount = val,
-                  keyboardType: TextInputType.number,
-                ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: context.commonLocals.price_etb,
-                    labelStyle: theme.textTheme.bodyMedium,
-                  ),
-                  validator: (val) {
-                    if (val == null || val.isEmpty) return 'Required';
-                    final parsed = double.tryParse(val);
-                    if (parsed == null || parsed < 0) return 'Enter valid price';
-                    return null;
-                  },
-                  onChanged: (val) => price = val,
-                  keyboardType: TextInputType.number,
+                  // Corrected button text
+                  child: Text(context.commonLocals.add),
                 ),
               ],
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            style: TextButton.styleFrom(
-              foregroundColor: theme.primaryColor,
-            ),
-            onPressed: () {
-              if (selectedDate == null) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Please pick a date.")),
-                );
-                return;
-              }
-
-              if (formKey.currentState!.validate()) {
-                final expense = ExpenseTrackingEntity.fromUserInput(
-                  date: selectedDate!,
-                  goods: goods.trim(),
-                  amount: int.tryParse(amount) ?? 0,
-                  price_etb: double.tryParse(price) ?? 0.0,
-                );
-                context.read<ExpenseTrackingBloc>().add(
-                      AddExpenseTrackingEvent(expense),
-                    );
-
-                Navigator.pop(ctx);
-              }
-            },
-            child: Text(context.commonLocals.account),
-          ),
-        ],
-      );
-    },
-  );
-}
+            );
+          },
+        );
+      },
+    );
+  }
 
   void _confirmDelete(String id) {
     showDialog(
@@ -556,7 +565,9 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                 foregroundColor: Colors.red,
               ),
               onPressed: () {
-                context.read<ExpenseTrackingBloc>().add(DeleteExpenseTrackingEvent(id));
+                context
+                    .read<ExpenseTrackingBloc>()
+                    .add(DeleteExpenseTrackingEvent(id));
                 Navigator.pop(ctx);
               },
               child: Text(context.commonLocals.delete),
@@ -584,10 +595,44 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
           )
         ],
       ),
-      body: BlocBuilder<ExpenseTrackingBloc, ExpenseTrackingState>(
+      body: BlocConsumer<ExpenseTrackingBloc, ExpenseTrackingState>(
+        // The listener handles side effects like showing SnackBars
+        listener: (context, state) {
+          if (state is ExpenseTrackingAdded) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.green,
+              ));
+          }
+          if (state is GetExpenseFailed) {
+            ScaffoldMessenger.of(context)
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ));
+          }
+        },
+        // The builder handles building the UI
         builder: (context, state) {
           if (state is GetExpenseLoading) {
             return const Center(child: CircularProgressIndicator());
+          } else if (state is GetExpenseFailed) {
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(state.message),
+                IconButton(
+                    onPressed: () {
+                      context
+                          .read<ExpenseTrackingBloc>()
+                          .add(GetExpensesEvent());
+                    },
+                    icon: const Icon(Icons.replay_outlined))
+              ],
+            );
           } else if (state is GetExpensesSucess) {
             final expenses = state.expenses;
             return SingleChildScrollView(
@@ -604,7 +649,8 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                   fontSize: 13,
                   color: onSurface,
                 ),
-                dataTextStyle: textBody.copyWith(color: onSurface, fontSize: 13),
+                dataTextStyle:
+                    textBody.copyWith(color: onSurface, fontSize: 13),
                 columns: [
                   DataColumn(label: Text(context.commonLocals.date)),
                   DataColumn(label: Text(context.commonLocals.goods)),
@@ -630,17 +676,20 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                 }).toList(),
               ),
             );
-          } else if (state is GetExpenseFailed) {
-            return Center(child: Text(state.message));
-          } else {
-            return const SizedBox.shrink();
           }
+
+          // Show an error message if the initial fetch fails
+          if (state is GetExpenseFailed) {
+            return Center(child: Text(state.message));
+          }
+
+          // Fallback for initial and other states
+          return const Center(child: CircularProgressIndicator());
         },
       ),
     );
   }
 }
-
 
 
 
