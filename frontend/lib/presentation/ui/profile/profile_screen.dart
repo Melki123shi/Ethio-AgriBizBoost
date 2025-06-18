@@ -85,8 +85,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 _settingsCard(theme, children: [
                   _settingsTile(context, theme,
                       icon: Icons.logout, label: context.commonLocals.log_out),
-                  _settingsTile(context, theme,
-                      icon: Icons.delete, label: context.commonLocals.delete),
                 ]),
               ],
             ),

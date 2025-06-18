@@ -1,12 +1,17 @@
-import 'package:app/presentation/ui/common/loading_button.dart';
-import 'package:app/presentation/utils/localization_extension.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/application/health_assessment/health_assessment_bloc.dart';
 import 'package:app/application/health_assessment/health_assessment_event.dart';
 import 'package:app/application/health_assessment/health_assessment_state.dart';
+import 'package:app/application/recent_assessment_results/recent_assessment_result_bloc.dart';
+import 'package:app/application/recent_assessment_results/recent_assessment_result_event.dart';
+import 'package:app/application/recent_assessment_results/recent_assessment_result_state.dart';
+import 'package:app/constants/mappings.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
-import 'package:app/presentation/ui/common/custom_input_field.dart';
+import 'package:app/presentation/ui/common/loading_button.dart';
+import 'package:app/presentation/ui/health_assessment/assessment_card.dart';
+import 'package:app/presentation/utils/localization_extension.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HealthAssessmentScreen extends StatefulWidget {
   final void Function(AssessmentResultEntity result) onSubmitted;
@@ -18,33 +23,274 @@ class HealthAssessmentScreen extends StatefulWidget {
 }
 
 class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
-  final Map<String, dynamic> _formData = {};
+  final Map<String, String?> _formData = {
+    'cropType': null,
+    'subsidy': null,
+    'salePrice': null,
+    'totalCost': null,
+    'quantitySold': null,
+  };
+
+  final Map<String, GlobalKey> _fieldKeys = {
+    'cropType': GlobalKey(),
+  };
+
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Dispatch the event to fetch recent averages when the screen loads
+    context.read<RecentAssessmentBloc>().add(FetchRecentAverages());
+  }
 
   void _updateInputFieldData() {
     context.read<HealthAssessmentBloc>().add(
           UpdateInputFieldEvent(
-            _formData['cropType'],
-            _formData['subsidy'],
-            _formData['salePrice'],
-            _formData['totalCost'],
-            _formData['quantitySold'],
+            _formData['cropType'] ?? '',
+            double.tryParse(_formData['subsidy'] ?? '') ?? 0,
+            double.tryParse(_formData['salePrice'] ?? '') ?? 0,
+            double.tryParse(_formData['totalCost'] ?? '') ?? 0,
+            double.tryParse(_formData['quantitySold'] ?? '') ?? 0,
           ),
         );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return BlocListener<HealthAssessmentBloc, HealthAssessmentState>(
-      listener: (context, state) {
-        if (state is HealthAssessmentSuccess) {
-          widget.onSubmitted(state.assessmentResult);
-        } else if (state is HealthAssessmentFailure) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(context.commonLocals.assessment_failed)),
+  Future<void> _showCropDropdown() async {
+    final items = cropNameVarietyMapping.keys.toList();
+    const key = 'cropType';
+    final renderBox =
+        _fieldKeys[key]!.currentContext!.findRenderObject() as RenderBox;
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+
+    final selected = await showMenu<String>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        offset.dx,
+        offset.dy + size.height,
+        offset.dx + size.width,
+        0,
+      ),
+      color: Theme.of(context).indicatorColor,
+      items: items
+          .map(
+            (crop) => PopupMenuItem(
+              value: crop,
+              child: SizedBox(
+                width: size.width,
+                child: Text(
+                  crop,
+                  style: TextStyle(color: Theme.of(context).focusColor),
+                ),
+              ),
+            ),
+          )
+          .toList(),
+    );
+
+    if (selected != null) {
+      setState(() {
+        _formData[key] = selected;
+      });
+      _updateInputFieldData();
+    }
+  }
+
+  Widget _buildDropdown(String key, String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30),
+      child: GestureDetector(
+        onTap: _showCropDropdown,
+        child: Container(
+          key: _fieldKeys[key],
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: const Color.fromARGB(255, 148, 196, 149),
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(
+                  _formData[key] ?? label,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: _formData[key] != null
+                        ? FontWeight.w300
+                        : FontWeight.normal,
+                    color: _formData[key] != null
+                        ? Theme.of(context).focusColor
+                        : Colors.grey,
+                  ),
+                ),
+              ),
+              const Icon(
+                Icons.arrow_drop_down,
+                color: Color.fromARGB(255, 148, 196, 149),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStyledNumberField({
+    required String label,
+    required String fieldKey,
+  }) {
+    final border = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: const BorderSide(
+        color: Color.fromARGB(255, 148, 196, 149),
+      ),
+    );
+
+    final errorBorder = OutlineInputBorder(
+      borderRadius: BorderRadius.circular(10),
+      borderSide: BorderSide(
+        color: Theme.of(context).colorScheme.error,
+      ),
+    );
+
+    return TextFormField(
+      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
+      ],
+      decoration: InputDecoration(
+        hintText: label,
+        hintStyle: const TextStyle(color: Colors.grey),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        border: border,
+        enabledBorder: border,
+        focusedBorder: border,
+        errorBorder: errorBorder,
+        focusedErrorBorder: errorBorder,
+      ),
+      validator: (val) {
+        if (val == null || val.trim().isEmpty) return "$label is required";
+        if (double.tryParse(val.trim()) == null) return "Enter a valid number";
+        return null;
+      },
+      onChanged: (val) {
+        _formData[fieldKey] = val;
+        _updateInputFieldData();
+      },
+    );
+  }
+
+  Widget _buildSubmitButton() {
+    return BlocBuilder<HealthAssessmentBloc, HealthAssessmentState>(
+      builder: (context, state) {
+        final isLoading = state is HealthAssessmentLoading;
+
+        return LoadingButton(
+          label: context.commonLocals.submit,
+          loading: isLoading,
+          onPressed: isLoading
+              ? null
+              : () {
+                  if (_formKey.currentState?.validate() ?? false) {
+                    if (_formData['cropType'] == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(context.commonLocals.crop_type +
+                                " " + 'is_required'
+                                )),
+                      );
+                      return;
+                    }
+                    context.read<HealthAssessmentBloc>().add(
+                          SubmitHealthAssessmentEvent(
+                            cropType: _formData['cropType']!,
+                            governmentSubsidy:
+                                double.parse(_formData['subsidy'] ?? '0'),
+                            salePricePerQuintal:
+                                double.parse(_formData['salePrice'] ?? '0'),
+                            totalCost:
+                                double.parse(_formData['totalCost'] ?? '0'),
+                            quantitySold:
+                                double.parse(_formData['quantitySold'] ?? '0'),
+                          ),
+                        );
+                  }
+                },
+        );
+      },
+    );
+  }
+
+  // === WIDGET UPDATED ===
+  Widget _buildRecentResultHeader() {
+    // Use BlocBuilder to listen to the RecentAssessmentBloc
+    return BlocBuilder<RecentAssessmentBloc, RecentAssessmentState>(
+      builder: (context, state) {
+        // Show a loading indicator for Initial and Loading states
+        if (state is RecentAssessmentInitial || state is RecentAssessmentLoading) {
+          return const Padding(
+            padding: EdgeInsets.only(bottom: 30),
+            child: Center(child: CircularProgressIndicator()),
           );
         }
+        if (state is RecentAssessmentSuccess) {
+          if (state.averages.recordsConsidered == 0) {
+          }
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: AssessmentCard(
+                    title: context.commonLocals.financial_stability,
+                    percentage: state.averages.averageFinancialStability,
+                  ),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: AssessmentCard(
+                    title: context.commonLocals.cash_flow,
+                    percentage: state.averages.averageCashFlow,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+        if (state is RecentAssessmentFailure) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: Center(child: Text(state.error)),
+          );
+        }
+        return const SizedBox.shrink();
       },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocListener(
+      listeners: [
+        BlocListener<HealthAssessmentBloc, HealthAssessmentState>(
+          listener: (context, state) {
+            if (state is HealthAssessmentSuccess) {
+              widget.onSubmitted(state.assessmentResult);
+              context.read<RecentAssessmentBloc>().add(FetchRecentAverages());
+            } else if (state is HealthAssessmentFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                    content: Text(context.commonLocals.assessment_failed)),
+              );
+            }
+          },
+        ),
+      ],
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -52,97 +298,41 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CustomInputField(
-                label: context.commonLocals.crop_type,
-                hintText: context.commonLocals.crop_type,
-                isRequired: true,
-                onChanged: (value) {
-                  _formData['cropType'] = value;
-                  _updateInputFieldData();
-                },
+              _buildRecentResultHeader(),
+              _buildDropdown('cropType', context.commonLocals.crop_type),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: _buildStyledNumberField(
+                  label: context.commonLocals.government_subsidy,
+                  fieldKey: 'subsidy',
+                ),
               ),
-              const SizedBox(height: 30),
-              CustomInputField(
-                label: context.commonLocals.government_subsidy,
-                hintText: context.commonLocals.government_subsidy,
-                isRequired: true,
-                onChanged: (value) {
-                  _formData['subsidy'] = value;
-                  _updateInputFieldData();
-                },
+              Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: _buildStyledNumberField(
+                  label: context.commonLocals.sale_price_per_quintal,
+                  fieldKey: 'salePrice',
+                ),
               ),
-              const SizedBox(height: 30),
-              CustomInputField(
-                label: context.commonLocals.sale_price_per_quintal,
-                hintText: context.commonLocals.sale_price_per_quintal,
-                isRequired: true,
-                onChanged: (value) {
-                  _formData['salePrice'] = value;
-                  _updateInputFieldData();
-                },
-              ),
-              const SizedBox(height: 30),
               Row(
                 children: [
                   Expanded(
-                    child: CustomInputField(
+                    child: _buildStyledNumberField(
                       label: context.commonLocals.total_cost,
-                      hintText: context.commonLocals.total_cost,
-                      isRequired: true,
-                      onChanged: (value) {
-                        _formData['totalCost'] = value;
-                        _updateInputFieldData();
-                      },
+                      fieldKey: 'totalCost',
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: 16),
                   Expanded(
-                    child: CustomInputField(
+                    child: _buildStyledNumberField(
                       label: context.commonLocals.quantity_sold,
-                      hintText: context.commonLocals.quantity_sold,
-                      isRequired: true,
-                      onChanged: (value) {
-                        _formData['quantitySold'] = value;
-                        _updateInputFieldData();
-                      },
+                      fieldKey: 'quantitySold',
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 80),
-              Center(
-                child: BlocBuilder<HealthAssessmentBloc, HealthAssessmentState>(
-                  builder: (context, state) {
-                    final isLoading = state is HealthAssessmentLoading;
-
-                    return LoadingButton(
-                      label: context.commonLocals.submit,
-                      loading: isLoading,
-                      onPressed: isLoading
-                          ? null
-                          : () {
-                              final isValid =
-                                  _formKey.currentState?.validate() ?? false;
-                              if (isValid) {
-                                context.read<HealthAssessmentBloc>().add(
-                                      SubmitHealthAssessmentEvent(
-                                        cropType: _formData['cropType'],
-                                        governmentSubsidy:
-                                            double.parse(_formData['subsidy']),
-                                        salePricePerQuintal: double.parse(
-                                            _formData['salePrice']),
-                                        totalCost: double.parse(
-                                            _formData['totalCost']),
-                                        quantitySold: double.parse(
-                                            _formData['quantitySold']),
-                                      ),
-                                    );
-                              }
-                            },
-                    );
-                  },
-                ),
-              ),
+              Center(child: _buildSubmitButton()),
             ],
           ),
         ),
