@@ -36,12 +36,16 @@ class DioClient {
         },
         onResponse: (response, handler) async {
           if (response.statusCode == 401 &&
-              response.requestOptions.extra['retry'] != true) {
+              response.requestOptions.extra['retry'] != true &&
+              response.requestOptions.path != '/auth/refresh') {
             final didRefresh = await _refreshToken();
             if (didRefresh) {
               final newAccess = await TokenStorage.readAccessToken();
               if (newAccess != null && newAccess.isNotEmpty) {
                 final opts = response.requestOptions;
+
+                // Update the global dio header
+                dio.options.headers['Authorization'] = 'Bearer $newAccess';
 
                 final clonedResponse = await dio.request(
                   opts.path,
@@ -63,13 +67,52 @@ class DioClient {
                 );
                 return handler.resolve(clonedResponse);
               }
-            } else {}
+            } else {
+              // Refresh failed, let the 401 response pass through
+              // This will trigger navigation to login via router
+            }
           }
 
           handler.next(response);
         },
-        onError: (err, handler) async {
-          handler.next(err);
+        onError: (error, handler) async {
+          if (error.response?.statusCode == 401 &&
+              error.requestOptions.extra['retry'] != true &&
+              error.requestOptions.path != '/auth/refresh' &&
+              error.requestOptions.path != '/auth/login-with-json') {
+            final didRefresh = await _refreshToken();
+            if (didRefresh) {
+              final newAccess = await TokenStorage.readAccessToken();
+              if (newAccess != null && newAccess.isNotEmpty) {
+                final opts = error.requestOptions;
+
+                // Update the global dio header
+                dio.options.headers['Authorization'] = 'Bearer $newAccess';
+
+                final clonedRequest = await dio.request(
+                  opts.path,
+                  data: opts.data,
+                  queryParameters: opts.queryParameters,
+                  options: Options(
+                    method: opts.method,
+                    headers: {
+                      ...opts.headers,
+                      'Authorization': 'Bearer $newAccess',
+                    },
+                    contentType: opts.contentType,
+                    responseType: opts.responseType,
+                    extra: {
+                      ...opts.extra,
+                      'retry': true,
+                    },
+                  ),
+                );
+                return handler.resolve(clonedRequest);
+              }
+            }
+          }
+
+          handler.next(error);
         },
       ),
     );
@@ -90,6 +133,9 @@ class DioClient {
   static Future<bool> _refreshToken() async {
     final refresh = await TokenStorage.readRefreshToken();
     if (refresh == null || refresh.isEmpty) {
+      await TokenStorage.clearAccessToken();
+      await TokenStorage.clearRefreshToken();
+      await TokenStorage.clearTokenType();
       return false;
     }
     try {
@@ -100,24 +146,37 @@ class DioClient {
         data: {"refresh_token": refresh},
       );
 
-      if (res.statusCode != 200) return false;
+      if (res.statusCode != 200) {
+        // Clear tokens on refresh failure
+        await TokenStorage.clearAccessToken();
+        await TokenStorage.clearRefreshToken();
+        await TokenStorage.clearTokenType();
+        return false;
+      }
 
       final newAccess = res.data['access_token'] as String?;
       final newRefresh = res.data['refresh_token'] as String?;
-      final type = res.data['token_type'] as String?;
+      final type = res.data['token_type'] as String? ?? 'Bearer';
 
-      if (newAccess == null || newAccess.isEmpty) return false;
+      if (newAccess == null || newAccess.isEmpty) {
+        await TokenStorage.clearAccessToken();
+        await TokenStorage.clearRefreshToken();
+        await TokenStorage.clearTokenType();
+        return false;
+      }
 
       await TokenStorage.saveAccessToken(newAccess);
       if (newRefresh != null && newRefresh.isNotEmpty) {
         await TokenStorage.saveRefreshToken(newRefresh);
       }
-      if (type != null && type.isNotEmpty) {
-        await TokenStorage.saveTokenType(type);
-      }
+      await TokenStorage.saveTokenType(type);
 
       return true;
     } catch (e) {
+      // Clear tokens on any error
+      await TokenStorage.clearAccessToken();
+      await TokenStorage.clearRefreshToken();
+      await TokenStorage.clearTokenType();
       return false;
     }
   }

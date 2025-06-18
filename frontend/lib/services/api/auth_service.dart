@@ -5,11 +5,9 @@ import 'package:app/domain/entity/signup_entity.dart';
 import 'package:app/services/network/dio_client.dart';
 import 'package:app/services/token_storage.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class AuthService {
   final Dio dio = DioClient.getDio();
-  final _storage = const FlutterSecureStorage();
 
   Future<SignupResponseEntity> signup(SignupRequestDTO dto) async {
     try {
@@ -55,12 +53,12 @@ class AuthService {
   }
 
   Future<bool> refresh() async {
-    final refreshToken = await _storage.read(key: 'refresh');
+    final refreshToken = await TokenStorage.readRefreshToken();
     if (refreshToken == null) return false;
 
     try {
-      final res =
-          await dio.post('/auth/refresh', data: {'refreshToken': refreshToken});
+      final res = await dio
+          .post('/auth/refresh', data: {'refresh_token': refreshToken});
 
       if (res.statusCode != 200) return false;
 
@@ -78,30 +76,55 @@ class AuthService {
   }
 
   Future<LoginResponseEntity?> tryAutoLogin() async {
-    final a = await _storage.read(key: 'access');
-    final r = await _storage.read(key: 'refresh');
-    final t = await _storage.read(key: 'type');
-    if ([a, r, t].every((e) => e != null)) {
-      return LoginResponseEntity(
-          accessToken: a!, refreshToken: r!, tokenType: t!);
+    try {
+      // Try to get user profile to verify token is valid
+      // This will automatically trigger refresh if needed via interceptor
+      final res = await dio.get('/auth/profile');
+
+      if (res.statusCode == 200) {
+        // Token is valid (either directly or after refresh)
+        final access = await TokenStorage.readAccessToken();
+        final refresh = await TokenStorage.readRefreshToken();
+        final type = await TokenStorage.readTokenType();
+
+        if (access != null && refresh != null) {
+          return LoginResponseEntity(
+            accessToken: access,
+            refreshToken: refresh,
+            tokenType: type ?? 'Bearer',
+          );
+        }
+      }
+    } on DioException catch (e) {
+      // If we get a 401 and refresh also failed, clear tokens
+      if (e.response?.statusCode == 401) {
+        await TokenStorage.clearAccessToken();
+        await TokenStorage.clearRefreshToken();
+        await TokenStorage.clearTokenType();
+      }
+    } catch (_) {
+      // Any other error
     }
     return null;
   }
 
   Future<void> logout() async {
-    final refresh = await _storage.read(key: 'refresh');
+    final refresh = await TokenStorage.readRefreshToken();
     if (refresh != null && refresh.isNotEmpty) {
       try {
-        await dio.post('/auth/logout', data: {'refreshToken': refresh});
+        await dio.post('/auth/logout', data: {'refresh_token': refresh});
       } catch (_) {}
     }
-    await _storage.deleteAll();
+    // Clear all tokens
+    await TokenStorage.clearAccessToken();
+    await TokenStorage.clearRefreshToken();
+    await TokenStorage.clearTokenType();
   }
 
   Future<void> _writeTokens(String access, String refresh, String type) async {
-    await _storage.write(key: 'access', value: access);
+    await TokenStorage.saveAccessToken(access);
     await TokenStorage.saveRefreshToken(refresh);
-    await _storage.write(key: 'type', value: type);
+    await TokenStorage.saveTokenType(type);
   }
 
   String _msg(dynamic data, int? code, {String fallback = 'Unknown error'}) {

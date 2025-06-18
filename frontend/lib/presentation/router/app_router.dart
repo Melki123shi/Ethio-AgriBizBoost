@@ -44,18 +44,27 @@ class AppRouter {
 
   late final GoRouter router = GoRouter(
     refreshListenable: RouterNotifier(_authBloc.stream),
-    // initialLocation: loggedIn ? '/home' : '/login',
-    redirect: (BuildContext context, GoRouterState state) {
-      final loggedIn = _authBloc.state is AuthSuccess;
-      final loggingIn = state.uri.toString() == '/login';
-      final signingUp = state.uri.toString() == '/signup';
+    redirect: (BuildContext context, GoRouterState state) async {
+      final authState = _authBloc.state;
+      final isLoggedIn = authState is AuthSuccess;
+      final path = state.uri.toString();
+      final isAuthRoute = path == '/login' || path == '/signup';
 
-      if (!loggedIn && !loggingIn && !signingUp) {
+      // If user is not logged in and trying to access protected route
+      if (!isLoggedIn && !isAuthRoute) {
         return '/login';
       }
-      if (loggedIn && (loggingIn || signingUp)) {
+
+      // If user is logged in and trying to access auth routes
+      if (isLoggedIn && isAuthRoute) {
         return '/home';
       }
+
+      // Handle initial route
+      if (path == '/') {
+        return isLoggedIn ? '/home' : '/login';
+      }
+
       return null;
     },
     routes: <RouteBase>[
@@ -133,7 +142,8 @@ class AppRouter {
       ),
       GoRoute(
         path: '/loan_advice_result',
-        builder: (_, state) => LoanAdviceResultScreen(result: state.extra as LoanAdviceResultEntity),
+        builder: (_, state) => LoanAdviceResultScreen(
+            result: state.extra as LoanAdviceResultEntity),
       ),
     ],
   );
