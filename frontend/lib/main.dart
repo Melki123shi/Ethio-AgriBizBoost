@@ -8,6 +8,7 @@ import 'package:app/l10n/ti_material_localizations.dart';
 import 'package:app/services/api/auth_service.dart';
 import 'package:app/services/api/loan_advice_service.dart';
 import 'package:app/services/api/user_service.dart';
+import 'package:app/services/token_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/application/forcasting/forcasting_bloc.dart';
@@ -28,7 +29,8 @@ void main() {
   final userService = UserService();
   final loanAdviceService = LoanAdviceService();
   final authBloc = AuthBloc(authService)..add(AppStarted());
-  final appRouter = AppRouter(authBloc).router;
+  final loggedIn = TokenStorage.readAccessToken() != '';
+  final appRouter = AppRouter(authBloc, loggedIn).router;
 
   runApp(
     MultiBlocProvider(

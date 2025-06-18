@@ -1,18 +1,16 @@
+from datetime import time
 from typing import Optional
 from pydantic import BaseModel, field_validator
-from .validation import validate_date_format, validate_goods, validate_positive, validate_non_negative
+from .validation import validate_goods, validate_positive, validate_non_negative
 
 class Expense(BaseModel):
-    date: str
-    goods: str
+    date: time
+    good: str
     amount: float
     price_etb: float
+    user_id: str
 
-    @field_validator('date')
-    def validate_date(cls, v):
-        return validate_date_format(v)
-
-    @field_validator('goods')
+    @field_validator('good')
     def validate_goods_name(cls, v):
         return validate_goods(v)
 
@@ -22,17 +20,13 @@ class Expense(BaseModel):
 
 
 class Assessment(BaseModel):
-    date: str
+    date: time
     goods: str
     expenses: float
     profit: float
     financial_stability: Optional[str] = None
     cash_flow: Optional[str] = None
-
-    @field_validator('date')
-    def validate_date(cls, v):
-        return validate_date_format(v)
-
+    
     @field_validator('goods')
     def validate_goods_name(cls, v):
         return validate_goods(v)

@@ -9,7 +9,7 @@ void main() {
     Widget createWidgetUnderTest({
       String? label,
       required String hintText,
-      IconData? suffixIcon,
+      IconButton? suffixIcon,
       TextEditingController? controller,
       bool obscureText = false,
       TextInputType keyboardType = TextInputType.text,
@@ -112,7 +112,7 @@ void main() {
       testWidgets('displays suffix icon when provided', (tester) async {
         await tester.pumpWidget(createWidgetUnderTest(
           hintText: 'Search',
-          suffixIcon: Icons.search,
+          suffixIcon: const IconButton(onPressed: null, icon: Icon(Icons.search)),
         ));
 
         expect(find.byIcon(Icons.search), findsOneWidget);
@@ -131,7 +131,7 @@ void main() {
         await tester.pumpWidget(createWidgetUnderTest(
           hintText: 'Password',
           prefixIcon: const Icon(Icons.lock),
-          suffixIcon: Icons.visibility,
+          suffixIcon: const IconButton(onPressed: null, icon: Icon(Icons.visibility)),
         ));
 
         expect(find.byIcon(Icons.lock), findsOneWidget);

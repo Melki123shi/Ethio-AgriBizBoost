@@ -47,13 +47,21 @@ class ForcastingOutput extends StatelessWidget {
                               getTitlesWidget: (value, meta) {
                                 switch (value.toInt()) {
                                   case 0:
-                                    return Text(context.commonLocals.min_price,
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 10));
+                                    return Column(children: [
+                                      Text(context.commonLocals.min_price,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10)),
+                                      Text(result.predictedMinPrice.toInt().toString())
+                                    ]);
                                   case 1:
-                                    return Text(context.commonLocals.max_price,
-                                        style: const TextStyle(
-                                            color: Colors.white, fontSize: 10));
+                                    return Column(children: [
+                                      Text(context.commonLocals.max_price,
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10)),
+                                      Text(result.predictedMaxPrice.toInt().toString())
+                                    ]);
                                   default:
                                     return const SizedBox.shrink();
                                 }
@@ -110,8 +118,11 @@ class ForcastingOutput extends StatelessWidget {
                   const SizedBox(height: 20),
                   Text(
                     "${context.commonLocals.demand} : ${result.predictedDemand}",
-                    style:
-                        const TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(
+                        color: result.predictedDemand == 'High'
+                            ? Colors.green
+                            : Colors.yellow,
+                        fontSize: 14),
                   ),
                 ],
               ),
