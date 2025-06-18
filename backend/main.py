@@ -120,6 +120,36 @@ def custom_openapi():
         if path.startswith("/admin/") and not path.endswith("/health"):
             for method in openapi_schema["paths"][path]:
                 openapi_schema["paths"][path][method]["security"] = [{"bearerAuth": []}]
+        
+        # Secure expense tracking endpoints
+        if path.startswith("/expenses"):
+            for method in openapi_schema["paths"][path]:
+                openapi_schema["paths"][path][method]["security"] = [{"bearerAuth": []}]
+        
+        # Secure chatbot endpoints
+        if path.startswith("/chatbot"):
+            for method in openapi_schema["paths"][path]:
+                openapi_schema["paths"][path][method]["security"] = [{"bearerAuth": []}]
+        
+        # Secure prediction endpoints
+        if path.startswith("/predict"):
+            for method in openapi_schema["paths"][path]:
+                openapi_schema["paths"][path][method]["security"] = [{"bearerAuth": []}]
+        
+        # Secure health assessment endpoints  
+        if path.startswith("/health_assessment") or path.startswith("/assessment"):
+            for method in openapi_schema["paths"][path]:
+                openapi_schema["paths"][path][method]["security"] = [{"bearerAuth": []}]
+        
+        # Secure loan advice endpoints
+        if path.startswith("/loan_advice"):
+            for method in openapi_schema["paths"][path]:
+                openapi_schema["paths"][path][method]["security"] = [{"bearerAuth": []}]
+        
+        # Secure recommendation endpoints
+        if path.startswith("/recommend"):
+            for method in openapi_schema["paths"][path]:
+                openapi_schema["paths"][path][method]["security"] = [{"bearerAuth": []}]
     
     app.openapi_schema = openapi_schema
     return app.openapi_schema

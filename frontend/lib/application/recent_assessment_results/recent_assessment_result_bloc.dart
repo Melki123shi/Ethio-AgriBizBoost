@@ -1,30 +1,34 @@
+import 'package:app/application/recent_assessment_results/recent_assessment_result_event.dart';
+import 'package:app/application/recent_assessment_results/recent_assessment_result_state.dart';
+import 'package:app/domain/entity/recent_assessment_results_entity.dart';
+import 'package:app/services/api/health_assessment_service.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/application/health_assessment/health_assessment_event.dart';
-import 'package:app/application/health_assessment/health_assessment_state.dart';
-import 'package:app/services/network/health_assessment_service.dart';
 
-class RecentAssessmentBloc extends Bloc<HealthAssessmentEvent, HealthAssessmentState> {
+class RecentAssessmentBloc extends Bloc<RecentAssessmentEvent, RecentAssessmentState> {
   final HealthAssessmentService _healthAssessmentService;
 
-  RecentAssessmentBloc(this._healthAssessmentService) : super(RecentAssessmentResultLoading()) {
-    on<FetchRecentAssessmentsEvent>(_onFetchRecentAssessments);
+  RecentAssessmentBloc(this._healthAssessmentService) : super(RecentAssessmentInitial()) {
+    on<FetchRecentAverages>(_onFetchRecentAverages);
   }
 
-  Future<void> _onFetchRecentAssessments(
-    FetchRecentAssessmentsEvent event,
-    Emitter<HealthAssessmentState> emit,
+  Future<void> _onFetchRecentAverages(
+    FetchRecentAverages event,
+    Emitter<RecentAssessmentState> emit,
   ) async {
-    emit(RecentAssessmentResultLoading());
+    emit(RecentAssessmentLoading());
     try {
-      final result = await _healthAssessmentService.fetchRecentAssessmentResults();
+      final Map<String, dynamic> result = await _healthAssessmentService.fetchRecentAssessmentResults();
 
-      emit(RecentAssessmentResultState(
-        averageFinancialStability: (result['averageFinancialStability'] as num).toDouble(),
-        averageCashFlow: (result['averageCashFlow'] as num).toDouble(),
-        recordsConsidered: result['recordsConsidered'] as int,
-      ));
+      if (result.containsKey('message')) {
+        final noDataEntity = RecentAssessmentAveragesEntity.empty();
+        emit(RecentAssessmentSuccess(noDataEntity));
+      } else {
+        final averagesEntity = RecentAssessmentAveragesEntity.fromJson(result);
+        emit(RecentAssessmentSuccess(averagesEntity));
+      }
+
     } catch (e) {
-      emit(RecentAssessmentResultFailure());
+      emit(RecentAssessmentFailure(e.toString()));
     }
   }
 }

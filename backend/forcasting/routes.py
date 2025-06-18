@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
-from forcasting.model import PredictionInput
-from forcasting.services import make_predictions
-from forcasting.database import save_prediction_result
+from .model import PredictionInput
+from .services import make_predictions
+from .database import save_prediction_result
 from auth.dependencies import get_current_active_user
 from security.rate_limiter import limiter
 

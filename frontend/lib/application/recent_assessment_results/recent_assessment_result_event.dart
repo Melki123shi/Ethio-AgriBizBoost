@@ -1,40 +1,10 @@
-class FetchRecentAssessmentsEvent extends HealthAssessmentEvent {}
-on<FetchRecentAssessmentsEvent>(_onFetchRecentAssessments);
+import 'package:equatable/equatable.dart';
 
-Future<void> _onFetchRecentAssessments(
-    FetchRecentAssessmentsEvent event,
-    Emitter<HealthAssessmentState> emit,
-) async {
-  emit(RecentAssessmentResultLoading());
-  try {
-    final result = await _healthAssessmentService.fetchRecentAssessmentResults();
+abstract class RecentAssessmentEvent extends Equatable {
+  const RecentAssessmentEvent();
 
-    emit(RecentAssessmentResultState(
-      averageFinancialStability: (result['averageFinancialStability'] as num).toDouble(),
-      averageCashFlow: (result['averageCashFlow'] as num).toDouble(),
-      recordsConsidered: result['recordsConsidered'] as int,
-    ));
-  } catch (e) {
-    emit(RecentAssessmentResultFailure());
-  }
+  @override
+  List<Object> get props => [];
 }
-class FetchRecentAssessmentsEvent extends HealthAssessmentEvent {}
-on<FetchRecentAssessmentsEvent>(_onFetchRecentAssessments);
 
-Future<void> _onFetchRecentAssessments(
-    FetchRecentAssessmentsEvent event,
-    Emitter<HealthAssessmentState> emit,
-) async {
-  emit(RecentAssessmentResultLoading());
-  try {
-    final result = await _healthAssessmentService.fetchRecentAssessmentResults();
-
-    emit(RecentAssessmentResultState(
-      averageFinancialStability: (result['averageFinancialStability'] as num).toDouble(),
-      averageCashFlow: (result['averageCashFlow'] as num).toDouble(),
-      recordsConsidered: result['recordsConsidered'] as int,
-    ));
-  } catch (e) {
-    emit(RecentAssessmentResultFailure());
-  }
-}
+class FetchRecentAverages extends RecentAssessmentEvent {}

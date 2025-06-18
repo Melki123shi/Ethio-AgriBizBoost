@@ -3,8 +3,7 @@ from bson import ObjectId
 from auth.dependencies import get_current_active_user
 from .model import CropData
 from .service import calculateFinancials
-from .database import save_crop_financial
-from database import financials_collection
+from .database import save_crop_financial, financials_collection
 
 router = APIRouter()
 

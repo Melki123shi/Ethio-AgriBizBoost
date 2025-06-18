@@ -1,3 +1,4 @@
+import 'package:app/application/auth/auth_state.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
 import 'package:app/domain/entity/forcasting_result_entity.dart';
 import 'package:app/domain/entity/loan_advice_result_entity.dart';
@@ -22,7 +23,6 @@ import 'dart:async';
 import 'package:app/presentation/ui/chatbot/chatbot_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app/application/auth/auth_bloc.dart';
-import 'package:app/application/auth/auth_state.dart';
 
 class RouterNotifier extends ChangeNotifier {
   RouterNotifier(Stream<dynamic> stream) {
@@ -44,20 +44,20 @@ class AppRouter {
 
   late final GoRouter router = GoRouter(
     refreshListenable: RouterNotifier(_authBloc.stream),
-    initialLocation: loggedIn ? '/home' : '/login',
-    // redirect: (BuildContext context, GoRouterState state) {
-    //   final loggedIn = _authBloc.state is AuthSuccess;
-    //   final loggingIn = state.uri.toString() == '/login';
-    //   final signingUp = state.uri.toString() == '/signup';
+    // initialLocation: loggedIn ? '/home' : '/login',
+    redirect: (BuildContext context, GoRouterState state) {
+      final loggedIn = _authBloc.state is AuthSuccess;
+      final loggingIn = state.uri.toString() == '/login';
+      final signingUp = state.uri.toString() == '/signup';
 
-    //   if (!loggedIn && !loggingIn && !signingUp) {
-    //     return '/login';
-    //   }
-    //   if (loggedIn && (loggingIn || signingUp)) {
-    //     return '/home';
-    //   }
-    //   return null;
-    // },
+      if (!loggedIn && !loggingIn && !signingUp) {
+        return '/login';
+      }
+      if (loggedIn && (loggingIn || signingUp)) {
+        return '/home';
+      }
+      return null;
+    },
     routes: <RouteBase>[
       GoRoute(
         path: '/',

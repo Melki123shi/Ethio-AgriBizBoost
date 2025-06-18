@@ -1,15 +1,17 @@
 import 'package:app/application/health_assessment/health_assessment_bloc.dart';
 import 'package:app/application/health_assessment/health_assessment_event.dart';
 import 'package:app/application/health_assessment/health_assessment_state.dart';
+import 'package:app/application/recent_assessment_results/recent_assessment_result_bloc.dart';
+import 'package:app/application/recent_assessment_results/recent_assessment_result_event.dart';
+import 'package:app/application/recent_assessment_results/recent_assessment_result_state.dart';
 import 'package:app/constants/mappings.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
 import 'package:app/presentation/ui/common/loading_button.dart';
+import 'package:app/presentation/ui/health_assessment/assessment_card.dart';
 import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:app/presentation/ui/common/assessment_card.dart';
-import 'package:app/application/health_assessment/recent_assessment_bloc.dart';
 
 class HealthAssessmentScreen extends StatefulWidget {
   final void Function(AssessmentResultEntity result) onSubmitted;
@@ -38,7 +40,8 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<RecentAssessmentBloc>().add(FetchRecentAssessmentsEvent());
+    // Dispatch the event to fetch recent averages when the screen loads
+    context.read<RecentAssessmentBloc>().add(FetchRecentAverages());
   }
 
   void _updateInputFieldData() {
@@ -55,8 +58,9 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
 
   Future<void> _showCropDropdown() async {
     final items = cropNameVarietyMapping.keys.toList();
-    final key = 'cropType';
-    final renderBox = _fieldKeys[key]!.currentContext!.findRenderObject() as RenderBox;
+    const key = 'cropType';
+    final renderBox =
+        _fieldKeys[key]!.currentContext!.findRenderObject() as RenderBox;
     final offset = renderBox.localToGlobal(Offset.zero);
     final size = renderBox.size;
 
@@ -114,8 +118,12 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
                   _formData[key] ?? label,
                   style: TextStyle(
                     fontSize: 16,
-                    fontWeight: _formData[key] != null ? FontWeight.w300 : FontWeight.normal,
-                    color: _formData[key] != null ? Theme.of(context).focusColor : Colors.grey,
+                    fontWeight: _formData[key] != null
+                        ? FontWeight.w300
+                        : FontWeight.normal,
+                    color: _formData[key] != null
+                        ? Theme.of(context).focusColor
+                        : Colors.grey,
                   ),
                 ),
               ),
@@ -156,7 +164,8 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
       decoration: InputDecoration(
         hintText: label,
         hintStyle: const TextStyle(color: Colors.grey),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
         border: border,
         enabledBorder: border,
         focusedBorder: border,
@@ -187,13 +196,26 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
               ? null
               : () {
                   if (_formKey.currentState?.validate() ?? false) {
+                    if (_formData['cropType'] == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(context.commonLocals.crop_type +
+                                " " + 'is_required'
+                                )),
+                      );
+                      return;
+                    }
                     context.read<HealthAssessmentBloc>().add(
                           SubmitHealthAssessmentEvent(
                             cropType: _formData['cropType']!,
-                            governmentSubsidy: double.parse(_formData['subsidy'] ?? '0'),
-                            salePricePerQuintal: double.parse(_formData['salePrice'] ?? '0'),
-                            totalCost: double.parse(_formData['totalCost'] ?? '0'),
-                            quantitySold: double.parse(_formData['quantitySold'] ?? '0'),
+                            governmentSubsidy:
+                                double.parse(_formData['subsidy'] ?? '0'),
+                            salePricePerQuintal:
+                                double.parse(_formData['salePrice'] ?? '0'),
+                            totalCost:
+                                double.parse(_formData['totalCost'] ?? '0'),
+                            quantitySold:
+                                double.parse(_formData['quantitySold'] ?? '0'),
                           ),
                         );
                   }
@@ -203,36 +225,47 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
     );
   }
 
+  // === WIDGET UPDATED ===
   Widget _buildRecentResultHeader() {
-    return BlocBuilder<RecentAssessmentBloc, HealthAssessmentState>(
+    // Use BlocBuilder to listen to the RecentAssessmentBloc
+    return BlocBuilder<RecentAssessmentBloc, RecentAssessmentState>(
       builder: (context, state) {
-        if (state is RecentAssessmentResultState) {
+        // Show a loading indicator for Initial and Loading states
+        if (state is RecentAssessmentInitial || state is RecentAssessmentLoading) {
+          return const Padding(
+            padding: EdgeInsets.only(bottom: 30),
+            child: Center(child: CircularProgressIndicator()),
+          );
+        }
+        if (state is RecentAssessmentSuccess) {
+          if (state.averages.recordsConsidered == 0) {
+          }
           return Padding(
             padding: const EdgeInsets.only(bottom: 30),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                AssessmentCard(
-                  title: context.commonLocals.financial_stability,
-                  percentage: double.parse(state.averageFinancialStability.toStringAsFixed(1)),
+                Expanded(
+                  child: AssessmentCard(
+                    title: context.commonLocals.financial_stability,
+                    percentage: state.averages.averageFinancialStability,
+                  ),
                 ),
                 const SizedBox(width: 15),
-                AssessmentCard(
-                  title: context.commonLocals.cash_flow,
-                  percentage: double.parse(state.averageCashFlow.toStringAsFixed(1)),
+                Expanded(
+                  child: AssessmentCard(
+                    title: context.commonLocals.cash_flow,
+                    percentage: state.averages.averageCashFlow,
+                  ),
                 ),
               ],
             ),
           );
-        } else if (state is RecentAssessmentResultLoading) {
-          return const Padding(
-            padding: EdgeInsets.only(bottom: 30),
-            child: Center(child: CircularProgressIndicator()),
-          );
-        } else if (state is RecentAssessmentResultFailure) {
-          return const Padding(
-            padding: EdgeInsets.only(bottom: 30),
-            child: Center(child: Text("Failed to load recent data")),
+        }
+        if (state is RecentAssessmentFailure) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: Center(child: Text(state.error)),
           );
         }
         return const SizedBox.shrink();
@@ -248,11 +281,11 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
           listener: (context, state) {
             if (state is HealthAssessmentSuccess) {
               widget.onSubmitted(state.assessmentResult);
-              // Refresh the recent result on success
-              context.read<RecentAssessmentBloc>().add(FetchRecentAssessmentsEvent());
+              context.read<RecentAssessmentBloc>().add(FetchRecentAverages());
             } else if (state is HealthAssessmentFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(context.commonLocals.assessment_failed)),
+                SnackBar(
+                    content: Text(context.commonLocals.assessment_failed)),
               );
             }
           },

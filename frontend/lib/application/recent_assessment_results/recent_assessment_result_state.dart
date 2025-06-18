@@ -1,15 +1,31 @@
-class RecentAssessmentResultState extends HealthAssessmentState {
-  final double averageFinancialStability;
-  final double averageCashFlow;
-  final int recordsConsidered;
+import 'package:app/domain/entity/recent_assessment_results_entity.dart';
+import 'package:equatable/equatable.dart';
 
-  RecentAssessmentResultState({
-    required this.averageFinancialStability,
-    required this.averageCashFlow,
-    required this.recordsConsidered,
-  });
+abstract class RecentAssessmentState extends Equatable {
+  const RecentAssessmentState();
+
+  @override
+  List<Object> get props => [];
 }
 
-final class RecentAssessmentResultLoading extends HealthAssessmentState {}
+class RecentAssessmentInitial extends RecentAssessmentState {}
 
-final class RecentAssessmentResultFailure extends HealthAssessmentState {}
+class RecentAssessmentLoading extends RecentAssessmentState {}
+
+class RecentAssessmentSuccess extends RecentAssessmentState {
+  final RecentAssessmentAveragesEntity averages;
+
+  const RecentAssessmentSuccess(this.averages);
+
+  @override
+  List<Object> get props => [averages];
+}
+
+class RecentAssessmentFailure extends RecentAssessmentState {
+  final String error;
+
+  const RecentAssessmentFailure(this.error);
+
+  @override
+  List<Object> get props => [error];
+}

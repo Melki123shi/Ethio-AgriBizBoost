@@ -1,5 +1,6 @@
 import 'package:app/application/auth/auth_bloc.dart';
 import 'package:app/application/auth/auth_event.dart';
+import 'package:app/application/recent_assessment_results/recent_assessment_result_bloc.dart';
 import 'package:app/application/recommendation/loan_advice/loan_advice_bloc.dart';
 import 'package:app/application/user/user_bloc.dart';
 import 'package:app/l10n/common/localization_classes/common_localizations.dart';
