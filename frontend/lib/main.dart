@@ -48,6 +48,9 @@ void main() {
          BlocProvider<LoanAdviceBloc>(
           create: (context) => LoanAdviceBloc(loanAdviceService),
         ),
+        BlocProvider<RecentAssessmentBloc>(
+          create: (context) => RecentAssessmentBloc(healthService),
+        ),
       ],
       child: ValueListenableBuilder<ThemeMode>(
         valueListenable: themeNotifier,

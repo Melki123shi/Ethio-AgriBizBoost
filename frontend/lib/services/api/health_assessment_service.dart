@@ -17,4 +17,15 @@ class HealthAssessmentService {
       throw Exception('An unexpected error occurred');
     }
   }
+
+  Future<Map<String, dynamic>> fetchRecentAssessmentResults() async {
+  try {
+    final response = await dio.get('/assessment-result-recents');
+    return response.data as Map<String, dynamic>;
+  } on DioException catch (e) {
+    throw Exception('Failed to fetch recent assessment data: ${e.message}');
+  } catch (e) {
+    throw Exception('An unexpected error occurred');
+  }
+}
 }
