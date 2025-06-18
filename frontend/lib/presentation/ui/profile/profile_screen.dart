@@ -36,7 +36,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             return _buildProfile(context, theme, state.user);
           } else if (state is UserError) {
             return Center(
-                child: Text(context.commonLocals.failed_to_fetch_user));
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(context.commonLocals.failed_to_fetch_user),
+                IconButton(
+                    onPressed: () {
+                      context.read<UserBloc>().add(FetchUser());
+                    },
+                    icon: const Icon(Icons.replay_outlined))
+              ],
+            ));
           }
           return const SizedBox.shrink();
         },

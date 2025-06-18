@@ -2,7 +2,7 @@ import 'package:app/application/auth/auth_state.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
 import 'package:app/domain/entity/forcasting_result_entity.dart';
 import 'package:app/domain/entity/loan_advice_result_entity.dart';
-import 'package:app/presentation/ui/expense_tracking_screen.dart';
+import 'package:app/presentation/ui/expense_tracking/expense_tracking_screen.dart';
 import 'package:app/presentation/ui/auth/login.dart';
 import 'package:app/presentation/ui/auth/signup.dart';
 import 'package:app/presentation/ui/forcasting/forcasting_output.dart';
@@ -44,12 +44,20 @@ class AppRouter {
 
   late final GoRouter router = GoRouter(
     refreshListenable: RouterNotifier(_authBloc.stream),
-    // initialLocation: loggedIn ? '/home' : '/login',
+    initialLocation: loggedIn ? '/home' : '/login',
     redirect: (BuildContext context, GoRouterState state) {
       final loggedIn = _authBloc.state is AuthSuccess;
       final loggingIn = state.uri.toString() == '/login';
       final signingUp = state.uri.toString() == '/signup';
 
+      if (!loggedIn && !loggingIn && !signingUp) {
+        return '/login';
+      }
+      if (loggedIn && (loggingIn || signingUp)) {
+        return '/home';
+      }
+      return null;
+    },
       if (!loggedIn && !loggingIn && !signingUp) {
         return '/login';
       }
