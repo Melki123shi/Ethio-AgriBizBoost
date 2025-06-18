@@ -61,7 +61,7 @@ class CommonLocalizationsOm extends CommonLocalizations {
   String get notifications => 'Beeksisota';
 
   @override
-  String get language => 'Afaan';
+  String get language => 'Afgaari';
 
   @override
   String get darkmode => 'Haala dukkanaa';
@@ -85,7 +85,7 @@ class CommonLocalizationsOm extends CommonLocalizations {
   String get confirm_new_password => 'Jecha iccitii haaraa mirkaneessi';
 
   @override
-  String get select_language => 'Afaan filadhu';
+  String get select_language => 'Afgaari Filachi';
 
   @override
   String get english => 'Ingliffaa';
@@ -262,25 +262,25 @@ class CommonLocalizationsOm extends CommonLocalizations {
   String get farm_size => 'Bal’ina lafa (hektar)';
 
   @override
-  String get fertilizer_expense => 'Baasi fertiizara';
+  String get fertilizer_expense => 'Baasii xaa’oo (ETB)';
 
   @override
-  String get pesticide_expense => 'Baasi pestisaaydi';
+  String get pesticide_expense => 'Baasii qoricha aramaa (ETB)';
 
   @override
-  String get transportation_expense => 'Baasi geejjibaa';
+  String get transportation_expense => 'Baasii geejjibaa (ETB)';
 
   @override
-  String get equipment_expense => 'Baasi meeshaalee';
+  String get equipment_expense => 'Baasii meeshaalee (ETB)';
 
   @override
-  String get seed_expense => 'Baasi biqiltii';
+  String get seed_expense => 'Baasii sanyii (ETB)';
 
   @override
-  String get labour_expense => 'Baasi hojjettootaa';
+  String get labour_expense => 'Baasii hojii (ETB)';
 
   @override
-  String get other_utilities => 'Tajaajiloota biroo';
+  String get other_utilities => 'Baasii tajaajila addaa (ETB)';
 
   @override
   String get loan_advice_result => 'Bu\'aa Gorsa Liqaa';
@@ -350,4 +350,28 @@ class CommonLocalizationsOm extends CommonLocalizations {
 
   @override
   String get action => 'Hojii';
+
+  @override
+  String get fill_all_fields => 'Mee dirqama hunda guutuu.';
+
+  @override
+  String get invalid_input => 'Galtee sirrii miti';
+
+  @override
+  String get recommendation_success_title => 'Gorsa';
+
+  @override
+  String get recommendation_error_title => 'Dogoggora';
+
+  @override
+  String get is_required => 'barbaachisaadha';
+
+  @override
+  String get enter_valid_number => 'Lakkoofsa sirrii galchi';
+
+  @override
+  String get cost_cutting_result_title => 'Gorsa Hir\'ina Baasii';
+
+  @override
+  String get recommendation_label => 'Gorsa:';
 }

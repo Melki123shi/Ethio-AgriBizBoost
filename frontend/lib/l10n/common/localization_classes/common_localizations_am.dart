@@ -262,25 +262,25 @@ class CommonLocalizationsAm extends CommonLocalizations {
   String get farm_size => 'የእርሻ መጠን (በሄክታር)';
 
   @override
-  String get fertilizer_expense => 'የተክል መዋቂያ ወጪ';
+  String get fertilizer_expense => 'የማዳበሪያ ወጪ (ብር)';
 
   @override
-  String get pesticide_expense => 'የአሳዳጊ ወጪ';
+  String get pesticide_expense => 'የፀረ-ተባይ ወጪ (ብር)';
 
   @override
-  String get transportation_expense => 'የመጓጓዣ ወጪ';
+  String get transportation_expense => 'የመጓጓዣ ወጪ (ብር)';
 
   @override
-  String get equipment_expense => 'የመሣሪያ ወጪ';
+  String get equipment_expense => 'የመሳሪያ ወጪ (ብር)';
 
   @override
-  String get seed_expense => 'የዘር ወጪ';
+  String get seed_expense => 'የዘር ወጪ (ብር)';
 
   @override
-  String get labour_expense => 'የሥራ ኃይል ወጪ';
+  String get labour_expense => 'የጉልበት ወጪ (ብር)';
 
   @override
-  String get other_utilities => 'ሌሎች አገልግሎቶች';
+  String get other_utilities => 'የሌሎች አገልግሎቶች ወጪ (ብር)';
 
   @override
   String get loan_advice_result => 'የብድር ምክር ውጤት';
@@ -349,5 +349,29 @@ class CommonLocalizationsAm extends CommonLocalizations {
   String get failed_to_fetch_user => 'ተጠቃሚን ማግኘት አልተሳካም';
 
   @override
-  String get action => 'ተግባር';
+  String get action => 'እርምጃ';
+
+  @override
+  String get fill_all_fields => 'እባክዎ ሁሉንም መስኮች ይሙሉ።';
+
+  @override
+  String get invalid_input => 'የተሳሳተ ግቤት';
+
+  @override
+  String get recommendation_success_title => 'ምክር';
+
+  @override
+  String get recommendation_error_title => 'ስህተት';
+
+  @override
+  String get is_required => 'ያስፈልጋል';
+
+  @override
+  String get enter_valid_number => 'ትክክለኛ ቁጥር ያስገቡ';
+
+  @override
+  String get cost_cutting_result_title => 'የወጪ ቅናሽ ምክር';
+
+  @override
+  String get recommendation_label => 'ምክር:';
 }
