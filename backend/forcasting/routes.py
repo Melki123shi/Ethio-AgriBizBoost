@@ -6,16 +6,16 @@ from auth.dependencies import get_current_active_user
 from security.rate_limiter import limiter
 
 router = APIRouter(
-    prefix="/forcasting",
-    tags=["Forecasting"],
-    responses={
-        403: {"description": "Forbidden - Authentication required"},
-        404: {"description": "Not found"}
-    }
+#     prefix="/forcasting",
+#     tags=["Forecasting"],
+#     responses={
+#         403: {"description": "Forbidden - Authentication required"},
+#         404: {"description": "Not found"}
+#     }
 )
 
 @router.post("/predict", response_model=dict)
-@limiter.limit("30/minute")
+# @limiter.limit("30/minute")
 async def predict(
     data: PredictionInput,
     current_user: dict = Depends(get_current_active_user)
