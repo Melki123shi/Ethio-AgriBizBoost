@@ -1,5 +1,6 @@
 import 'package:app/application/auth/auth_bloc.dart';
 import 'package:app/application/auth/auth_event.dart';
+import 'package:app/application/expense_tracking/bloc/expense_tracking_bloc.dart';
 import 'package:app/application/recent_assessment_results/recent_assessment_result_bloc.dart';
 import 'package:app/application/recommendation/loan_advice/loan_advice_bloc.dart';
 import 'package:app/application/user/user_bloc.dart';
@@ -7,6 +8,7 @@ import 'package:app/l10n/common/localization_classes/common_localizations.dart';
 import 'package:app/l10n/om_material_localizations.dart';
 import 'package:app/l10n/ti_material_localizations.dart';
 import 'package:app/services/api/auth_service.dart';
+import 'package:app/services/api/expense_tracking_service.dart';
 import 'package:app/services/api/loan_advice_service.dart';
 import 'package:app/services/api/user_service.dart';
 import 'package:app/services/token_storage.dart';
@@ -29,6 +31,7 @@ void main() {
   final authService = AuthService();
   final userService = UserService();
   final loanAdviceService = LoanAdviceService();
+  final expenseTrackingService = ExpenseTrackingService();
   final authBloc = AuthBloc(authService)..add(AppStarted());
   final loggedIn = TokenStorage.readAccessToken() != '';
   final appRouter = AppRouter(authBloc, loggedIn).router;
@@ -48,6 +51,9 @@ void main() {
         ),
          BlocProvider<LoanAdviceBloc>(
           create: (context) => LoanAdviceBloc(loanAdviceService),
+        ),
+        BlocProvider<ExpenseTrackingBloc>(
+          create: (context) => ExpenseTrackingBloc(expenseTrackingService),
         ),
         BlocProvider<RecentAssessmentBloc>(
           create: (context) => RecentAssessmentBloc(healthService),
