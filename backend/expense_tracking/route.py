@@ -12,10 +12,6 @@ from auth.dependencies import get_current_active_user
 router = APIRouter(
     prefix="/expense-tracking",
     tags=["Expense Tracking"],
-    responses={
-        403: {"description": "Forbidden - Authentication required"},
-        404: {"description": "Not found"}
-    }
 )
 
 @router.post("/expenses")

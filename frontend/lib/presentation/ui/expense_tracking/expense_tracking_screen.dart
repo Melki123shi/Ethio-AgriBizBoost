@@ -391,6 +391,8 @@
 //   }
 // }
 
+import 'package:app/application/auth/auth_bloc.dart';
+import 'package:app/services/token_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/application/expense_tracking/bloc/expense_tracking_bloc.dart';
@@ -408,22 +410,26 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch initial expenses when the screen loads
+    // Correctly dispatch an event to fetch initial data when the screen loads.
     context.read<ExpenseTrackingBloc>().add(GetExpensesEvent());
   }
 
+  /// This dialog now correctly uses a Form with validators and creates
+  /// an ExpenseTrackingEntity using its factory constructor.
   Future<void> _showAddExpenseDialog() async {
+    final userId = await TokenStorage.readAccessToken();
     final formKey = GlobalKey<FormState>();
-    String goods = '';
-    String amount = '';
-    String price = '';
+    String cropType = '';
+    String quantitySold = '';
+    String totalCost = '';
     DateTime? selectedDate;
+
+   
 
     await showDialog(
       context: context,
       builder: (ctx) {
         final theme = Theme.of(ctx);
-        // Use StatefulBuilder to manage the state of the dialog independently
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
@@ -444,11 +450,9 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                             context: ctx,
                             initialDate: DateTime.now(),
                             firstDate: DateTime(2000),
-                            lastDate:
-                                DateTime.now().add(const Duration(days: 365)),
+                            lastDate: DateTime.now().add(const Duration(days: 365)),
                           );
                           if (picked != null) {
-                            // Use the dialog's own setState
                             setDialogState(() => selectedDate = picked);
                           }
                         },
@@ -460,42 +464,44 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                       ),
                       const SizedBox(height: 10),
                       TextFormField(
+                        // The field names now correctly match the entity (goods -> cropType)
                         decoration: InputDecoration(
-                          labelText: context.commonLocals.goods,
+                          labelText: context.commonLocals.goods, // UI text for "Crop Type"
                           labelStyle: theme.textTheme.bodyMedium,
                         ),
-                        validator: (val) =>
-                            (val == null || val.isEmpty) ? 'Required' : null,
-                        onChanged: (val) => goods = val,
+                        validator: (val) => (val == null || val.isEmpty) ? 'Required' : null,
+                        onSaved: (val) => cropType = val!,
                       ),
                       TextFormField(
+                        // The field names now correctly match the entity (amount -> quantitySold)
                         decoration: InputDecoration(
-                          labelText: context.commonLocals.amount,
+                          labelText: context.commonLocals.amount, // UI text for "Quantity"
                           labelStyle: theme.textTheme.bodyMedium,
                         ),
                         validator: (val) {
                           if (val == null || val.isEmpty) return 'Required';
-                          final parsed = int.tryParse(val);
-                          if (parsed == null || parsed <= 0)
-                            return 'Enter a valid amount';
+                          if (int.tryParse(val) == null || int.parse(val) <= 0) {
+                            return 'Enter a valid number';
+                          }
                           return null;
                         },
-                        onChanged: (val) => amount = val,
+                        onSaved: (val) => quantitySold = val!,
                         keyboardType: TextInputType.number,
                       ),
                       TextFormField(
+                        // The field names now correctly match the entity (price -> totalCost)
                         decoration: InputDecoration(
-                          labelText: context.commonLocals.price_etb,
+                          labelText: context.commonLocals.price_etb, // UI text for "Total Cost"
                           labelStyle: theme.textTheme.bodyMedium,
                         ),
                         validator: (val) {
                           if (val == null || val.isEmpty) return 'Required';
-                          final parsed = double.tryParse(val);
-                          if (parsed == null || parsed < 0)
-                            return 'Enter valid price';
+                          if (double.tryParse(val) == null || double.parse(val) < 0) {
+                            return 'Enter a valid price';
+                          }
                           return null;
                         },
-                        onChanged: (val) => price = val,
+                        onSaved: (val) => totalCost = val!,
                         keyboardType: TextInputType.number,
                       ),
                     ],
@@ -518,14 +524,22 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                       );
                       return;
                     }
-
+                    
+                    // Validate and save the form
                     if (formKey.currentState!.validate()) {
+                      formKey.currentState!.save();
+                      
+                      // This is the key fix: creating the entity with a proper constructor.
+                      // No more casting a Map to an Entity!
                       final expense = ExpenseTrackingEntity.fromUserInput(
+                        userId: userId!,
                         date: selectedDate!,
-                        goods: goods.trim(),
-                        amount: int.tryParse(amount) ?? 0,
-                        price_etb: double.tryParse(price) ?? 0.0,
+                        cropType: cropType.trim(),
+                        quantitySold: int.parse(quantitySold),
+                        totalCost: double.parse(totalCost),
                       );
+                      
+                      // Dispatching the event to the BLoC handles the business logic.
                       context.read<ExpenseTrackingBloc>().add(
                             AddExpenseTrackingEvent(expense),
                           );
@@ -533,7 +547,6 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                       Navigator.pop(ctx);
                     }
                   },
-                  // Corrected button text
                   child: Text(context.commonLocals.add),
                 ),
               ],
@@ -544,6 +557,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
     );
   }
 
+  /// Delete logic is now clean, taking an ID and dispatching an event.
   void _confirmDelete(String id) {
     showDialog(
       context: context,
@@ -554,20 +568,13 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
           content: Text(context.commonLocals.delete_entry_prompt),
           actions: [
             TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: theme.colorScheme.onSurface,
-              ),
               onPressed: () => Navigator.pop(ctx),
               child: Text(context.commonLocals.cancel),
             ),
             TextButton(
-              style: TextButton.styleFrom(
-                foregroundColor: Colors.red,
-              ),
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
               onPressed: () {
-                context
-                    .read<ExpenseTrackingBloc>()
-                    .add(DeleteExpenseTrackingEvent(id));
+                context.read<ExpenseTrackingBloc>().add(DeleteExpenseTrackingEvent(id));
                 Navigator.pop(ctx);
               },
               child: Text(context.commonLocals.delete),
@@ -595,8 +602,10 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
           )
         ],
       ),
+      // BlocConsumer is the perfect widget for this.
+      // `listener` handles side-effects like SnackBars or navigation.
+      // `builder` handles rebuilding the UI based on the state.
       body: BlocConsumer<ExpenseTrackingBloc, ExpenseTrackingState>(
-        // The listener handles side effects like showing SnackBars
         listener: (context, state) {
           if (state is ExpenseTrackingAdded) {
             ScaffoldMessenger.of(context)
@@ -614,43 +623,25 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                 backgroundColor: Colors.red,
               ));
           }
+          // You can add more listeners for other states (e.g., delete success/failure).
         },
-        // The builder handles building the UI
         builder: (context, state) {
+          // Handle the loading state
           if (state is GetExpenseLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (state is GetExpenseFailed) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(state.message),
-                IconButton(
-                    onPressed: () {
-                      context
-                          .read<ExpenseTrackingBloc>()
-                          .add(GetExpensesEvent());
-                    },
-                    icon: const Icon(Icons.replay_outlined))
-              ],
-            );
-          } else if (state is GetExpensesSucess) {
+          }
+          // Handle the success state
+          else if (state is GetExpensesSucess) {
             final expenses = state.expenses;
+            if (expenses.isEmpty) {
+              return const Center(child: Text("No expenses recorded yet."));
+            }
             return SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: DataTable(
                 headingRowHeight: 56,
                 dataRowHeight: 56,
-                horizontalMargin: 8,
-                columnSpacing: 5,
-                dividerThickness: 1,
                 border: TableBorder.all(color: divider),
-                headingTextStyle: textBody.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 13,
-                  color: onSurface,
-                ),
-                dataTextStyle:
-                    textBody.copyWith(color: onSurface, fontSize: 13),
                 columns: [
                   DataColumn(label: Text(context.commonLocals.date)),
                   DataColumn(label: Text(context.commonLocals.goods)),
@@ -658,17 +649,20 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                   DataColumn(label: Text(context.commonLocals.price_etb)),
                   DataColumn(label: Text(context.commonLocals.action)),
                 ],
-                rows: expenses.map((e) {
+                // The UI is now built directly from the BLoC state, not a local list.
+                rows: expenses.map((expense) {
                   return DataRow(cells: [
-                    DataCell(Text(e.date.toLocal().toString().split(" ")[0])),
-                    DataCell(Text(e.goods)),
-                    DataCell(Text(e.amount.toString())),
-                    DataCell(Text(e.price_etb.toString())),
+                    DataCell(Text(expense.date.toLocal().toString().split(" ")[0])),
+                    DataCell(Text(expense.cropType)),
+                    DataCell(Text(expense.quantitySold.toString())),
+                    DataCell(Text(expense.totalCost.toString())),
                     DataCell(Row(
                       children: [
                         IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => _confirmDelete(e.id ?? ''),
+                          // The 'id' must not be null for delete to work.
+                          // Ensure your entity always has an id from the backend.
+                          onPressed: () => _confirmDelete(expense.id ?? ''),
                         )
                       ],
                     )),
@@ -677,20 +671,27 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
               ),
             );
           }
-
-          // Show an error message if the initial fetch fails
-          if (state is GetExpenseFailed) {
-            return Center(child: Text(state.message));
+          // Handle the failure state
+          else if (state is GetExpenseFailed) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(state.message),
+                  IconButton(
+                    onPressed: () => context.read<ExpenseTrackingBloc>().add(GetExpensesEvent()),
+                    icon: const Icon(Icons.replay_outlined))
+                ],
+              ),
+            );
           }
-
-          // Fallback for initial and other states
-          return const Center(child: CircularProgressIndicator());
+          // A fallback for any other unhandled states.
+          return const Center(child: Text("Something went wrong."));
         },
       ),
     );
   }
 }
-
 
 
 // const SizedBox(height: 40),

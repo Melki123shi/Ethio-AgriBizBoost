@@ -2,26 +2,29 @@ import 'package:app/domain/entity/expense_tracking_entity.dart';
 
 class ExpenseTrackingDTO {
   final DateTime date;
-  final String goods;
-  final int amount;
-  final double price_etb;
+  final String cropType;
+  final int quantitySold;
+  final double totalCost;
+  final String userId;
 
   ExpenseTrackingDTO({
       required this.date,
-      required this.goods,
-      required this.amount,
-      required this.price_etb,
+      required this.cropType,
+      required this.quantitySold,
+      required this.totalCost,
+      required this.userId,
   });
 
   /// JSON → DTO
   factory ExpenseTrackingDTO.fromJson(Map<String, dynamic> json) {
     return ExpenseTrackingDTO(
       date: DateTime.parse(json['date'] as String),
-      goods: json['goods'] as String,
-      amount: json['amount'] is int
-          ? json['amount'] as int
-          : int.tryParse(json['amount'].toString()) ?? 0,
-      price_etb: (json['price_etb'] as num).toDouble(),
+      cropType: json['cropType'] as String,
+      quantitySold: json['quantitySold'] is int
+          ? json['quantitySold'] as int
+          : int.tryParse(json['quantitySold'].toString()) ?? 0,
+      totalCost: (json['totalCost'] as num).toDouble(),
+      userId: json['userId'],
     );
   }
 
@@ -29,9 +32,10 @@ class ExpenseTrackingDTO {
   Map<String, dynamic> toJson() {
     return {
       'date': date.toIso8601String(),
-      'goods': goods,
-      'amount': amount,
-      'price_etb': price_etb,
+      'cropType': cropType,
+      'quantitySold': quantitySold,
+      'totalCost': totalCost,
+      'userId': userId, 
     };
   }
 
@@ -39,9 +43,10 @@ class ExpenseTrackingDTO {
   static ExpenseTrackingDTO fromEntity(ExpenseTrackingEntity e) {
     return ExpenseTrackingDTO(
       date: e.date,
-      goods: e.goods,
-      amount: e.amount,
-      price_etb: e.price_etb,
+      cropType: e.cropType,
+      quantitySold: e.quantitySold,
+      totalCost: e.totalCost,
+      userId: e.userId,
     );
   }
 
@@ -49,9 +54,10 @@ class ExpenseTrackingDTO {
   ExpenseTrackingEntity toEntity() {
     return ExpenseTrackingEntity(
       date: date,
-      goods: goods,
-      amount: amount,
-      price_etb: price_etb,
+      cropType: cropType,
+      quantitySold: quantitySold,
+      totalCost: totalCost,
+      userId: userId,
     );
   }
 }
