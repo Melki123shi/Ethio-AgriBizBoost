@@ -113,8 +113,8 @@ def get_farmer_dashboard_data(user_id: str, time_filter: TimeFilter = TimeFilter
 def get_farmers_list(filters: DashboardFilters) -> Tuple[List[FarmerDashboardData], int]:
     """Get paginated list of farmers with filters - OPTIMIZED VERSION"""
     try:
-        # Build query
-        query = {}
+        # Build query - exclude admin users
+        query = {"$or": [{"is_admin": False}, {"is_admin": {"$exists": False}}]}
         
         # Don't filter by is_active if field doesn't exist in database
         # We'll handle this during result processing
@@ -122,7 +122,7 @@ def get_farmers_list(filters: DashboardFilters) -> Tuple[List[FarmerDashboardDat
         if filters.region:
             query["location"] = {"$regex": filters.region, "$options": "i"}
         
-        # Get total count
+        # Get total count (excluding admins)
         total_count = users_collection.count_documents(query)
         
         # Get paginated users
@@ -257,8 +257,11 @@ def get_farmers_list(filters: DashboardFilters) -> Tuple[List[FarmerDashboardDat
 def get_dashboard_summary(time_filter: TimeFilter = TimeFilter.all) -> DashboardSummary:
     """Get overall system summary for admin dashboard - OPTIMIZED VERSION"""
     try:
-        # Get user counts using aggregation
+        # Get user counts using aggregation - exclude admin users
+        base_match = {"$or": [{"is_admin": False}, {"is_admin": {"$exists": False}}]}
+        
         pipeline = [
+            {"$match": base_match},
             {"$facet": {
                 "total": [{"$count": "count"}],
                 "active": [{"$match": {"is_active": True}}, {"$count": "count"}],
@@ -382,9 +385,12 @@ def search_farmers(query: str, limit: int = 10) -> List[Dict[str, Any]]:
     """Search farmers by name or phone number"""
     try:
         search_query = {
-            "$or": [
-                {"name": {"$regex": query, "$options": "i"}},
-                {"phone_number": {"$regex": query, "$options": "i"}}
+            "$and": [
+                {"$or": [{"is_admin": False}, {"is_admin": {"$exists": False}}]},
+                {"$or": [
+                    {"name": {"$regex": query, "$options": "i"}},
+                    {"phone_number": {"$regex": query, "$options": "i"}}
+                ]}
             ]
         }
         
