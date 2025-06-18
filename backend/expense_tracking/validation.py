@@ -1,9 +1,9 @@
 from datetime import datetime
 
 # Validation function for goods (non-empty)
-def validate_goods(v: str) -> str:
+def validate_cropTypes(v: str) -> str:
     if not v.strip():
-        raise ValueError('Goods name must not be empty')
+        raise ValueError('Crop type name must not be empty')
     return v
 
 # Validation function for positive values

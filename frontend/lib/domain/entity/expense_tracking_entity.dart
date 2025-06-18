@@ -1,88 +1,56 @@
-// class ExpenseTrackingEntity {
-//   final DateTime date;
-//   final String goods;
-//   final int amount;
-//   final double price_etb;
-
-//   ExpenseTrackingEntity({
-//     required this.date,
-//     required this.goods,
-//     required this.amount,
-//     required this.price_etb,
-//   });
-
-//   static ExpenseTrackingEntity fromUserInput({
-//     required DateTime date,
-//     required String goods,
-//     required int amount,
-//     required double price_etb,
-//   }) {
-//     return ExpenseTrackingEntity(
-//       date: date,
-//       goods: goods,
-//       amount: amount,
-//       price_etb: price_etb,
-//     );
-//   }
-
-//   Map<String, dynamic> toJson() {
-//     return {
-//       'date': date,
-//       'goods': goods,
-//       'amount': amount,
-//       'price_etb': price_etb,
-//     };
-//   }
-// }
-
-
 class ExpenseTrackingEntity {
   final String? id;
   final DateTime date;
-  final String goods;
-  final int amount;
-  final double price_etb;
+  final String cropType;
+  final int quantitySold;
+  final double totalCost;
+  final String userId; // <-- Add this field
 
   ExpenseTrackingEntity({
     this.id,
     required this.date,
-    required this.goods,
-    required this.amount,
-    required this.price_etb,
+    required this.cropType,
+    required this.quantitySold,
+    required this.totalCost,
+    required this.userId, // <-- Add to constructor
   });
 
   static ExpenseTrackingEntity fromUserInput({
+    required String userId,
     required DateTime date,
-    required String goods,
-    required int amount,
-    required double price_etb,
+    required String cropType,
+    required int quantitySold,
+    required double totalCost,
   }) {
     return ExpenseTrackingEntity(
+      userId: userId,
       date: date,
-      goods: goods,
-      amount: amount,
-      price_etb: price_etb,
+      cropType: cropType,
+      quantitySold: quantitySold,
+      totalCost: totalCost,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
+      'userId': userId,
       'date': date.toIso8601String(),
-      'goods': goods,
-      'amount': amount,
-      'price_etb': price_etb,
+      'cropType': cropType,
+      'quantitySold': quantitySold,
+      'totalCost': totalCost,
     };
   }
 
   factory ExpenseTrackingEntity.fromJson(Map<String, dynamic> json) {
     return ExpenseTrackingEntity(
       id: json['_id'], 
+      userId: json['userId'],
       date: DateTime.parse(json['date']),
-      goods: json['goods'],
-      amount: json['amount'],
-      price_etb: (json['price_etb'] is int)
-          ? (json['price_etb'] as int).toDouble()
-          : json['price_etb'].toDouble(),
+      cropType: json['cropType'],
+      quantitySold: json['quantitySold'],
+      totalCost: (json['totalCost'] is int)
+          ? (json['totalCost'] as int).toDouble()
+          : json['totalCost'].toDouble(),
     );
   }
 }
