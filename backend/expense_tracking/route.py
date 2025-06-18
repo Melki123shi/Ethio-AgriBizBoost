@@ -6,23 +6,27 @@ from .service import (
     get_expenses,
     update_expense,
     delete_expense,
-    get_assessments
 )
 from auth.dependencies import get_current_active_user  
 
-router = APIRouter(prefix="/expense-tracking", tags=["Expense Tracking"])
+router = APIRouter(
+    prefix="/expense-tracking",
+    tags=["Expense Tracking"],
+    responses={
+        403: {"description": "Forbidden - Authentication required"},
+        404: {"description": "Not found"}
+    }
+)
 
-#! --- Expenses Routes ---
 @router.post("/expenses")
 def create_expense(expense: Expense, current_user: str = Depends(get_current_active_user)):
-    # Add user_id to the expense before adding it to the database
     expense.user_id = current_user  
     expense_id = add_expense(expense)
     return {"message": "Expense added successfully", "id": expense_id}
 
 @router.get("/expenses")
 def list_expenses(
-    current_user: str = Depends(get_current_active_user)  # Filter expenses by current user
+    current_user: str = Depends(get_current_active_user) 
 ):
     filter_by = {"user_id": current_user}
     expenses = get_expenses(filter_by)
@@ -38,7 +42,7 @@ def edit_expense(expense_id: str, expense_update: Expense, current_user: str = D
 
 @router.delete("/expenses/{expense_id}")
 def remove_expense(expense_id: str, current_user: str = Depends(get_current_active_user)):
-    deleted = delete_expense(expense_id, current_user)  # Check if the expense belongs to the user
+    deleted = delete_expense(expense_id, current_user)
     if not deleted:
         raise HTTPException(status_code=404, detail="Expense not found")
     return {"message": "Expense deleted successfully"}
