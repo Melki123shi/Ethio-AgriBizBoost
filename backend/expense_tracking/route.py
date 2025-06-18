@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Query, HTTPException
+from fastapi import APIRouter, Query, HTTPException, Depends
 from typing import Optional
 from .model import Expense
 from .service import (
@@ -8,55 +8,37 @@ from .service import (
     delete_expense,
     get_assessments
 )
+from auth.dependencies import get_current_active_user  
 
 router = APIRouter(prefix="/expense-tracking", tags=["Expense Tracking"])
 
 #! --- Expenses Routes ---
 @router.post("/expenses")
-def create_expense(expense: Expense):
+def create_expense(expense: Expense, current_user: str = Depends(get_current_active_user)):
+    # Add user_id to the expense before adding it to the database
+    expense.user_id = current_user  
     expense_id = add_expense(expense)
     return {"message": "Expense added successfully", "id": expense_id}
 
 @router.get("/expenses")
 def list_expenses(
-    year: Optional[str] = Query(None),
-    month: Optional[str] = Query(None)
+    current_user: str = Depends(get_current_active_user)  # Filter expenses by current user
 ):
-    filter_by = {}
-    if year and month:
-        filter_by["date"] = {"$regex": f"^{year}-{month}"}
-    elif year:
-        filter_by["date"] = {"$regex": f"^{year}"}
-    elif month: 
-        filter_by["date"] = {"$regex": f"-{month}-"}
+    filter_by = {"user_id": current_user}
     expenses = get_expenses(filter_by)
     return expenses
 
 @router.put("/expenses/{expense_id}")
-def edit_expense(expense_id: str, expense_update: Expense):
+def edit_expense(expense_id: str, expense_update: Expense, current_user: str = Depends(get_current_active_user)):
+    expense_update.user_id = current_user 
     updated = update_expense(expense_id, expense_update.model_dump())
     if not updated:
         raise HTTPException(status_code=404, detail="Expense not found")
     return {"message": "Expense updated successfully"}
 
 @router.delete("/expenses/{expense_id}")
-def remove_expense(expense_id: str):
-    deleted = delete_expense(expense_id)
+def remove_expense(expense_id: str, current_user: str = Depends(get_current_active_user)):
+    deleted = delete_expense(expense_id, current_user)  # Check if the expense belongs to the user
     if not deleted:
         raise HTTPException(status_code=404, detail="Expense not found")
     return {"message": "Expense deleted successfully"}
-
-#! --- Assessments Routes ---
-@router.get("/assessments")
-def list_assessments(
-    year: Optional[str] = Query(None),
-    month: Optional[str] = Query(None)
-):
-    filter_by = {}
-    if year and month:
-        filter_by["date"] = {"$regex": f"^{year}-{month.zfill(2)}"}
-    elif year:
-        filter_by["date"] = {"$regex": f"^{year}"}
-    
-    assessments = get_assessments(filter_by)
-    return assessments

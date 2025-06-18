@@ -1,13 +1,5 @@
 from datetime import datetime
 
-# Validation function for date format (YYYY-MM-DD)
-def validate_date_format(v: str) -> str:
-    try:
-        datetime.strptime(v, '%Y-%m-%d')
-    except ValueError:
-        raise ValueError('Date must be in YYYY-MM-DD format')
-    return v
-
 # Validation function for goods (non-empty)
 def validate_goods(v: str) -> str:
     if not v.strip():
