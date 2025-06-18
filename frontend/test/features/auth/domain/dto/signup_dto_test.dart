@@ -908,7 +908,7 @@ void main() {
 
       test('should handle very long success messages', () {
         // Arrange
-        final longMessage =
+        const longMessage =
             'This is a very long success message that might be returned from the API when providing detailed information about the registration process and next steps for the agricultural business user registration in the Ethio-AgriBizBoost platform.';
         final dto = SignupResponseDTO(
           userId: 'user_long_message',

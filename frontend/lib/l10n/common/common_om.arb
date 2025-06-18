@@ -116,5 +116,22 @@
         "add_expense": "Baasi galchi",
         "farmer": "Qotee bulaa",
         "failed_to_fetch_user": "Fayyadamaa argachuu hin dandeenye",
-        "action": "Hojii"
+        "action": "Hojii",
+        "fertilizer_expense": "Baasii xaa’oo (ETB)",
+        "pesticide_expense": "Baasii qoricha aramaa (ETB)",
+        "transportation_expense": "Baasii geejjibaa (ETB)",
+        "equipment_expense": "Baasii meeshaalee (ETB)",
+        "seed_expense": "Baasii sanyii (ETB)",
+        "labour_expense": "Baasii hojii (ETB)",
+        "other_utilities": "Baasii tajaajila addaa (ETB)",
+        "fill_all_fields": "Mee dirqama hunda guutuu.",
+        "invalid_input": "Galtee sirrii miti",
+        "recommendation_success_title": "Gorsa",
+        "recommendation_error_title": "Dogoggora",
+        "language": "Afgaari",
+        "select_language": "Afgaari Filachi",
+        "is_required": "barbaachisaadha",
+        "enter_valid_number": "Lakkoofsa sirrii galchi",
+        "cost_cutting_result_title": "Gorsa Hir'ina Baasii",
+        "recommendation_label": "Gorsa:"
 }

@@ -21,7 +21,6 @@ class LoanAdviceScreen extends StatefulWidget {
 
 class _LoanAdviceScreenState extends State<LoanAdviceScreen> {
   final _formKey = GlobalKey<FormState>();
-  // Changed to Map<String, String?> for consistency
   final Map<String, String?> _formData = {
     'cropType': null,
     'subsidy': null,
@@ -30,7 +29,6 @@ class _LoanAdviceScreenState extends State<LoanAdviceScreen> {
     'quantitySold': null,
   };
 
-  // Added keys for positioning the dropdown
   final Map<String, GlobalKey> _fieldKeys = {
     'cropType': GlobalKey(),
   };
@@ -85,7 +83,6 @@ class _LoanAdviceScreenState extends State<LoanAdviceScreen> {
     }
   }
 
-  // New helper for the dropdown UI
   Widget _buildDropdown(String key, String label) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
@@ -191,10 +188,8 @@ class _LoanAdviceScreenState extends State<LoanAdviceScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // REPLACED CustomInputField with the new dropdown
               _buildDropdown('cropType', context.commonLocals.crop_type),
 
-              // REPLACED CustomInputField with the new styled number field
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
                 child: _buildStyledNumberField(
@@ -203,7 +198,6 @@ class _LoanAdviceScreenState extends State<LoanAdviceScreen> {
                 ),
               ),
 
-              // REPLACED CustomInputField with the new styled number field
               Padding(
                 padding: const EdgeInsets.only(bottom: 30),
                 child: _buildStyledNumberField(
@@ -212,7 +206,6 @@ class _LoanAdviceScreenState extends State<LoanAdviceScreen> {
                 ),
               ),
 
-              // REPLACED CustomInputFields and added a Row for better layout
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
