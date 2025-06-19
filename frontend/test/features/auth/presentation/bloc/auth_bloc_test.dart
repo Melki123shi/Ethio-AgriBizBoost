@@ -65,7 +65,7 @@ void main() {
         ),
         expect: () => [
           AuthLoading(),
-          const AuthFailure('Exception: Phone number already exists'),
+          const AuthFailure('Phone number already exists'),
         ],
         verify: (_) {
           verify(mockAuthService.signup(any)).called(1);
@@ -126,7 +126,7 @@ void main() {
         ),
         expect: () => [
           AuthLoading(),
-          const AuthFailure('Exception: Invalid credentials'),
+          const AuthFailure('Invalid credentials'),
         ],
         verify: (_) {
           verify(mockAuthService.login(any)).called(1);
@@ -150,8 +150,7 @@ void main() {
         ),
         expect: () => [
           AuthLoading(),
-          const AuthFailure(
-              'Exception: Login failed: no access token returned'),
+          const AuthFailure('Login failed: no access token returned'),
         ],
       );
 
@@ -172,8 +171,7 @@ void main() {
         ),
         expect: () => [
           AuthLoading(),
-          const AuthFailure(
-              'Exception: Login failed: no access token returned'),
+          const AuthFailure('Login failed: no access token returned'),
         ],
       );
 
