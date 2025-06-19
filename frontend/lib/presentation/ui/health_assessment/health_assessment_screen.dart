@@ -226,12 +226,9 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
     );
   }
 
-  // === WIDGET UPDATED ===
   Widget _buildRecentResultHeader() {
-    // Use BlocBuilder to listen to the RecentAssessmentBloc
     return BlocBuilder<RecentAssessmentBloc, RecentAssessmentState>(
       builder: (context, state) {
-        // Show a loading indicator for Initial and Loading states
         if (state is RecentAssessmentInitial ||
             state is RecentAssessmentLoading) {
           return const Padding(

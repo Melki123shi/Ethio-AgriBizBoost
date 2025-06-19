@@ -37,7 +37,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           } else if (state is UserError) {
             return Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(context.commonLocals.failed_to_fetch_user),
                 IconButton(
@@ -57,7 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildProfile(BuildContext context, ThemeData theme, UserEntity user) {
     return Column(
       children: [
-        const Header(),
+        Header(),
         Expanded(
           child: SafeArea(
             child: ListView(
@@ -117,9 +117,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: Row(
             children: [
               CircleAvatar(
+                backgroundColor: const Color.fromARGB(255, 154, 195, 154),
                 radius: 32,
-                backgroundImage: NetworkImage(user.profilePictureUrl ??
-                    'https://via.placeholder.com/150'),
+                backgroundImage: user.profilePictureUrl != null
+                    ? NetworkImage(user.profilePictureUrl!)
+                    : null,
+                child: user.profilePictureUrl == null
+                    ? Icon(Icons.person,
+                        size: 30, color: Theme.of(context).focusColor)
+                    : null,
               ),
               const SizedBox(width: 16),
               Expanded(

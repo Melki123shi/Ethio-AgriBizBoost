@@ -13,7 +13,7 @@ class HealthAssessmentOutput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 40, 0, 10),
+      padding: const EdgeInsets.fromLTRB(0, 25, 0, 10),
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
@@ -25,7 +25,7 @@ class HealthAssessmentOutput extends StatelessWidget {
           title: Text(context.commonLocals.assessment_result),
         ),
         body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

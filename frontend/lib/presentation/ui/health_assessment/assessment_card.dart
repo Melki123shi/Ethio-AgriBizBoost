@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AssessmentCard extends StatelessWidget {
   final String title;
-  final double percentage; 
+  final double percentage;
 
   const AssessmentCard({
     super.key,
@@ -23,18 +23,24 @@ class AssessmentCard extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            width: 80,
-            height: 80,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Theme.of(context).primaryColor,
-                width: 8,
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              SizedBox(
+                width: 80,
+                height: 80,
+                child: CircularProgressIndicator(
+                  value: percentage / 100,
+                  strokeWidth: 8,
+                  backgroundColor: Theme.of(context).primaryColor.withOpacity(0.2),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    percentage >= 50
+                        ? Colors.green
+                        : Colors.yellow,
+                  ),
+                ),
               ),
-            ),
-            child: Center(
-              child: Text(
+              Text(
                 "${percentage.toStringAsFixed(1)}%",
                 style: TextStyle(
                   fontSize: 16,
@@ -42,7 +48,7 @@ class AssessmentCard extends StatelessWidget {
                   color: Theme.of(context).focusColor,
                 ),
               ),
-            ),
+            ],
           ),
           const SizedBox(height: 10),
           Text(

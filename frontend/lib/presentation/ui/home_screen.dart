@@ -35,7 +35,7 @@ class HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: Column(
         children: [
-          const Header(),
+          Header(),
           const SizedBox(height: 30),
           NavigationTabs(
             selectedIndex: selectedIndex,
