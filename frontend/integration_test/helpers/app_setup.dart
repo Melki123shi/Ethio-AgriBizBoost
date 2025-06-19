@@ -26,24 +26,51 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../helpers/mock_server.dart';
+import '../helpers/test_dio_factory.dart';
+import '../helpers/mock_service_provider.dart';
 
 class IntegrationTestApp {
-  static Widget createApp({bool skipAuth = false}) {
-    // Reset DioClient before creating services
-    DioClient.resetForTesting();
+  static AuthBloc? _authBloc;
 
-    final healthService = HealthAssessmentService();
-    final forcastingService = ForcastingService();
-    final authService = AuthService();
-    final userService = UserService();
-    final loanAdviceService = LoanAdviceService();
-    final expenseTrackingService = ExpenseTrackingService();
-    final authBloc = AuthBloc(authService, autoStart: !skipAuth);
+  static Widget createApp({bool skipAuth = false}) {
+    // This should not be used in tests - use createAppWithMockAdapter instead
+    throw Exception('Use createAppWithMockAdapter for tests!');
+  }
+
+  /// Create app with mock adapter already set up
+  static Widget createAppWithMockAdapter(
+    MockHttpClientAdapter mockAdapter, {
+    bool skipAuth = false,
+  }) {
+    // Initialize test Dio factory with mock adapter
+    TestDioFactory.initializeWithMockAdapter(mockAdapter);
+
+    // Verify mock is attached
+    assert(
+        TestDioFactory.isMockAttached(), 'Mock adapter not properly attached!');
+
+    // Reset service provider
+    MockServiceProvider.reset();
+
+    // Get mocked services
+    final healthService = MockServiceProvider.getHealthService();
+    final forcastingService = MockServiceProvider.getForcastingService();
+    final authService = MockServiceProvider.getAuthService();
+    final userService = MockServiceProvider.getUserService();
+    final loanAdviceService = MockServiceProvider.getLoanAdviceService();
+    final expenseTrackingService =
+        MockServiceProvider.getExpenseTrackingService();
+
+    // Create auth bloc with mocked auth service
+    _authBloc = AuthBloc(authService, autoStart: false);
+    final authBloc = _authBloc!;
+
     final loggedIn = TokenStorage.readAccessToken() != '';
     final appRouter = AppRouter(authBloc, loggedIn).router;
 
+    // Only start auth if not skipping
     if (!skipAuth) {
-      authBloc.add(AppStarted());
+      Future.microtask(() => authBloc.add(AppStarted()));
     }
 
     return MultiBlocProvider(
@@ -108,24 +135,24 @@ class IntegrationTestApp {
     );
   }
 
-  /// Create app with mock adapter already set up
-  static Widget createAppWithMockAdapter(
-    MockHttpClientAdapter mockAdapter, {
-    bool skipAuth = false,
-  }) {
-    // Reset DioClient and set mock adapter before creating services
-    DioClient.resetForTesting();
-    DioClient.getDio().httpClientAdapter = mockAdapter;
-
-    return createApp(skipAuth: skipAuth);
-  }
-
   /// Clean up all stored data before tests
   static Future<void> clearAllData() async {
     SharedPreferences.setMockInitialValues({});
     await TokenStorage.clearAccessToken();
     await TokenStorage.clearRefreshToken();
     await TokenStorage.clearTokenType();
+
+    // Reset auth bloc if it exists
+    if (_authBloc != null) {
+      _authBloc!.close();
+      _authBloc = null;
+    }
+
+    // Clear test Dio factory
+    TestDioFactory.reset();
+
+    // Clear mock service provider
+    MockServiceProvider.reset();
   }
 
   /// Set up authenticated state for tests that need it
@@ -133,5 +160,13 @@ class IntegrationTestApp {
     await TokenStorage.saveAccessToken('mock_access_token');
     await TokenStorage.saveRefreshToken('mock_refresh_token');
     await TokenStorage.saveTokenType('Bearer');
+  }
+
+  /// Reset the entire app state - useful between test groups
+  static Future<void> resetAppState() async {
+    await clearAllData();
+    _authBloc = null;
+    TestDioFactory.reset();
+    MockServiceProvider.reset();
   }
 }

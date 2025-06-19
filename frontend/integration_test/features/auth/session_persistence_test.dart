@@ -1,13 +1,17 @@
+import 'package:app/application/auth/auth_bloc.dart';
+import 'package:app/application/auth/auth_event.dart';
 import 'package:app/presentation/ui/auth/login.dart';
 import 'package:app/presentation/ui/home_screen.dart';
-import 'package:app/services/network/dio_client.dart';
 import 'package:app/services/token_storage.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../helpers/app_setup.dart';
 import '../../helpers/mock_server.dart';
+import '../../helpers/test_utils.dart';
 import 'test_data.dart';
 
 void main() {
@@ -23,50 +27,56 @@ void main() {
     setUp(() async {
       await IntegrationTestApp.clearAllData();
       mockAdapter = MockHttpClientAdapter();
-      DioClient.resetForTesting();
-      DioClient.getDio().httpClientAdapter = mockAdapter;
     });
 
     tearDown(() async {
       mockAdapter.clearResponses();
       await IntegrationTestApp.clearAllData();
-      DioClient.resetForTesting();
     });
 
     testWidgets('should auto-login with valid stored tokens', (tester) async {
-      // Setup valid tokens
-      await TokenStorage.saveAccessToken('valid-token');
-      await TokenStorage.saveRefreshToken('valid-refresh');
-      await TokenStorage.saveTokenType('Bearer');
+      // Setup valid tokens using SharedPreferences directly
+      SharedPreferences.setMockInitialValues({
+        'ACCESS_TOKEN': 'valid-token',
+        'REFRESH_TOKEN': 'valid-refresh',
+        'TOKEN_TYPE': 'Bearer',
+      });
 
-      // Mock multiple successful profile calls
-      for (int i = 0; i < 10; i++) {
-        mockAdapter.addResponse(
-            '/auth/profile', 200, MockApiResponses.userProfile());
-      }
+      // Mock successful profile calls (persistent)
+      mockAdapter.addPersistentResponse(
+          '/auth/profile', 200, MockApiResponses.userProfile());
 
-      await tester
-          .pumpWidget(IntegrationTestApp.createAppWithMockAdapter(mockAdapter));
+      await tester.pumpWidget(IntegrationTestApp.createAppWithMockAdapter(
+          mockAdapter,
+          skipAuth: true));
+
+      // Now trigger auth check after mocks are set up
+      final authBloc =
+          tester.element(find.byType(MaterialApp)).read<AuthBloc>();
+      authBloc.add(AppStarted());
+
       await tester.pumpAndSettle();
 
-      // Additional wait for auto-login to complete
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle();
+      // Ensure auto-login completes
+      await TestUtils.ensureNavigationComplete(tester);
 
       // Should auto-login and be on home screen
       expect(find.byType(HomeScreen), findsOneWidget);
 
       // Verify tokens are still present
-      expect(await TokenStorage.readAccessToken(), 'valid-token');
-      expect(await TokenStorage.readRefreshToken(), 'valid-refresh');
-      expect(await TokenStorage.readTokenType(), 'Bearer');
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('ACCESS_TOKEN'), 'valid-token');
+      expect(prefs.getString('REFRESH_TOKEN'), 'valid-refresh');
+      expect(prefs.getString('TOKEN_TYPE'), 'Bearer');
     });
 
     testWidgets('should handle expired token with refresh', (tester) async {
-      // Setup tokens
-      await TokenStorage.saveAccessToken('expired-token');
-      await TokenStorage.saveRefreshToken('valid-refresh');
-      await TokenStorage.saveTokenType('Bearer');
+      // Setup tokens using SharedPreferences directly
+      SharedPreferences.setMockInitialValues({
+        'ACCESS_TOKEN': 'expired-token',
+        'REFRESH_TOKEN': 'valid-refresh',
+        'TOKEN_TYPE': 'Bearer',
+      });
 
       // Clear and setup mock responses in specific order
       mockAdapter.clearResponses();
@@ -82,36 +92,36 @@ void main() {
         'token_type': 'Bearer'
       });
 
-      // After refresh, profile is retried with new token
-      for (int i = 0; i < 5; i++) {
-        mockAdapter.addResponse(
-            '/auth/profile', 200, MockApiResponses.userProfile());
-      }
+      // After refresh, profile is retried with new token (persistent)
+      mockAdapter.addPersistentResponse(
+          '/auth/profile', 200, MockApiResponses.userProfile());
 
-      await tester
-          .pumpWidget(IntegrationTestApp.createAppWithMockAdapter(mockAdapter));
+      // Create app with skip auth to control when auth starts
+      await tester.pumpWidget(IntegrationTestApp.createAppWithMockAdapter(
+          mockAdapter,
+          skipAuth: true));
 
-      // Wait for initial load
+      // Now trigger auth check after mocks are set up
+      final authBloc =
+          tester.element(find.byType(MaterialApp)).read<AuthBloc>();
+      authBloc.add(AppStarted());
+
+      // Give time for the auth flow to complete
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
-
-      // Wait for auth check, 401 response, refresh, and retry
-      await tester.pump(const Duration(seconds: 2));
+      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
-      // Additional wait for navigation
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle();
+      // Ensure navigation completes
+      await TestUtils.ensureNavigationComplete(tester);
 
       // Should still reach home after token refresh
       expect(find.byType(HomeScreen), findsOneWidget);
 
       // Verify new tokens were stored after refresh
-      final newToken = await TokenStorage.readAccessToken();
-      expect(newToken, 'new-mock-access-token-456');
-
-      final newRefreshToken = await TokenStorage.readRefreshToken();
-      expect(newRefreshToken, 'new-mock-refresh-token-456');
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString('ACCESS_TOKEN'), 'new-mock-access-token-456');
+      expect(prefs.getString('REFRESH_TOKEN'), 'new-mock-refresh-token-456');
     });
 
     testWidgets('should redirect to login when refresh fails', (tester) async {
@@ -133,20 +143,24 @@ void main() {
 
       // 3. No retry after failed refresh
 
-      await tester
-          .pumpWidget(IntegrationTestApp.createAppWithMockAdapter(mockAdapter));
+      await tester.pumpWidget(IntegrationTestApp.createAppWithMockAdapter(
+          mockAdapter,
+          skipAuth: true));
 
-      // Wait for initial load
+      // Now trigger auth check after mocks are set up
+      final authBloc =
+          tester.element(find.byType(MaterialApp)).read<AuthBloc>();
+      authBloc.add(AppStarted());
+
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
       // Give time for auth check and refresh attempt
-      await tester.pump(const Duration(seconds: 2));
+      await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
 
-      // Additional wait for redirect
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle();
+      // Ensure redirect completes
+      await TestUtils.ensureNavigationComplete(tester);
 
       // Should redirect to login
       expect(find.byType(LoginScreen), findsOneWidget);
@@ -162,13 +176,19 @@ void main() {
       // Ensure no tokens are stored
       await IntegrationTestApp.clearAllData();
 
-      await tester
-          .pumpWidget(IntegrationTestApp.createAppWithMockAdapter(mockAdapter));
+      await tester.pumpWidget(IntegrationTestApp.createAppWithMockAdapter(
+          mockAdapter,
+          skipAuth: true));
+
+      // Now trigger auth check after mocks are set up
+      final authBloc =
+          tester.element(find.byType(MaterialApp)).read<AuthBloc>();
+      authBloc.add(AppStarted());
+
       await tester.pumpAndSettle();
 
-      // Additional wait for auth check
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle();
+      // Ensure auto-login completes
+      await TestUtils.ensureNavigationComplete(tester);
 
       // Should start at login screen
       expect(find.byType(LoginScreen), findsOneWidget);
@@ -193,17 +213,21 @@ void main() {
       mockAdapter.addResponse(
           '/auth/refresh', 401, {'detail': 'Invalid refresh token format'});
 
-      await tester
-          .pumpWidget(IntegrationTestApp.createAppWithMockAdapter(mockAdapter));
+      await tester.pumpWidget(IntegrationTestApp.createAppWithMockAdapter(
+          mockAdapter,
+          skipAuth: true));
 
-      // Wait for auth checks
+      // Now trigger auth check after mocks are set up
+      final authBloc =
+          tester.element(find.byType(MaterialApp)).read<AuthBloc>();
+      authBloc.add(AppStarted());
+
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
 
-      // Additional wait for redirect
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle();
+      // Ensure redirect completes
+      await TestUtils.ensureNavigationComplete(tester);
 
       // Should redirect to login
       expect(find.byType(LoginScreen), findsOneWidget);
@@ -220,18 +244,22 @@ void main() {
       await TokenStorage.saveTokenType('Bearer');
 
       // Mock successful profile calls
-      for (int i = 0; i < 10; i++) {
-        mockAdapter.addResponse(
-            '/auth/profile', 200, MockApiResponses.userProfile());
-      }
+      mockAdapter.addPersistentResponse(
+          '/auth/profile', 200, MockApiResponses.userProfile());
 
-      await tester
-          .pumpWidget(IntegrationTestApp.createAppWithMockAdapter(mockAdapter));
+      await tester.pumpWidget(IntegrationTestApp.createAppWithMockAdapter(
+          mockAdapter,
+          skipAuth: true));
+
+      // Now trigger auth check after mocks are set up
+      final authBloc =
+          tester.element(find.byType(MaterialApp)).read<AuthBloc>();
+      authBloc.add(AppStarted());
+
       await tester.pumpAndSettle();
 
-      // Additional wait
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle();
+      // Ensure auto-login completes
+      await TestUtils.ensureNavigationComplete(tester);
 
       // Should be logged in
       expect(find.byType(HomeScreen), findsOneWidget);
@@ -241,18 +269,20 @@ void main() {
       expect(await TokenStorage.readRefreshToken(), 'persistent-refresh');
       expect(await TokenStorage.readTokenType(), 'Bearer');
 
-      // Important: Reset DioClient but keep the mock adapter
-      DioClient.resetForTesting();
-      DioClient.getDio().httpClientAdapter = mockAdapter;
-
       // Create new app instance (simulating restart)
-      await tester
-          .pumpWidget(IntegrationTestApp.createAppWithMockAdapter(mockAdapter));
+      await tester.pumpWidget(IntegrationTestApp.createAppWithMockAdapter(
+          mockAdapter,
+          skipAuth: true));
+
+      // Now trigger auth check for the new instance
+      final newAuthBloc =
+          tester.element(find.byType(MaterialApp)).read<AuthBloc>();
+      newAuthBloc.add(AppStarted());
+
       await tester.pumpAndSettle();
 
-      // Additional wait
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle();
+      // Ensure auto-login completes
+      await TestUtils.ensureNavigationComplete(tester);
 
       // Should still be logged in
       expect(find.byType(HomeScreen), findsOneWidget);
@@ -269,19 +299,23 @@ void main() {
       await TokenStorage.saveRefreshToken('initial-refresh');
       await TokenStorage.saveTokenType('Bearer');
 
-      // Mock successful initial profile calls
-      for (int i = 0; i < 5; i++) {
-        mockAdapter.addResponse(
-            '/auth/profile', 200, MockApiResponses.userProfile());
-      }
+      // Mock successful initial profile calls (persistent)
+      mockAdapter.addPersistentResponse(
+          '/auth/profile', 200, MockApiResponses.userProfile());
 
-      await tester
-          .pumpWidget(IntegrationTestApp.createAppWithMockAdapter(mockAdapter));
+      await tester.pumpWidget(IntegrationTestApp.createAppWithMockAdapter(
+          mockAdapter,
+          skipAuth: true));
+
+      // Now trigger auth check after mocks are set up
+      final authBloc =
+          tester.element(find.byType(MaterialApp)).read<AuthBloc>();
+      authBloc.add(AppStarted());
+
       await tester.pumpAndSettle();
 
-      // Additional wait
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle();
+      // Ensure auto-login completes
+      await TestUtils.ensureNavigationComplete(tester);
 
       // Should be logged in
       expect(find.byType(HomeScreen), findsOneWidget);
@@ -301,17 +335,21 @@ void main() {
       mockAdapter.addResponse(
           '/auth/profile', 403, {'detail': 'User account suspended'});
 
-      await tester
-          .pumpWidget(IntegrationTestApp.createAppWithMockAdapter(mockAdapter));
+      await tester.pumpWidget(IntegrationTestApp.createAppWithMockAdapter(
+          mockAdapter,
+          skipAuth: true));
 
-      // Wait for auth check
+      // Now trigger auth check after mocks are set up
+      final authBloc =
+          tester.element(find.byType(MaterialApp)).read<AuthBloc>();
+      authBloc.add(AppStarted());
+
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pumpAndSettle();
 
-      // Additional wait for redirect
-      await tester.pump(const Duration(milliseconds: 100));
-      await tester.pumpAndSettle();
+      // Ensure redirect completes
+      await TestUtils.ensureNavigationComplete(tester);
 
       // Should redirect to login
       expect(find.byType(LoginScreen), findsOneWidget);

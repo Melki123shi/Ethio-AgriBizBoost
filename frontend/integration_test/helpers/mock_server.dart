@@ -6,20 +6,38 @@ import 'package:dio/dio.dart';
 class MockHttpClientAdapter implements HttpClientAdapter {
   final Map<String, List<dynamic>> _responses = {};
   final List<RequestRecord> _requests = [];
+  final Map<String, bool> _consumeResponse = {};
 
-  void addResponse(String path, int statusCode, Map<String, dynamic> data) {
+  void addResponse(String path, int statusCode, Map<String, dynamic> data,
+      {bool consumeOnUse = true}) {
     _responses.putIfAbsent(path, () => []).add({
       'statusCode': statusCode,
       'data': data,
     });
+    _consumeResponse[path] = consumeOnUse;
   }
 
   void clearResponses() {
     _responses.clear();
     _requests.clear();
+    _consumeResponse.clear();
   }
 
   List<RequestRecord> get requests => List.unmodifiable(_requests);
+
+  /// Add a response that will be reused for multiple calls
+  void addPersistentResponse(
+      String path, int statusCode, Map<String, dynamic> data) {
+    addResponse(path, statusCode, data, consumeOnUse: false);
+  }
+
+  /// Add multiple identical responses for a path
+  void addMultipleResponses(
+      String path, int statusCode, Map<String, dynamic> data, int count) {
+    for (int i = 0; i < count; i++) {
+      addResponse(path, statusCode, data, consumeOnUse: true);
+    }
+  }
 
   @override
   Future<ResponseBody> fetch(
@@ -27,20 +45,33 @@ class MockHttpClientAdapter implements HttpClientAdapter {
     Stream<Uint8List>? requestStream,
     Future<void>? cancelFuture,
   ) async {
-    // Record the request
+    // Extract path from the full URL if needed
+    String path = options.path;
+    if (path.startsWith('http')) {
+      // Extract path from full URL
+      final uri = Uri.parse(path);
+      path = uri.path;
+    }
+
+    // Record the request with clean path
     _requests.add(RequestRecord(
       method: options.method,
-      path: options.path,
+      path: path,
       data: options.data,
       headers: options.headers,
     ));
 
-    // Find matching response
-    final responseList = _responses[options.path];
+    // Find matching response using clean path
+    final responseList = _responses[path];
     if (responseList != null && responseList.isNotEmpty) {
-      // Get the first response and remove it from the list
-      // This allows for different responses to the same endpoint
-      final response = responseList.removeAt(0);
+      // Check if we should consume the response
+      final shouldConsume = _consumeResponse[path] ?? true;
+
+      // Get the response (either remove it or keep it)
+      final response = shouldConsume && responseList.length > 1
+          ? responseList.removeAt(0)
+          : responseList.first;
+
       final statusCode = response['statusCode'] as int;
       final data = response['data'] as Map<String, dynamic>;
 
@@ -60,7 +91,7 @@ class MockHttpClientAdapter implements HttpClientAdapter {
         requestOptions: options,
         statusCode: 404,
         statusMessage: 'Not Found',
-        data: {'detail': 'Mock endpoint not found: ${options.path}'},
+        data: {'detail': 'Mock endpoint not found: $path'},
       ),
     );
   }
@@ -133,7 +164,7 @@ class MockApiResponses {
         'phone_number': '0911234567',
         'location': 'Addis Ababa, Ethiopia',
         'profile_picture_url': 'assets/images/profile_placeholder.png',
-        'created_at': '2024-01-01T00:00:00Z',
+        'created_at': '2025-06-19T00:00:00Z',
       };
 
   static Map<String, dynamic> profileError(

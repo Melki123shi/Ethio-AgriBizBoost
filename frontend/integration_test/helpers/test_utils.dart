@@ -286,6 +286,80 @@ class TestUtils {
         reason: 'Should show snackbar with message: $message');
   }
 
+  /// Wait for and verify SnackBar with better reliability
+  static Future<void> waitForSnackBar(
+    WidgetTester tester,
+    String message, {
+    Duration timeout = const Duration(seconds: 3),
+  }) async {
+    final endTime = DateTime.now().add(timeout);
+
+    while (DateTime.now().isBefore(endTime)) {
+      await tester.pump();
+
+      // Check if SnackBar with message exists
+      if (find.text(message).evaluate().isNotEmpty) {
+        // Give it time to fully animate in
+        await tester.pump(const Duration(milliseconds: 250));
+        return;
+      }
+
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    // If we get here, the SnackBar was not found
+    fail('SnackBar with message "$message" was not shown within timeout');
+  }
+
+  /// Wait for any text containing the message (more flexible than exact match)
+  static Future<void> waitForTextContaining(
+    WidgetTester tester,
+    String partialMessage, {
+    Duration timeout = const Duration(seconds: 3),
+  }) async {
+    final endTime = DateTime.now().add(timeout);
+
+    while (DateTime.now().isBefore(endTime)) {
+      await tester.pump();
+
+      // Check if any text contains the partial message
+      final textFinder = find.byWidgetPredicate((widget) {
+        if (widget is Text && widget.data != null) {
+          return widget.data!
+              .toLowerCase()
+              .contains(partialMessage.toLowerCase());
+        }
+        return false;
+      });
+
+      if (textFinder.evaluate().isNotEmpty) {
+        // Give it time to fully animate in
+        await tester.pump(const Duration(milliseconds: 250));
+        return;
+      }
+
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+
+    // If we get here, the text was not found
+    fail('Text containing "$partialMessage" was not shown within timeout');
+  }
+
+  /// Ensure navigation is complete by waiting for route animation
+  static Future<void> ensureNavigationComplete(
+    WidgetTester tester, {
+    Duration timeout = const Duration(seconds: 2),
+  }) async {
+    // Wait for any ongoing animations
+    await tester.pumpAndSettle();
+
+    // Additional pump to ensure route transitions are complete
+    await tester.pump(const Duration(milliseconds: 100));
+
+    // Final settle
+    await tester.pumpAndSettle();
+  }
+
   /// Verify that we're on a specific screen by checking for a unique widget
   static void expectScreen(Finder screenIndicator) {
     expect(screenIndicator, findsOneWidget,
