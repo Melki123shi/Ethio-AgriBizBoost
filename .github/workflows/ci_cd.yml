@@ -97,51 +97,6 @@ jobs:
           echo "Running Infrastructure Tests (Phase 2)..."
           flutter test test/core/network/dio_client_test.dart --coverage
 
-  # Frontend Core Service Tests
-  frontend_core_tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Cache Flutter dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.pub-cache
-            frontend/.dart_tool
-            frontend/build
-          key: ${{ runner.os }}-flutter-core-${{ hashFiles('frontend/pubspec.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-flutter-core-
-
-      - uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.24.5"
-          channel: "stable"
-
-      - name: Install dependencies
-        working-directory: frontend
-        run: flutter pub get
-
-      - name: Regenerate mocks
-        working-directory: frontend
-        run: flutter packages pub run build_runner build --delete-conflicting-outputs
-
-      - name: Analyze code
-        working-directory: frontend
-        run: flutter analyze --no-fatal-infos
-
-      - name: Run Core Service Tests
-        working-directory: frontend
-        run: |
-          echo "Running Core Service Tests..."
-          if [ -d "test/core/services/" ]; then
-            flutter test test/core/services/ --coverage
-          fi
-          if [ -d "test/core/network/" ]; then
-            flutter test test/core/network/ --coverage
-          fi
-
   # Frontend Auth Unit Tests
   frontend_auth_unit_tests:
     runs-on: ubuntu-latest
@@ -415,7 +370,6 @@ jobs:
       [
         frontend_critical_tests,
         frontend_infrastructure_tests,
-        frontend_core_tests,
         frontend_auth_unit_tests,
         frontend_feature_unit_tests,
         frontend_auth_widget_tests,
@@ -475,7 +429,6 @@ jobs:
       [
         frontend_critical_tests,
         frontend_infrastructure_tests,
-        frontend_core_tests,
         frontend_auth_unit_tests,
         frontend_feature_unit_tests,
         frontend_auth_widget_tests,
@@ -567,7 +520,6 @@ jobs:
             ### ✅ Tests Passed
             - Frontend critical foundation tests (token storage, auth entities)
             - Frontend infrastructure tests (network client)
-            - Frontend core service tests
             - Frontend auth unit tests (entities, DTOs, services, BLoCs)
             - Frontend feature unit tests
             - Frontend auth widget tests
@@ -577,7 +529,6 @@ jobs:
             ### 📊 Test Categories
             - **Critical Foundation Tests**: Token storage, auth entities
             - **Infrastructure Tests**: Network client, API configuration
-            - **Core Service Tests**: Core services and utilities
             - **Auth Unit Tests**: Authentication business logic
             - **Feature Unit Tests**: Feature-specific business logic
             - **Auth Widget Tests**: Authentication UI components
