@@ -3,9 +3,8 @@ import 'package:go_router/go_router.dart';
 
 class Header extends StatelessWidget {
   final String? image;
-  static bool _isProfileOpen = false;
 
-  Header({super.key, this.image});
+  const Header({super.key, this.image});
 
   @override
   Widget build(BuildContext context) {
@@ -31,13 +30,7 @@ class Header extends StatelessWidget {
               const SizedBox(width: 5),
               GestureDetector(
                 onTap: () {
-                  if (!_isProfileOpen) {
-                    _isProfileOpen = true;
-                    context.push('/profile').then((_) {
-                      // Reset flag when coming back
-                      _isProfileOpen = false;
-                    });
-                  }
+                  context.push('/profile');
                 },
                 child: image != null
                     ? CircleAvatar(
