@@ -33,7 +33,7 @@ class ExpenseTrackingEntity {
 
   Map<String, dynamic> toJson() {
     return {
-      'userId': userId,
+      'user_id': userId,
       'date': date.toIso8601String(),
       'cropType': cropType,
       'quantitySold': quantitySold,
@@ -44,10 +44,10 @@ class ExpenseTrackingEntity {
   factory ExpenseTrackingEntity.fromJson(Map<String, dynamic> json) {
     return ExpenseTrackingEntity(
       id: json['_id'], 
-      userId: json['userId'],
+      userId: json['user_id'],
       date: DateTime.parse(json['date']),
       cropType: json['cropType'],
-      quantitySold: json['quantitySold'],
+      quantitySold: (json['quantitySold'] as num).toInt(),
       totalCost: (json['totalCost'] is int)
           ? (json['totalCost'] as int).toDouble()
           : json['totalCost'].toDouble(),

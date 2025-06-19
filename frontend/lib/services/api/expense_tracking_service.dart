@@ -8,7 +8,7 @@ class ExpenseTrackingService {
   Future<void> createExpense(ExpenseTrackingEntity expense) async {
     try {
       final response = await dio.post(
-        "/expenses",
+        "/expense-tracking/expenses",
         data: expense.toJson(),
       );
 
@@ -24,7 +24,7 @@ class ExpenseTrackingService {
 
   Future<List<ExpenseTrackingEntity>> getExpenses() async {
     try {
-      final response = await dio.get("/expenses");
+      final response = await dio.get("/expense-tracking/expenses");
 
       if (response.statusCode == 200 && response.data is List) {
         final List data = response.data;
@@ -44,7 +44,7 @@ class ExpenseTrackingService {
   Future<void> updateExpense(String id, ExpenseTrackingEntity updated) async {
     try {
       final response = await dio.put(
-        "/expenses/$id",
+        "/expense-tracking/expenses/$id",
         data: updated.toJson(),
       );
 
@@ -60,7 +60,7 @@ class ExpenseTrackingService {
 
   Future<void> deleteExpense(String id) async {
     try {
-      final response = await dio.delete("/expenses/$id");
+      final response = await dio.delete("/expense-tracking/expenses/$id");
 
       if (response.statusCode != 200) {
         throw Exception("Failed to delete expense: ${response.statusMessage}");
