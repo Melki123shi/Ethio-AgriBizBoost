@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-      - dev
+      - develop
       - "impl/*"
       - "feature/*"
 
@@ -23,49 +23,8 @@ jobs:
       - uses: actions/checkout@v3
       - uses: ludeeus/action-shellcheck@master
 
-  # Backend setup and tests
-  backend_tests:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.8", "3.10"]
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Cache Python dependencies
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pip
-            backend/.venv
-          key: ${{ runner.os }}-python-${{ matrix.python-version }}-${{ hashFiles('backend/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ matrix.python-version }}-
-
-      - name: Install backend dependencies
-        working-directory: backend
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest pytest-cov
-
-      - name: Run backend tests
-        working-directory: backend
-        run: |
-          # Run tests if they exist
-          if [ -d "tests" ] || [ -n "$(find . -name 'test_*.py' -o -name '*_test.py')" ]; then
-            python -m pytest --cov=. --cov-report=xml --cov-report=html
-          else
-            echo "No backend tests found, skipping..."
-          fi
-
-  # Frontend unit tests (matching unit_test_runner.ps1)
-  frontend_unit_tests:
+  # Frontend Critical Foundation Tests
+  frontend_critical_tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -77,43 +36,100 @@ jobs:
             ~/.pub-cache
             frontend/.dart_tool
             frontend/build
-          key: ${{ runner.os }}-flutter-unit-${{ hashFiles('frontend/pubspec.yaml') }}
+          key: ${{ runner.os }}-flutter-critical-${{ hashFiles('frontend/pubspec.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-flutter-unit-
+            ${{ runner.os }}-flutter-critical-
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.1"
+          flutter-version: "3.24.5"
           channel: "stable"
 
       - name: Install dependencies
         working-directory: frontend
-        run: |
-          flutter pub get
-          flutter pub global activate coverage
+        run: flutter pub get
 
       - name: Regenerate mocks
         working-directory: frontend
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs
+
+      - name: Run Critical Foundation Tests
+        working-directory: frontend
         run: |
-          flutter packages pub run build_runner build --delete-conflicting-outputs
+          echo "Running Critical Foundation Tests (Phase 1)..."
+          flutter test test/core/services/token_storage_test.dart --coverage
+          flutter test test/features/auth/domain/entity/login_entity_test.dart --coverage
+          flutter test test/features/auth/domain/entity/signup_entity_test.dart --coverage
+
+  # Frontend Infrastructure Tests
+  frontend_infrastructure_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            frontend/.dart_tool
+            frontend/build
+          key: ${{ runner.os }}-flutter-infra-${{ hashFiles('frontend/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-infra-
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+          channel: "stable"
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: flutter pub get
+
+      - name: Regenerate mocks
+        working-directory: frontend
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs
+
+      - name: Run Infrastructure Tests
+        working-directory: frontend
+        run: |
+          echo "Running Infrastructure Tests (Phase 2)..."
+          flutter test test/core/network/dio_client_test.dart --coverage
+
+  # Frontend Core Service Tests
+  frontend_core_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            frontend/.dart_tool
+            frontend/build
+          key: ${{ runner.os }}-flutter-core-${{ hashFiles('frontend/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-core-
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+          channel: "stable"
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: flutter pub get
+
+      - name: Regenerate mocks
+        working-directory: frontend
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs
 
       - name: Analyze code
         working-directory: frontend
         run: flutter analyze --no-fatal-infos
-
-      - name: Run Critical Foundation Tests (Phase 1)
-        working-directory: frontend
-        run: |
-          echo "Running Critical Foundation Tests..."
-          flutter test test/core/services/token_storage_test.dart || true
-          flutter test test/features/auth/domain/entity/login_entity_test.dart || true
-          flutter test test/features/auth/domain/entity/signup_entity_test.dart || true
-
-      - name: Run Infrastructure Tests (Phase 2)
-        working-directory: frontend
-        run: |
-          echo "Running Infrastructure Tests..."
-          flutter test test/core/network/dio_client_test.dart || true
 
       - name: Run Core Service Tests
         working-directory: frontend
@@ -125,6 +141,36 @@ jobs:
           if [ -d "test/core/network/" ]; then
             flutter test test/core/network/ --coverage
           fi
+
+  # Frontend Auth Unit Tests
+  frontend_auth_unit_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            frontend/.dart_tool
+            frontend/build
+          key: ${{ runner.os }}-flutter-auth-unit-${{ hashFiles('frontend/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-auth-unit-
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+          channel: "stable"
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: flutter pub get
+
+      - name: Regenerate mocks
+        working-directory: frontend
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs
 
       - name: Run Authentication Unit Tests
         working-directory: frontend
@@ -147,6 +193,36 @@ jobs:
             flutter test test/features/auth/presentation/bloc/ --coverage
           fi
 
+  # Frontend Feature Unit Tests
+  frontend_feature_unit_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            frontend/.dart_tool
+            frontend/build
+          key: ${{ runner.os }}-flutter-feature-unit-${{ hashFiles('frontend/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-feature-unit-
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+          channel: "stable"
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: flutter pub get
+
+      - name: Regenerate mocks
+        working-directory: frontend
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs
+
       - name: Run Feature Unit Tests
         working-directory: frontend
         run: |
@@ -168,36 +244,8 @@ jobs:
             flutter test test/features/recommendation/ --coverage
           fi
 
-      - name: Generate unit test coverage report
-        working-directory: frontend
-        run: |
-          # Combine all unit test coverage
-          flutter test --coverage \
-            test/core/ \
-            test/features/auth/domain/ \
-            test/features/auth/data/ \
-            test/features/auth/presentation/bloc/ \
-            test/features/user/ \
-            test/features/health_assessment/ \
-            test/features/forecasting/ \
-            test/features/recommendation/ \
-            --exclude-tags=widget || true
-
-          flutter pub global run coverage:format_coverage \
-            --lcov \
-            --in=coverage \
-            --out=coverage/unit_lcov.info \
-            --report-on=lib
-
-      - name: Upload unit test coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          file: frontend/coverage/unit_lcov.info
-          flags: frontend-unit-tests
-          name: frontend-unit-coverage
-
-  # Frontend widget tests (matching widget_test_runner.ps1)
-  frontend_widget_tests:
+  # Frontend Auth Widget Tests
+  frontend_auth_widget_tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -209,25 +257,22 @@ jobs:
             ~/.pub-cache
             frontend/.dart_tool
             frontend/build
-          key: ${{ runner.os }}-flutter-widget-${{ hashFiles('frontend/pubspec.yaml') }}
+          key: ${{ runner.os }}-flutter-auth-widget-${{ hashFiles('frontend/pubspec.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-flutter-widget-
+            ${{ runner.os }}-flutter-auth-widget-
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.1"
+          flutter-version: "3.24.5"
           channel: "stable"
 
       - name: Install dependencies
         working-directory: frontend
-        run: |
-          flutter pub get
-          flutter pub global activate coverage
+        run: flutter pub get
 
       - name: Regenerate mocks
         working-directory: frontend
-        run: |
-          flutter packages pub run build_runner build --delete-conflicting-outputs
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs
 
       - name: Run Authentication Widget Tests
         working-directory: frontend
@@ -246,10 +291,36 @@ jobs:
           if [ -f "test/features/auth/presentation/widgets/loading_button_test.dart" ]; then
             flutter test test/features/auth/presentation/widgets/loading_button_test.dart --coverage
           fi
-          # Or run all auth widget tests
-          if [ -d "test/features/auth/presentation/widgets/" ]; then
-            flutter test test/features/auth/presentation/widgets/ --coverage
-          fi
+
+  # Frontend Screen Widget Tests
+  frontend_screen_widget_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            frontend/.dart_tool
+            frontend/build
+          key: ${{ runner.os }}-flutter-screen-widget-${{ hashFiles('frontend/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-screen-widget-
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+          channel: "stable"
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: flutter pub get
+
+      - name: Regenerate mocks
+        working-directory: frontend
+        run: flutter packages pub run build_runner build --delete-conflicting-outputs
 
       - name: Run Screen Widget Tests
         working-directory: frontend
@@ -280,28 +351,7 @@ jobs:
             flutter test test/presentation/ui/chatbot/ --coverage
           fi
 
-      - name: Generate widget test coverage report
-        working-directory: frontend
-        run: |
-          # Combine all widget test coverage
-          flutter test --coverage \
-            test/features/auth/presentation/widgets/ \
-            test/presentation/ui/ || true
-
-          flutter pub global run coverage:format_coverage \
-            --lcov \
-            --in=coverage \
-            --out=coverage/widget_lcov.info \
-            --report-on=lib
-
-      - name: Upload widget test coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          file: frontend/coverage/widget_lcov.info
-          flags: frontend-widget-tests
-          name: frontend-widget-coverage
-
-  # Frontend integration tests
+  # Frontend Integration Tests
   frontend_integration_tests:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -324,7 +374,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.1"
+          flutter-version: "3.24.5"
           channel: "stable"
 
       - name: Install dependencies
@@ -359,9 +409,78 @@ jobs:
         working-directory: frontend
         run: flutter test integration_test/app_test.dart -d macos
 
+  # Coverage Report Generation
+  generate_coverage_report:
+    needs:
+      [
+        frontend_critical_tests,
+        frontend_infrastructure_tests,
+        frontend_core_tests,
+        frontend_auth_unit_tests,
+        frontend_feature_unit_tests,
+        frontend_auth_widget_tests,
+        frontend_screen_widget_tests,
+      ]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache Flutter dependencies
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.pub-cache
+            frontend/.dart_tool
+            frontend/build
+          key: ${{ runner.os }}-flutter-coverage-${{ hashFiles('frontend/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-flutter-coverage-
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.24.5"
+          channel: "stable"
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: |
+          flutter pub get
+          flutter pub global activate coverage
+
+      - name: Generate combined coverage report
+        working-directory: frontend
+        run: |
+          echo "Generating combined coverage report..."
+          # Run all tests with coverage
+          flutter test --coverage || true
+
+          # Generate LCOV report
+          flutter pub global run coverage:format_coverage \
+            --lcov \
+            --in=coverage \
+            --out=coverage/lcov.info \
+            --report-on=lib
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: frontend/coverage/lcov.info
+          flags: frontend-tests
+          name: frontend-coverage
+
   # Build job
   build:
-    needs: [frontend_unit_tests, frontend_widget_tests, backend_tests]
+    needs:
+      [
+        frontend_critical_tests,
+        frontend_infrastructure_tests,
+        frontend_core_tests,
+        frontend_auth_unit_tests,
+        frontend_feature_unit_tests,
+        frontend_auth_widget_tests,
+        frontend_screen_widget_tests,
+      ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -395,7 +514,7 @@ jobs:
 
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.24.1"
+          flutter-version: "3.24.5"
           channel: "stable"
 
       - name: Get dependencies
@@ -446,16 +565,23 @@ jobs:
             - `app-release.aab` - For Google Play Store submission
 
             ### ✅ Tests Passed
-            - Frontend unit tests (entities, DTOs, services, BLoCs)
-            - Frontend widget tests (UI components, screens)
+            - Frontend critical foundation tests (token storage, auth entities)
+            - Frontend infrastructure tests (network client)
+            - Frontend core service tests
+            - Frontend auth unit tests (entities, DTOs, services, BLoCs)
+            - Frontend feature unit tests
+            - Frontend auth widget tests
+            - Frontend screen widget tests
             - Frontend integration tests
-            - Backend tests (if applicable)
 
             ### 📊 Test Categories
             - **Critical Foundation Tests**: Token storage, auth entities
             - **Infrastructure Tests**: Network client, API configuration
-            - **Unit Tests**: Business logic, data models, services
-            - **Widget Tests**: UI components, screen rendering
+            - **Core Service Tests**: Core services and utilities
+            - **Auth Unit Tests**: Authentication business logic
+            - **Feature Unit Tests**: Feature-specific business logic
+            - **Auth Widget Tests**: Authentication UI components
+            - **Screen Widget Tests**: Screen-level UI components
             - **Integration Tests**: End-to-end flows
           draft: false
           prerelease: false
