@@ -40,7 +40,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 email: _emailCtrl.text.trim().isEmpty
                     ? null
                     : _emailCtrl.text.trim(),
-                phoneNumber: _phoneCtrl.text.trim(),
+                phoneNumber: _phoneCtrl.text.trim().replaceAll(' ', ''),
                 password: _pwdCtrl.text.trim(),
               ),
             ),
@@ -57,7 +57,7 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   String? _validatePhone(String? v) {
-    final cleaned = v?.replaceAll(' ', '') ?? '';
+    final cleaned = v?.trim().replaceAll(' ', '') ?? '';
     if (cleaned.isEmpty) return 'Phone number is required.';
     final ok = RegExp(r'^(?:\+2519\d{8}|09\d{8})$').hasMatch(cleaned);
     return ok ? null : 'Enter a valid Ethiopian phone number.';
@@ -205,9 +205,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                                 ?.copyWith(
                                               color: theme.primaryColor,
                                               fontWeight: FontWeight.bold,
-                                              decoration:
-                                                  TextDecoration.underline,
-                                            ),
+                                              ),
                                             recognizer: TapGestureRecognizer()
                                               ..onTap =
                                                   () => context.go('/login'),

@@ -24,7 +24,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final token = await TokenStorage.readAccessToken();
     if (token != null) {
       DioClient.getDio().options.headers['Authorization'] = 'Bearer $token';
-      emit(AuthSuccess());
+
+      // Try to verify token is still valid
+      try {
+        // Test the token by making a simple request
+        final loginEntity = await auth.tryAutoLogin();
+        if (loginEntity != null) {
+          emit(AuthSuccess());
+        } else {
+          // Token exists but auto-login failed
+          await TokenStorage.clearAccessToken();
+          await TokenStorage.clearRefreshToken();
+          await TokenStorage.clearTokenType();
+          DioClient.getDio().options.headers.remove('Authorization');
+          emit(AuthInitial());
+        }
+      } catch (_) {
+        // Any error means we should clear tokens and go to login
+        await TokenStorage.clearAccessToken();
+        await TokenStorage.clearRefreshToken();
+        await TokenStorage.clearTokenType();
+        DioClient.getDio().options.headers.remove('Authorization');
+        emit(AuthInitial());
+      }
     } else {
       emit(AuthInitial());
     }
@@ -36,7 +58,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await auth.signup(SignupRequestDTO.fromEntity(e.signupData));
       emit(AuthSignupDone());
     } catch (err) {
-      emit(AuthFailure(err.toString()));
+      final message = _extractErrorMessage(err);
+      emit(AuthFailure(message));
     }
   }
 
@@ -52,12 +75,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         throw Exception('Login failed: no access token returned');
       }
 
-      await TokenStorage.saveAccessToken(token);
+      // Note: The auth.login method already saves all tokens via _writeTokens
+      // We just need to update the Dio header here
       DioClient.getDio().options.headers['Authorization'] = 'Bearer $token';
 
       emit(AuthSuccess());
     } catch (err) {
-      emit(AuthFailure(err.toString()));
+      final message = _extractErrorMessage(err);
+      emit(AuthFailure(message));
     }
   }
 
@@ -69,9 +94,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // The user should be logged out locally even if server logout fails
     } finally {
       // Always clear local tokens and emit initial state
+      // Note: auth.logout() already clears all tokens, but we ensure it here too
       await TokenStorage.clearAccessToken();
+      await TokenStorage.clearRefreshToken();
+      await TokenStorage.clearTokenType();
       DioClient.getDio().options.headers.remove('Authorization');
       emit(AuthInitial());
     }
+  }
+
+  String _extractErrorMessage(dynamic err) {
+    final errorString = err.toString();
+    // Remove "Exception: " prefix if present
+    if (errorString.startsWith('Exception: ')) {
+      return errorString.substring(11);
+    }
+    return errorString;
   }
 }

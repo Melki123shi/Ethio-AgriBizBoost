@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context.read<AuthBloc>().add(
             LoginSubmitted(
               loginData: LoginRequestEntity(
-                phoneNumber: _phoneCtrl.text.trim(),
+                phoneNumber: _phoneCtrl.text.trim().replaceAll(' ', ''),
                 password: _pwdCtrl.text.trim(),
               ),
             ),
@@ -52,6 +52,13 @@ class _LoginScreenState extends State<LoginScreen> {
       ? 'Password must be at least 8 characters.'
       : null;
 
+  String? _validatePhone(String? v) {
+    final cleaned = v?.trim().replaceAll(' ', '') ?? '';
+    if (cleaned.isEmpty) return 'Phone number is required.';
+    final ok = RegExp(r'^(?:\+2519\d{8}|09\d{8})$').hasMatch(cleaned);
+    return ok ? null : 'Enter a valid Ethiopian phone number.';
+  }
+  
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -123,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       controller: _phoneCtrl,
                                       keyboardType: TextInputType.phone,
                                       isRequired: true,
+                                      validator: _validatePhone,
                                     ),
                                     const SizedBox(height: 16),
                                     CustomInputField(
@@ -160,8 +168,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 ?.copyWith(
                                               color: theme.primaryColor,
                                               fontWeight: FontWeight.bold,
-                                              decoration:
-                                                  TextDecoration.underline,
                                             ),
                                             recognizer: TapGestureRecognizer()
                                               ..onTap =
