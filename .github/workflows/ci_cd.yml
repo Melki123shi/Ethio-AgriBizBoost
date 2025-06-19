@@ -485,14 +485,14 @@ jobs:
       # Upload artifacts for pull requests
       - name: Upload APK artifacts
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: apk-artifacts
           path: frontend/build/app/outputs/flutter-apk/app-*-release.apk
 
       - name: Upload App Bundle
         if: github.event_name == 'pull_request'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: appbundle-artifact
           path: frontend/build/app/outputs/bundle/release/app-release.aab
