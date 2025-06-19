@@ -12,6 +12,7 @@ import 'package:app/presentation/utils/localization_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HealthAssessmentScreen extends StatefulWidget {
   final void Function(AssessmentResultEntity result) onSubmitted;
@@ -40,7 +41,6 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
   @override
   void initState() {
     super.initState();
-    // Dispatch the event to fetch recent averages when the screen loads
     context.read<RecentAssessmentBloc>().add(FetchRecentAverages());
   }
 
@@ -199,9 +199,10 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
                     if (_formData['cropType'] == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
+                            // ignore: prefer_interpolation_to_compose_strings
                             content: Text(context.commonLocals.crop_type +
-                                " " + 'is_required'
-                                )),
+                                " " +
+                                'is_required')),
                       );
                       return;
                     }
@@ -231,15 +232,15 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
     return BlocBuilder<RecentAssessmentBloc, RecentAssessmentState>(
       builder: (context, state) {
         // Show a loading indicator for Initial and Loading states
-        if (state is RecentAssessmentInitial || state is RecentAssessmentLoading) {
+        if (state is RecentAssessmentInitial ||
+            state is RecentAssessmentLoading) {
           return const Padding(
             padding: EdgeInsets.only(bottom: 30),
             child: Center(child: CircularProgressIndicator()),
           );
         }
         if (state is RecentAssessmentSuccess) {
-          if (state.averages.recordsConsidered == 0) {
-          }
+          if (state.averages.recordsConsidered == 0) {}
           return Padding(
             padding: const EdgeInsets.only(bottom: 30),
             child: Row(
@@ -279,13 +280,14 @@ class _HealthAssessmentScreenState extends State<HealthAssessmentScreen> {
       listeners: [
         BlocListener<HealthAssessmentBloc, HealthAssessmentState>(
           listener: (context, state) {
-            if (state is HealthAssessmentSuccess) {
-              widget.onSubmitted(state.assessmentResult);
+            if (state is HealthAssessmentSuccess &&
+                widget.onSubmitted != null) {
+              GoRouter.of(context)
+                  .push('/healthAssessmentOutput', extra: state.assessmentResult);
               context.read<RecentAssessmentBloc>().add(FetchRecentAverages());
             } else if (state is HealthAssessmentFailure) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text(context.commonLocals.assessment_failed)),
+                SnackBar(content: Text(context.commonLocals.assessment_failed)),
               );
             }
           },

@@ -85,7 +85,7 @@ class CommonLocalizationsEn extends CommonLocalizations {
   String get confirm_new_password => 'Confirm new password';
 
   @override
-  String get select_language => 'Select language';
+  String get select_language => 'Select Language';
 
   @override
   String get english => 'English';
@@ -262,25 +262,25 @@ class CommonLocalizationsEn extends CommonLocalizations {
   String get farm_size => 'Farm size (in hectares)';
 
   @override
-  String get fertilizer_expense => 'Fertilizer expense';
+  String get fertilizer_expense => 'Fertilizer Expense (ETB)';
 
   @override
-  String get pesticide_expense => 'Pesticide expense';
+  String get pesticide_expense => 'Pesticide Expense (ETB)';
 
   @override
-  String get transportation_expense => 'Transportation expense';
+  String get transportation_expense => 'Transportation Expense (ETB)';
 
   @override
-  String get equipment_expense => 'Equipment expense';
+  String get equipment_expense => 'Equipment Expense (ETB)';
 
   @override
-  String get seed_expense => 'Seed expense';
+  String get seed_expense => 'Seed Expense (ETB)';
 
   @override
-  String get labour_expense => 'Labour expense';
+  String get labour_expense => 'Labor Expense (ETB)';
 
   @override
-  String get other_utilities => 'Other utilities';
+  String get other_utilities => 'Utility Expense (ETB)';
 
   @override
   String get loan_advice_result => 'Loan Advice Result';
@@ -350,4 +350,28 @@ class CommonLocalizationsEn extends CommonLocalizations {
 
   @override
   String get action => 'Action';
+
+  @override
+  String get fill_all_fields => 'Please fill all fields.';
+
+  @override
+  String get invalid_input => 'Invalid input';
+
+  @override
+  String get recommendation_success_title => 'Recommendation';
+
+  @override
+  String get recommendation_error_title => 'Error';
+
+  @override
+  String get is_required => 'is required';
+
+  @override
+  String get enter_valid_number => 'Enter a valid number';
+
+  @override
+  String get cost_cutting_result_title => 'Cost Cutting Recommendation';
+
+  @override
+  String get recommendation_label => 'Recommendation:';
 }

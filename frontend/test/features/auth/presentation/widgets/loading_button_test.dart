@@ -271,7 +271,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData.light(),
-            localizationsDelegates: [
+            localizationsDelegates: const [
               CommonLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
@@ -296,7 +296,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             theme: ThemeData.dark(),
-            localizationsDelegates: [
+            localizationsDelegates: const [
               CommonLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
@@ -326,7 +326,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             theme: customTheme,
-            localizationsDelegates: [
+            localizationsDelegates: const [
               CommonLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
@@ -424,7 +424,7 @@ void main() {
 
       testWidgets('handles default width correctly', (tester) async {
         await tester.pumpWidget(
-          MaterialApp(
+          const MaterialApp(
             home: Scaffold(
               body: LoadingButton(
                 label: 'Default Width',
