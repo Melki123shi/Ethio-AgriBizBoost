@@ -116,5 +116,22 @@
         "add_expense": "ክፍያ አክል",
         "farmer": "ገበሬ",
         "failed_to_fetch_user": "ተጠቃሚን ማግኘት አልተሳካም",
-        "action": "ተግባር"
+        "action": "እርምጃ",
+        "fertilizer_expense": "የማዳበሪያ ወጪ (ብር)",
+        "pesticide_expense": "የፀረ-ተባይ ወጪ (ብር)",
+        "transportation_expense": "የመጓጓዣ ወጪ (ብር)",
+        "equipment_expense": "የመሳሪያ ወጪ (ብር)",
+        "seed_expense": "የዘር ወጪ (ብር)",
+        "labour_expense": "የጉልበት ወጪ (ብር)",
+        "other_utilities": "የሌሎች አገልግሎቶች ወጪ (ብር)",
+        "fill_all_fields": "እባክዎ ሁሉንም መስኮች ይሙሉ።",
+        "invalid_input": "የተሳሳተ ግቤት",
+        "recommendation_success_title": "ምክር",
+        "recommendation_error_title": "ስህተት",
+        "language": "ቋንቋ",
+        "select_language": "ቋንቋ ይምረጡ",
+        "is_required": "ያስፈልጋል",
+        "enter_valid_number": "ትክክለኛ ቁጥር ያስገቡ",
+        "cost_cutting_result_title": "የወጪ ቅናሽ ምክር",
+        "recommendation_label": "ምክር:"
 }

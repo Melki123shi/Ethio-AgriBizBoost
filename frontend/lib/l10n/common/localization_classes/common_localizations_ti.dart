@@ -85,7 +85,7 @@ class CommonLocalizationsTi extends CommonLocalizations {
   String get confirm_new_password => 'ሓድሽ መሕለፊ ቓል ኣረጋግጽ';
 
   @override
-  String get select_language => 'ቋንቋ ምረፅ';
+  String get select_language => 'ቋንቋ ምረጽ';
 
   @override
   String get english => 'እንግሊዝኛ';
@@ -262,25 +262,25 @@ class CommonLocalizationsTi extends CommonLocalizations {
   String get farm_size => 'መጠን ናይ እርሻ (ብሄክታር)';
 
   @override
-  String get fertilizer_expense => 'ወጪ መዋቂያ ተክል';
+  String get fertilizer_expense => 'ዋጋ ድኹዒ (ብር)';
 
   @override
-  String get pesticide_expense => 'ወጪ ኣሳዳጊ';
+  String get pesticide_expense => 'ዋጋ ጸረ-ባልዕ (ብር)';
 
   @override
-  String get transportation_expense => 'ወጪ መጓጓዣ';
+  String get transportation_expense => 'ዋጋ መጓዓዝያ (ብር)';
 
   @override
-  String get equipment_expense => 'ወጪ መሳርሒ';
+  String get equipment_expense => 'ዋጋ ኣቕሑ (ብር)';
 
   @override
-  String get seed_expense => 'ወጪ ዕዳል';
+  String get seed_expense => 'ዋጋ ዘርኢ (ብር)';
 
   @override
-  String get labour_expense => 'ወጪ ስራሕ';
+  String get labour_expense => 'ዋጋ ጉልበት (ብር)';
 
   @override
-  String get other_utilities => 'ሌሎች ኣገልግሎታት';
+  String get other_utilities => 'ዋጋ ካልኦት ኣገልግሎታት (ብር)';
 
   @override
   String get loan_advice_result => 'ውጽኢት መኣር ብዕድል';
@@ -349,5 +349,29 @@ class CommonLocalizationsTi extends CommonLocalizations {
   String get failed_to_fetch_user => 'ተጠቃሚ ኣብ ምውሳን ኣይተሳነን';
 
   @override
-  String get action => 'ተግባር';
+  String get action => 'ግብሪ';
+
+  @override
+  String get fill_all_fields => 'እባኹም ኩሉ መርበባት ምልኡ።';
+
+  @override
+  String get invalid_input => 'ጌጋ ምእታው';
+
+  @override
+  String get recommendation_success_title => 'ምኽሪ';
+
+  @override
+  String get recommendation_error_title => 'ጌጋ';
+
+  @override
+  String get is_required => 'የድሊ';
+
+  @override
+  String get enter_valid_number => 'ቅኑዕ ቁጽሪ የእቱ';
+
+  @override
+  String get cost_cutting_result_title => 'ምኽሪ ምቑራጽ ወጻኢታት';
+
+  @override
+  String get recommendation_label => 'ምኽሪ:';
 }

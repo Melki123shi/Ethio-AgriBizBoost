@@ -1,4 +1,5 @@
 import 'package:app/application/auth/auth_state.dart';
+import 'package:app/domain/dto/cost_cutting_strategies_dto.dart';
 import 'package:app/domain/entity/assessment_result_entity.dart';
 import 'package:app/domain/entity/forcasting_result_entity.dart';
 import 'package:app/domain/entity/loan_advice_result_entity.dart';
@@ -15,6 +16,7 @@ import 'package:app/presentation/ui/profile/logout_screen.dart';
 import 'package:app/presentation/ui/profile/notification_screen.dart';
 import 'package:app/presentation/ui/profile/profile_screen.dart';
 import 'package:app/presentation/ui/profile/security_screen.dart';
+import 'package:app/presentation/ui/recommendation/cost_cutting_strategies_output_screen.dart';
 import 'package:app/presentation/ui/recommendation/cost_cutting_strategies_screen.dart';
 import 'package:app/presentation/ui/recommendation/loan_advice_output_screen.dart';
 import 'package:app/presentation/ui/recommendation/loan_advice_screen.dart';
@@ -74,7 +76,7 @@ class AppRouter {
       ),
       GoRoute(
         path: '/login',
-        builder: (_, __) => LoginScreen(),
+        builder: (_, __) => const LoginScreen(),
       ),
       GoRoute(
         path: '/signup',
@@ -144,6 +146,19 @@ class AppRouter {
         path: '/loan_advice_result',
         builder: (_, state) => LoanAdviceResultScreen(
             result: state.extra as LoanAdviceResultEntity),
+      ),
+      GoRoute(
+        path: '/cost_cutting_result',
+        builder: (_, state) => CostCuttingStrategiesOutputScreen(
+            recommendationData: state.extra as RecommendationData),
+      ),
+      GoRoute(
+        path: '/forecast-output',
+        builder: (context, state) {
+          final ForcastingResultEntity result =
+              state.extra as ForcastingResultEntity;
+          return ForcastingOutput(result: result);
+        },
       ),
     ],
   );

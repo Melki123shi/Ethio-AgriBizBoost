@@ -2,12 +2,14 @@ import 'package:app/application/auth/auth_bloc.dart';
 import 'package:app/application/auth/auth_event.dart';
 import 'package:app/application/expense_tracking/bloc/expense_tracking_bloc.dart';
 import 'package:app/application/recent_assessment_results/recent_assessment_result_bloc.dart';
+import 'package:app/application/recommendation/cost_cutting_strategies/cost_cutting_strategies_bloc.dart';
 import 'package:app/application/recommendation/loan_advice/loan_advice_bloc.dart';
 import 'package:app/application/user/user_bloc.dart';
 import 'package:app/l10n/common/localization_classes/common_localizations.dart';
 import 'package:app/l10n/om_material_localizations.dart';
 import 'package:app/l10n/ti_material_localizations.dart';
 import 'package:app/services/api/auth_service.dart';
+import 'package:app/services/api/cost_cutting_recommendation_service.dart';
 import 'package:app/services/api/expense_tracking_service.dart';
 import 'package:app/services/api/loan_advice_service.dart';
 import 'package:app/services/api/user_service.dart';
@@ -45,11 +47,11 @@ void main() {
         BlocProvider<ForcastingBloc>(
           create: (context) => ForcastingBloc(forcastingService),
         ),
-        BlocProvider.value(value: authBloc),   
+        BlocProvider.value(value: authBloc),
         BlocProvider<UserBloc>(
           create: (context) => UserBloc(userService),
         ),
-         BlocProvider<LoanAdviceBloc>(
+        BlocProvider<LoanAdviceBloc>(
           create: (context) => LoanAdviceBloc(loanAdviceService),
         ),
         BlocProvider<ExpenseTrackingBloc>(
@@ -58,6 +60,11 @@ void main() {
         BlocProvider<RecentAssessmentBloc>(
           create: (context) => RecentAssessmentBloc(healthService),
         ),
+        BlocProvider(
+          create: (_) => RecommendationBloc(
+            recommendationService: RecommendationService(),
+          ),
+        )
       ],
       child: ValueListenableBuilder<ThemeMode>(
         valueListenable: themeNotifier,
@@ -85,7 +92,7 @@ void main() {
                   routerConfig: appRouter,
                   themeMode: themeMode,
                   theme: ThemeData(
-                  textTheme: GoogleFonts.notoSansEthiopicTextTheme(),
+                    textTheme: GoogleFonts.notoSansEthiopicTextTheme(),
                     brightness: Brightness.light,
                     primaryColor: const Color.fromARGB(255, 132, 203, 133),
                     scaffoldBackgroundColor: Colors.white,

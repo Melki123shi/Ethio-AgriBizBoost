@@ -258,7 +258,7 @@ abstract class CommonLocalizations {
   /// No description provided for @select_language.
   ///
   /// In en, this message translates to:
-  /// **'Select language'**
+  /// **'Select Language'**
   String get select_language;
 
   /// No description provided for @english.
@@ -612,43 +612,43 @@ abstract class CommonLocalizations {
   /// No description provided for @fertilizer_expense.
   ///
   /// In en, this message translates to:
-  /// **'Fertilizer expense'**
+  /// **'Fertilizer Expense (ETB)'**
   String get fertilizer_expense;
 
   /// No description provided for @pesticide_expense.
   ///
   /// In en, this message translates to:
-  /// **'Pesticide expense'**
+  /// **'Pesticide Expense (ETB)'**
   String get pesticide_expense;
 
   /// No description provided for @transportation_expense.
   ///
   /// In en, this message translates to:
-  /// **'Transportation expense'**
+  /// **'Transportation Expense (ETB)'**
   String get transportation_expense;
 
   /// No description provided for @equipment_expense.
   ///
   /// In en, this message translates to:
-  /// **'Equipment expense'**
+  /// **'Equipment Expense (ETB)'**
   String get equipment_expense;
 
   /// No description provided for @seed_expense.
   ///
   /// In en, this message translates to:
-  /// **'Seed expense'**
+  /// **'Seed Expense (ETB)'**
   String get seed_expense;
 
   /// No description provided for @labour_expense.
   ///
   /// In en, this message translates to:
-  /// **'Labour expense'**
+  /// **'Labor Expense (ETB)'**
   String get labour_expense;
 
   /// No description provided for @other_utilities.
   ///
   /// In en, this message translates to:
-  /// **'Other utilities'**
+  /// **'Utility Expense (ETB)'**
   String get other_utilities;
 
   /// No description provided for @loan_advice_result.
@@ -788,6 +788,54 @@ abstract class CommonLocalizations {
   /// In en, this message translates to:
   /// **'Action'**
   String get action;
+
+  /// No description provided for @fill_all_fields.
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill all fields.'**
+  String get fill_all_fields;
+
+  /// No description provided for @invalid_input.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid input'**
+  String get invalid_input;
+
+  /// No description provided for @recommendation_success_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation'**
+  String get recommendation_success_title;
+
+  /// No description provided for @recommendation_error_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get recommendation_error_title;
+
+  /// No description provided for @is_required.
+  ///
+  /// In en, this message translates to:
+  /// **'is required'**
+  String get is_required;
+
+  /// No description provided for @enter_valid_number.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number'**
+  String get enter_valid_number;
+
+  /// No description provided for @cost_cutting_result_title.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost Cutting Recommendation'**
+  String get cost_cutting_result_title;
+
+  /// No description provided for @recommendation_label.
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation:'**
+  String get recommendation_label;
 }
 
 class _CommonLocalizationsDelegate extends LocalizationsDelegate<CommonLocalizations> {
