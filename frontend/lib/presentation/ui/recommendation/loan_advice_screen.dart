@@ -120,7 +120,6 @@ class _LoanAdviceScreenState extends State<LoanAdviceScreen> {
     );
   }
 
-  // New helper for styled number fields
   Widget _buildStyledNumberField({
     required String label,
     required String fieldKey,

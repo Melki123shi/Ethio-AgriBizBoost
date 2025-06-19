@@ -129,8 +129,7 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                   onPressed: () {
                     if (selectedDate == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                            content: Text(context.commonLocals.pick_date)),
+                        SnackBar(content: Text(context.commonLocals.pick_date)),
                       );
                       return;
                     }
@@ -389,9 +388,6 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                               ),
                             ),
                           ),
-                          DataColumn(
-                              label: Center(
-                                  child: Text(context.commonLocals.action))),
                         ],
                         rows: expenses.map((expense) {
                           return DataRow(cells: [
@@ -402,24 +398,6 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                             DataCell(Text(expense.cropType)),
                             DataCell(Text(expense.quantitySold.toString())),
                             DataCell(Text(expense.totalCost.toString())),
-                            DataCell(
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  IconButton(
-                                    icon: Icon(Icons.edit,
-                                        color: primary, size: 20),
-                                    onPressed: _confirmEdit,
-                                  ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete,
-                                        color: Colors.red, size: 20),
-                                    onPressed: () =>
-                                        _confirmDelete(expense.id ?? ''),
-                                  ),
-                                ],
-                              ),
-                            ),
                           ]);
                         }).toList(),
                       ),
@@ -441,7 +419,8 @@ class _ExpenseTrackingScreenState extends State<ExpenseTrackingScreen> {
                       ),
                     );
                   }
-                  return const Center(child: Text("Something Went Wrong Try again"));
+                  return const Center(
+                      child: Text("Something Went Wrong Try again"));
                 },
               ),
             ],

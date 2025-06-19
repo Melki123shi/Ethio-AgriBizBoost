@@ -3,32 +3,41 @@ import 'package:go_router/go_router.dart';
 
 class Header extends StatelessWidget {
   final String? image;
-  const Header({super.key, this.image});
+  static bool _isProfileOpen = false;
+
+  Header({super.key, this.image});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.only(right: 16, left: 16, top: 30, bottom: 10),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const CircleAvatar(
             radius: 20,
             backgroundImage: AssetImage('assets/plant.jpeg'),
           ),
+          const Spacer(),
           Row(
             children: [
               IconButton(
-                  icon: const Icon(Icons.chat_rounded),
-                  iconSize: 30,
-                  color: Theme.of(context).primaryColor,
-                  onPressed: () {
-                    context.push('/chatbot');
-                  }),
+                icon: const Icon(Icons.chat_rounded),
+                iconSize: 30,
+                color: Theme.of(context).primaryColor,
+                onPressed: () {
+                  context.push('/chatbot');
+                },
+              ),
               const SizedBox(width: 5),
               GestureDetector(
                 onTap: () {
-                  context.push('/profile');
+                  if (!_isProfileOpen) {
+                    _isProfileOpen = true;
+                    context.push('/profile').then((_) {
+                      // Reset flag when coming back
+                      _isProfileOpen = false;
+                    });
+                  }
                 },
                 child: image != null
                     ? CircleAvatar(
@@ -49,9 +58,9 @@ class Header extends StatelessWidget {
                           color: Theme.of(context).scaffoldBackgroundColor,
                         ),
                       ),
-              )
+              ),
             ],
-          )
+          ),
         ],
       ),
     );

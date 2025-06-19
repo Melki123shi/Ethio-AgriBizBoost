@@ -97,7 +97,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             child: Column(
               children: [
                 GestureDetector(
-                  onTap: _pickProfileImage,
+                  // onTap: _pickProfileImage,
                   child: CircleAvatar(
                     radius: 50,
                     backgroundColor: green,

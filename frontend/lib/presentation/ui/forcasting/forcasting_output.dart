@@ -13,7 +13,7 @@ class ForcastingOutput extends StatelessWidget {
     final maxY = _getMaxY();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 40, 0, 10),
+      padding: const EdgeInsets.fromLTRB(0, 25, 0, 10),
       child: Scaffold(
         appBar: AppBar(
           title: Text(context.commonLocals.price_forecast),

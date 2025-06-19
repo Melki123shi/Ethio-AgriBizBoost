@@ -113,3 +113,4 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/plant.jpeg"
+  adaptive_icon_background: "#4CAF50"
