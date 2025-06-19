@@ -3,6 +3,7 @@ import 'package:app/domain/dto/signup_dto.dart';
 import 'package:app/services/api/auth_service.dart';
 import 'package:app/services/network/dio_client.dart';
 import 'package:app/services/token_storage.dart';
+import 'package:app/services/local_storage/user_local_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/application/auth/auth_event.dart';
 import 'package:app/application/auth/auth_state.dart';
@@ -68,8 +69,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       // Log the error but don't fail the logout process
       // The user should be logged out locally even if server logout fails
     } finally {
-      // Always clear local tokens and emit initial state
+      // Always clear local tokens and user data, then emit initial state
       await TokenStorage.clearAccessToken();
+      await UserLocalStorage().clearUser();
       DioClient.getDio().options.headers.remove('Authorization');
       emit(AuthInitial());
     }

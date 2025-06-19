@@ -14,11 +14,12 @@ import 'package:app/services/api/expense_tracking_service.dart';
 import 'package:app/services/api/loan_advice_service.dart';
 import 'package:app/services/api/user_service.dart';
 import 'package:app/services/token_storage.dart';
+import 'package:app/services/local_storage/user_local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:app/application/forcasting/forcasting_bloc.dart';
 import 'package:app/application/health_assessment/health_assessment_bloc.dart';
-import 'package:app/services/api/forcasting_service.dart';
+import 'package:app/services/api/hybrid_forecasting_service.dart';
 import 'package:app/services/api/health_assessment_service.dart';
 import 'package:app/presentation/router/app_router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -27,7 +28,12 @@ import 'package:google_fonts/google_fonts.dart';
 final themeNotifier = ValueNotifier(ThemeMode.system);
 final ValueNotifier<Locale> localeNotifier = ValueNotifier(const Locale('en'));
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize Hive for local storage
+  await UserLocalStorage().init();
+
   final healthService = HealthAssessmentService();
   final forcastingService = ForcastingService();
   final authService = AuthService();
@@ -35,7 +41,7 @@ void main() {
   final loanAdviceService = LoanAdviceService();
   final expenseTrackingService = ExpenseTrackingService();
   final authBloc = AuthBloc(authService)..add(AppStarted());
-  final loggedIn = TokenStorage.readAccessToken() != '';
+  final loggedIn = await TokenStorage.readAccessToken() != null;
   final appRouter = AppRouter(authBloc, loggedIn).router;
 
   runApp(

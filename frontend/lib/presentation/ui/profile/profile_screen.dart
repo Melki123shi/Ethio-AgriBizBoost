@@ -1,6 +1,9 @@
 import 'package:app/domain/entity/user_entity.dart';
 import 'package:app/presentation/ui/profile/header.dart';
 import 'package:app/presentation/utils/localization_extension.dart';
+import 'package:app/services/local_storage/user_local_storage.dart';
+import 'package:app/services/sync/user_sync_service.dart';
+import 'package:app/services/api/user_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -16,10 +19,29 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  final UserLocalStorage _localStorage = UserLocalStorage();
+  late UserSyncService _syncService;
+  bool _hasPendingSync = false;
+
   @override
   void initState() {
     super.initState();
+    _syncService = UserSyncService(UserService());
+    _syncService.startAutoSync();
+    _checkPendingSync();
     context.read<UserBloc>().add(FetchUser());
+  }
+
+  @override
+  void dispose() {
+    _syncService.stopAutoSync();
+    super.dispose();
+  }
+
+  void _checkPendingSync() {
+    setState(() {
+      _hasPendingSync = _localStorage.hasPendingSync();
+    });
   }
 
   @override
@@ -28,28 +50,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: BlocBuilder<UserBloc, UserState>(
-        builder: (context, state) {
-          if (state is UserLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is UserLoaded) {
-            return _buildProfile(context, theme, state.user);
-          } else if (state is UserError) {
-            return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(context.commonLocals.failed_to_fetch_user),
-                IconButton(
-                    onPressed: () {
-                      context.read<UserBloc>().add(FetchUser());
-                    },
-                    icon: const Icon(Icons.replay_outlined))
-              ],
-            ));
+      body: BlocListener<UserBloc, UserState>(
+        listener: (context, state) {
+          // Update sync status when user state changes
+          if (state is UserLoaded) {
+            _checkPendingSync();
           }
-          return const SizedBox.shrink();
         },
+        child: BlocBuilder<UserBloc, UserState>(
+          builder: (context, state) {
+            if (state is UserLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is UserLoaded) {
+              return _buildProfile(context, theme, state.user);
+            } else if (state is UserError) {
+              return Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(context.commonLocals.failed_to_fetch_user),
+                  IconButton(
+                      onPressed: () {
+                        context.read<UserBloc>().add(FetchUser());
+                      },
+                      icon: const Icon(Icons.replay_outlined))
+                ],
+              ));
+            }
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
@@ -58,6 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       children: [
         const Header(),
+        if (_hasPendingSync) _buildSyncIndicator(context, theme),
         Expanded(
           child: SafeArea(
             child: ListView(
@@ -245,5 +276,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     }
     return list;
+  }
+
+  Widget _buildSyncIndicator(BuildContext context, ThemeData theme) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.sync, size: 20, color: Colors.orange.shade700),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              'Profile changes pending sync',
+              style: theme.textTheme.bodySmall!.copyWith(
+                color: Colors.orange.shade700,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              final result = await _syncService.manualSync();
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(result.message),
+                    backgroundColor: result.success ? Colors.green : Colors.red,
+                  ),
+                );
+                if (result.success) {
+                  _checkPendingSync();
+                  context.read<UserBloc>().add(FetchUser());
+                }
+              }
+            },
+            child: Text(
+              'Sync Now',
+              style: TextStyle(
+                color: Colors.orange.shade700,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
